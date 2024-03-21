@@ -1,46 +1,23 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/layout/ApplicationAppBar.dart';
 import 'package:mtaa_project/layout/LayoutConfig.dart';
 
-class MainLayout extends StatefulWidget {
+class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required this.child});
 
   final Widget child;
 
   @override
-  State<MainLayout> createState() => _MainLayoutState();
-}
-
-class _MainLayoutState extends State<MainLayout> {
-  String _title = "Null Page";
-  int _focusedButton = 0;
-
-  void _setTitle(String title) {
-    if (title == _title) return;
-    Future.microtask(() => setState(() => _title = title));
-  }
-
-  void _setFocusedButton(int focusedButton) {
-    if (focusedButton == _focusedButton) return;
-    Future.microtask(() => setState(() => _focusedButton = focusedButton));
-  }
-
-  @override
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
+    final layoutConfig = LayoutConfig.instance.bind(context);
 
     return Scaffold(
-      appBar: applicationAppBar(context, _title),
-      body: LayoutConfig(
-        onFocusedButtonChanged: _setFocusedButton,
-        onTitleChanged: _setTitle,
-        child: widget.child,
-      ),
+      appBar: applicationAppBar(context, layoutConfig.title),
+      body: child,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _focusedButton,
+        currentIndex: layoutConfig.focusedButton,
         onTap: (value) {
           router.goNamed(
             switch (value) {

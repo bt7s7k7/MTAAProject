@@ -17,7 +17,7 @@ class _RecordingPageState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.of(context).setTitle("Recording").setFocusedButton(1);
+    LayoutConfig.instance.setTitle("Recording").setFocusedButton(1);
 
     return Center(
       child: Column(

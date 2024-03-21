@@ -17,7 +17,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.of(context).setTitle("Friends").setFocusedButton(2);
+    LayoutConfig.instance.setTitle("Friends").setFocusedButton(2);
 
     return Center(
       child: Column(

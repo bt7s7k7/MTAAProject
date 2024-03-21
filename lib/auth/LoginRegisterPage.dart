@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mtaa_project/auth/AuthAdapter.dart';
 import 'package:mtaa_project/layout/ApplicationAppBar.dart';
 
 class _AuthFormField {
@@ -83,11 +84,18 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  GoRouter? _router;
+
   String _email = "";
   String _password = "";
 
   void _setEmail(String email) => setState(() => _email = email);
   void _setPassword(String password) => setState(() => _password = password);
+
+  void _submit() {
+    AuthAdapter.instance.setUser(User(email: _email));
+    _router!.goNamed("Home");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +109,17 @@ class _LoginPageState extends State<LoginPage> {
             label: "Password", onChanged: _setPassword, obscureText: true),
       ],
       submitLabel: "Login",
-      onSubmit: () => router.goNamed("Home"),
+      onSubmit: _submit,
       alternateText: "If you don't have an account you can ",
       alternateLabel: "Register Here",
       onAlternate: () => router.goNamed("Register"),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _router = GoRouter.of(context);
   }
 }
 
@@ -117,6 +131,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  GoRouter? _router;
+
   String _name = "";
   String _email = "";
   String _password = "";
@@ -127,6 +143,11 @@ class _RegisterPageState extends State<RegisterPage> {
   void _setPassword(String password) => setState(() => _password = password);
   void _setConfirmPassword(String confirmPassword) =>
       setState(() => _confirmPassword = confirmPassword);
+
+  void _submit() {
+    AuthAdapter.instance.setUser(User(email: _email));
+    _router!.goNamed("Home");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,10 +166,16 @@ class _RegisterPageState extends State<RegisterPage> {
             obscureText: true),
       ],
       submitLabel: "Register",
-      onSubmit: () => router.goNamed("Home"),
+      onSubmit: _submit,
       alternateText: "If you already have an account you can ",
       alternateLabel: "Login Here",
       onAlternate: () => router.goNamed("Login"),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _router = GoRouter.of(context);
   }
 }
