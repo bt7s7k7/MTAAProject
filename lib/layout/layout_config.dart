@@ -1,4 +1,4 @@
-import 'package:mtaa_project/support/Observable.dart';
+import 'package:mtaa_project/support/observable.dart';
 
 class LayoutConfig extends Observable<LayoutConfig> {
   LayoutConfig._();

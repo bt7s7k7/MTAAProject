@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/auth/AuthAdapter.dart';
-import 'package:mtaa_project/layout/LayoutConfig.dart';
+import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/layout/layout_config.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

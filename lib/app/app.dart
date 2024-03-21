@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/router.dart';
-import 'package:mtaa_project/support/Observable.dart';
+import 'package:mtaa_project/support/observable.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

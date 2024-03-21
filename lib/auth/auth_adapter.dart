@@ -1,7 +1,7 @@
 import 'package:http/http.dart';
-import 'package:mtaa_project/auth/User.dart';
+import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
-import 'package:mtaa_project/support/Observable.dart';
+import 'package:mtaa_project/support/observable.dart';
 import 'package:mtaa_project/support/support.dart';
 
 class AuthAdapter extends Observable<AuthAdapter> {

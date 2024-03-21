@@ -96,6 +96,6 @@ abstract class Observable<T> {
   var _version = 0;
 
   InheritedWidget _makeProvider(Widget child) {
-    return _ObservableProvider(child: child, value: this);
+    return _ObservableProvider(value: this, child: child);
   }
 }

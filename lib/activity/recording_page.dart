@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/layout/LayoutConfig.dart';
+import 'package:mtaa_project/layout/layout_config.dart';
 
-class FriendsPage extends StatefulWidget {
-  const FriendsPage({super.key});
+class RecordingPage extends StatefulWidget {
+  const RecordingPage({super.key});
 
   @override
-  State<FriendsPage> createState() => _FriendsPageState();
+  State<RecordingPage> createState() => _RecordingPageState();
 }
 
-class _FriendsPageState extends State<FriendsPage> {
+class _RecordingPageState extends State<RecordingPage> {
   int _counter = 0;
 
   void _incrementCounter() {
@@ -17,7 +17,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.instance.setTitle("Friends").setFocusedButton(2);
+    LayoutConfig.instance.setTitle("Recording").setFocusedButton(1);
 
     return Center(
       child: Column(

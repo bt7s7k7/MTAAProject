@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mtaa_project/layout/ApplicationAppBar.dart';
-import 'package:mtaa_project/layout/LayoutConfig.dart';
+import 'package:mtaa_project/layout/application_app_bar.dart';
+import 'package:mtaa_project/layout/layout_config.dart';
 
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required this.child});

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mtaa_project/HomePage.dart';
-import 'package:mtaa_project/activity/RecordingPage.dart';
-import 'package:mtaa_project/auth/LoginRegisterPage.dart';
-import 'package:mtaa_project/friends/FriendsPage.dart';
-import 'package:mtaa_project/layout/MainLayout.dart';
+import 'package:mtaa_project/activity/recording_page.dart';
+import 'package:mtaa_project/auth/login_register_page.dart';
+import 'package:mtaa_project/friends/friends_page.dart';
+import 'package:mtaa_project/home_page.dart';
+import 'package:mtaa_project/layout/main_layout.dart';
 
 final _rootNavigationKey = GlobalKey<NavigatorState>();
 final _homeNavigationKey = GlobalKey<NavigatorState>();

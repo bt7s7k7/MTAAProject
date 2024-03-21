@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mtaa_project/auth/AuthAdapter.dart';
-import 'package:mtaa_project/layout/ApplicationAppBar.dart';
+import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/layout/application_app_bar.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -98,6 +98,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await AuthAdapter.instance.login(_email, _password);
     } on UserException catch (error) {
+      if (!mounted) return;
       alertError(context, "Login", error);
       return;
     }
@@ -158,6 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       await AuthAdapter.instance.register(_name, _email, _password);
     } on UserException catch (error) {
+      if (!mounted) return;
       alertError(context, "Register", error);
       return;
     }
