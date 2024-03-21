@@ -8,11 +8,11 @@ Map<String, dynamic> processHTTPResponse(Response response) {
   var error = response.statusCode != 200;
   var body = jsonDecode(response.body) as Map<String, dynamic>;
   if (error) {
-    if (body.containsKey("message")) {
-      throw UserException(body["message"] as String);
-    } else {
-      throw const APIError("No error message in response");
-    }
+    final _ = switch (body) {
+      {"message": String message} => throw UserException(message),
+      {"errors": [{"message": String message}]} => throw UserException(message),
+      _ => throw const APIError("No error message in response"),
+    };
   } else {
     return body;
   }
