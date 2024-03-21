@@ -1,12 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:mtaa_project/auth/User.dart';
+import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/Observable.dart';
-
-@immutable
-class User {
-  const User({required this.email});
-
-  final String email;
-}
+import 'package:mtaa_project/support/support.dart';
 
 class AuthAdapter extends Observable<AuthAdapter> {
   AuthAdapter._();
@@ -14,9 +10,41 @@ class AuthAdapter extends Observable<AuthAdapter> {
 
   User? get user => _user;
   User? _user;
-  AuthAdapter setUser(User? value) {
-    _user = value;
+
+  Future<User> register(String fullName, String email, String password) async {
+    var response = await post(
+      backendURL.resolve("/auth/register"),
+      body: <String, dynamic>{
+        "fullName": fullName,
+        "email": email,
+        "password": password,
+      },
+    );
+
+    var data = processHTTPResponse(response);
+    var user = User.fromJson(data);
+
+    _user = user;
     setDirty();
-    return this;
+
+    return user;
+  }
+
+  Future<User> login(String email, String password) async {
+    var response = await post(
+      backendURL.resolve("/auth/login"),
+      body: <String, dynamic>{
+        "email": email,
+        "password": password,
+      },
+    );
+
+    var data = processHTTPResponse(response);
+    var user = User.fromJson(data);
+
+    _user = user;
+    setDirty();
+
+    return user;
   }
 }

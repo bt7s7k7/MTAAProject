@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/auth/AuthAdapter.dart';
 import 'package:mtaa_project/layout/ApplicationAppBar.dart';
+import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/support/support.dart';
 
 class _AuthFormField {
   _AuthFormField(
@@ -92,8 +94,14 @@ class _LoginPageState extends State<LoginPage> {
   void _setEmail(String email) => setState(() => _email = email);
   void _setPassword(String password) => setState(() => _password = password);
 
-  void _submit() {
-    AuthAdapter.instance.setUser(User(email: _email));
+  void _submit() async {
+    try {
+      await AuthAdapter.instance.login(_email, _password);
+    } on UserException catch (error) {
+      alertError(context, "Login", error);
+      return;
+    }
+
     _router!.goNamed("Home");
   }
 
@@ -144,8 +152,16 @@ class _RegisterPageState extends State<RegisterPage> {
   void _setConfirmPassword(String confirmPassword) =>
       setState(() => _confirmPassword = confirmPassword);
 
-  void _submit() {
-    AuthAdapter.instance.setUser(User(email: _email));
+  void _submit() async {
+    if (_password != _confirmPassword) return;
+
+    try {
+      await AuthAdapter.instance.register(_name, _email, _password);
+    } on UserException catch (error) {
+      alertError(context, "Register", error);
+      return;
+    }
+
     _router!.goNamed("Home");
   }
 

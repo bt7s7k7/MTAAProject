@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/auth/AuthAdapter.dart';
 import 'package:mtaa_project/layout/LayoutConfig.dart';
@@ -16,7 +18,7 @@ class HomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text("User email is: ${auth.user!.email}"),
+          Text("User: ${jsonEncode(auth.user)}"),
         ],
       ),
     );
