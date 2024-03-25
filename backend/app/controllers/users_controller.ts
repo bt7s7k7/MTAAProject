@@ -1,55 +1,74 @@
-// // import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
+import { userUpdateValidator } from '#validators/user_validator'
+import { inject } from '@adonisjs/core'
+import type { HttpContext } from '@adonisjs/core/http'
+import { UserRepository } from '../repositories/user_repository.js'
+import { Exception } from '@adonisjs/core/exceptions'
 
-// export default class UserController {
-//     // GET /user
-//     // Returns details of the logged-in user
-//     async index({ auth }: HttpContext) {
-//       const user = auth.user!;
-//       return user.serialize();
-//     }
+@inject()
+export default class UserController {
+  constructor(protected userRepository: UserRepository) {}
 
-//     // POST /user
-//     // Updates user data
-//     async update({ auth, request }: HttpContext) {
-//       const user = auth.user!;
-//       const data = request.only(['name', 'email', 'bio']); // Assuming these are the fields you allow to update
-//       user.merge(data);
-//       await user.save();
+  // GET /user
+  // Returns details of the logged-in user
+  async index({ auth }: HttpContext) {
+    const user = auth.user!
+    return user.serialize()
+  }
 
-//       return user.serialize();
-//     }
+  // POST /user
+  // Updates user data
+  async update({ auth, request }: HttpContext) {
+    const user = auth.user!
+    const data = await userUpdateValidator.validate(request.all())
 
-//     // POST /user/photo
-//     // Handles profile picture upload
-//     async uploadPhoto({ auth, request }: HttpContext) {
-//       const user = auth.user!;
-//       const photo = request.file('photo', { size: '2mb' }); // Validate file size
+    for (const [key, value] of Object.entries(data)) {
+      if (value === '' || value === null) {
+        continue
+      }
 
-//       if (photo) {
-//         await photo.move(`./uploads/users/${user.id}`, {
-//           name: `profile.${photo.extname}`, // Save with a custom name
-//         });
+      const original = user[key as keyof typeof user]
+      if (original !== value) {
+        void ((user as any)[key] = value)
+      }
+    }
 
-//         // Update user's profile picture URL/path in the database
-//         // Assuming there's a field `profile_photo` in the User model
-//         user.profilePhoto = `uploads/users/${user.id}/profile.${photo.extname}`;
-//         await user.save();
-//       }
+    await user.save()
 
-//       return { message: 'Profile photo uploaded successfully', path: user.profilePhoto };
-//     }
+    return user.serialize()
+  }
 
-//     // GET /user/:id
-//     // Returns details of a selected user, if they are friends
-//     async show({ auth, params }: HttpContext) {
-//       const user = auth.user!;
-//       const targetUserId = params.id;
+  // POST /user/photo
+  // Handles profile picture upload
+  async uploadPhoto({ auth, request }: HttpContext) {
+    const user = auth.user!
+    const photo = request.file('photo', { size: '2mb' }) // Validate file size
 
-//       if (!await user.isFriendWith(targetUserId)) { // Assuming a method to check friendship
-//         return { error: 'You can only view details of your friends.' };
-//       }
+    if (photo) {
+      await photo.move(`./uploads/users/${user.id}`, {
+        name: `profile.${photo.extname}`, // Save with a custom name
+      })
 
-//       const friend = await User.findOrFail(targetUserId);
-//       return friend.serialize();
-//     }
-//   }
+      // Update user's profile picture URL/path in the database
+      // Assuming there's a field `profile_photo` in the User model
+      user.icon = `uploads/users/${user.id}/profile.${photo.extname}`
+      await user.save()
+    }
+
+    return user.serialize()
+  }
+
+  // GET /user/:id
+  // Returns details of a selected user, if they are friends
+  async show({ auth, params }: HttpContext) {
+    const user = auth.user!
+    const targetUserId = params['id']
+    const targetUser = await User.findOrFail(targetUserId)
+
+    if (!(await this.userRepository.isFriendsWith(user, targetUser))) {
+      throw new Exception('not_friend', { status: 400 })
+    }
+
+    return targetUser.serialize()
+  }
+}
