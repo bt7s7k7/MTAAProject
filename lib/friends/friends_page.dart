@@ -1,37 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
 
-class FriendsPage extends StatefulWidget {
+class FriendsPage extends StatelessWidget {
   const FriendsPage({super.key});
 
   @override
-  State<FriendsPage> createState() => _FriendsPageState();
-}
-
-class _FriendsPageState extends State<FriendsPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() => _counter++);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    LayoutConfig.instance.setTitle("Friends").setFocusedButton(2);
+    LayoutConfig.instance.setFocusedButton(2).setTitle("Friends");
+    var router = GoRouter.of(context);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text('You have pushed the button this many times:'),
-          Text(
-            '$_counter',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          TextButton(
-              onPressed: _incrementCounter, child: const Text("Increment"))
-        ],
+    return Scaffold(
+      floatingActionButton: IconButton.filled(
+        icon: const Icon(Icons.add),
+        onPressed: () => router.goNamed("AddFriends"),
       ),
+      body: const Placeholder(),
     );
   }
 }

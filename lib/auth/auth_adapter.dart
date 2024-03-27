@@ -12,6 +12,23 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
   User? get user => _user;
   User? _user;
+  String? _token;
+
+  (String, User) _parseAuthJson(Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        "token": String token,
+        "user": Map<String, dynamic> userJson,
+      } =>
+        (token, User.fromJson(userJson)),
+      _ => throw const APIError("Invalid fields in auth response"),
+    };
+  }
+
+  Map<String, String> getAuthorizationHeaders() {
+    if (_token == null) throw NotAuthenticatedException();
+    return {"Authorization": "Bearer $_token"};
+  }
 
   Future<User> load() async {
     await localStorage.ready;
@@ -28,9 +45,10 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     var data = processHTTPResponse(response);
-    var user = User.fromIndex(token, data);
+    var user = User.fromJson(data);
 
     _user = user;
+    _token = token;
     notifyListenersAsync();
 
     return user;
@@ -47,10 +65,11 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     var data = processHTTPResponse(response);
-    var user = User.fromLogin(data);
+    var (token, user) = _parseAuthJson(data);
 
     _user = user;
-    await localStorage.setItem("auth-token", user.token);
+    _token = token;
+    await localStorage.setItem("auth-token", token);
     notifyListenersAsync();
 
     return user;
@@ -66,10 +85,11 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     var data = processHTTPResponse(response);
-    var user = User.fromLogin(data);
+    var (token, user) = _parseAuthJson(data);
 
     _user = user;
-    await localStorage.setItem("auth-token", user.token);
+    _token = token;
+    await localStorage.setItem("auth-token", token);
     notifyListenersAsync();
 
     return user;

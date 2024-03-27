@@ -7,40 +7,39 @@ class User {
     required this.id,
     required this.email,
     required this.fullName,
-    required this.token,
+    required this.icon,
+    required this.points,
   });
 
   final int id;
   final String email;
   final String fullName;
-  final String token;
+  final String? icon;
+  final int points;
 
-  Map<String, dynamic> toJson() =>
-      {"id": id, "email": email, "fullName": fullName, "token": token};
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "email": email,
+        "fullName": fullName,
+        "icon": icon,
+        "points": points
+      };
 
-  factory User.fromLogin(Map<String, dynamic> json) {
-    return switch (json) {
-      {
-        "token": String token,
-        "user": {
-          "id": int id,
-          "fullName": String fullName,
-          "email": String email,
-        }
-      } =>
-        User(token: token, id: id, fullName: fullName, email: email),
-      _ => throw const APIError("Invalid fields to load a user"),
-    };
-  }
-
-  factory User.fromIndex(String token, Map<String, dynamic> json) {
+  factory User.fromJson(Map<String, dynamic> json) {
     return switch (json) {
       {
         "id": int id,
         "fullName": String fullName,
         "email": String email,
+        "icon": String? icon,
+        "points": int points,
       } =>
-        User(token: token, id: id, fullName: fullName, email: email),
+        User(
+            id: id,
+            fullName: fullName,
+            email: email,
+            icon: icon,
+            points: points),
       _ => throw const APIError("Invalid fields to load a user"),
     };
   }

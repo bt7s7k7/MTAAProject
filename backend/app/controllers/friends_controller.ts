@@ -1,5 +1,6 @@
 import Invite from '#models/invite'
 import User from '#models/user'
+import { searchFriendsValidator } from '#validators/friends_validator'
 import { inject } from '@adonisjs/core'
 import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
@@ -27,10 +28,10 @@ export default class FriendsController {
    * This method searches for users based on a query string
    */
   async search({ request }: HttpContext) {
-    const query = request.input('query')
+    const { query } = await searchFriendsValidator.validate(request.all())
     const results = await this.userRepository.searchUsers(query) // Assuming a static search method on the User model
 
-    return results.map((user) => user.serialize())
+    return { users: results.map((user) => user.serialize()) }
   }
 
   /**
