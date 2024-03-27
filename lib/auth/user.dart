@@ -18,7 +18,7 @@ class User {
   Map<String, dynamic> toJson() =>
       {"id": id, "email": email, "fullName": fullName, "token": token};
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromLogin(Map<String, dynamic> json) {
     return switch (json) {
       {
         "token": String token,
@@ -27,6 +27,18 @@ class User {
           "fullName": String fullName,
           "email": String email,
         }
+      } =>
+        User(token: token, id: id, fullName: fullName, email: email),
+      _ => throw const APIError("Invalid fields to load a user"),
+    };
+  }
+
+  factory User.fromIndex(String token, Map<String, dynamic> json) {
+    return switch (json) {
+      {
+        "id": int id,
+        "fullName": String fullName,
+        "email": String email,
       } =>
         User(token: token, id: id, fullName: fullName, email: email),
       _ => throw const APIError("Invalid fields to load a user"),

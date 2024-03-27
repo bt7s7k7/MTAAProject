@@ -1,6 +1,8 @@
 import 'package:http/http.dart';
 import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/support/local_storate.dart';
 import 'package:mtaa_project/support/observable.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -10,6 +12,29 @@ class AuthAdapter extends Observable<AuthAdapter> {
 
   User? get user => _user;
   User? _user;
+
+  Future<User> load() async {
+    await localStorage.ready;
+    var token = localStorage.getItem("auth-token");
+    if (token == null) throw NotAuthenticatedException();
+
+    if (token is! String) {
+      throw Error();
+    }
+
+    var response = await get(
+      backendURL.resolve("/user"),
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    var data = processHTTPResponse(response);
+    var user = User.fromIndex(token, data);
+
+    _user = user;
+    setDirty();
+
+    return user;
+  }
 
   Future<User> register(String fullName, String email, String password) async {
     var response = await post(
@@ -22,9 +47,10 @@ class AuthAdapter extends Observable<AuthAdapter> {
     );
 
     var data = processHTTPResponse(response);
-    var user = User.fromJson(data);
+    var user = User.fromLogin(data);
 
     _user = user;
+    await localStorage.setItem("auth-token", user.token);
     setDirty();
 
     return user;
@@ -40,9 +66,10 @@ class AuthAdapter extends Observable<AuthAdapter> {
     );
 
     var data = processHTTPResponse(response);
-    var user = User.fromJson(data);
+    var user = User.fromLogin(data);
 
     _user = user;
+    await localStorage.setItem("auth-token", user.token);
     setDirty();
 
     return user;
