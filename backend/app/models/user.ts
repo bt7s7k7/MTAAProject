@@ -40,6 +40,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare icon: string
 
+  @column()
+  declare points: number
+
   @manyToMany(() => User, {
     localKey: 'id',
     pivotForeignKey: 'user_id',

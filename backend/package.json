@@ -54,6 +54,7 @@
     "@adonisjs/core": "^6.2.2",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.1.0",
+    "@faker-js/faker": "^8.4.1",
     "@vinejs/vine": "^1.7.1",
     "luxon": "^3.4.4",
     "pg": "^8.11.3",
