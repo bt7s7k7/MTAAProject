@@ -20,4 +20,8 @@ export class UserRepository {
   async acceptInvite(invite: Invite) {
     // TODO
   }
+
+  async denyInvite(invite: Invite) {
+    // TODO
+  }
 }
