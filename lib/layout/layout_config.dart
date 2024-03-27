@@ -1,22 +1,25 @@
-import 'package:mtaa_project/support/observable.dart';
+import 'package:flutter/material.dart';
+import 'package:mtaa_project/support/support.dart';
 
-class LayoutConfig extends Observable<LayoutConfig> {
+class LayoutConfig with ChangeNotifier, ChangeNotifierAsync {
   LayoutConfig._();
   static final instance = LayoutConfig._();
 
   int get focusedButton => _focusedButton;
   var _focusedButton = 0;
   LayoutConfig setFocusedButton(int value) {
+    if (_focusedButton == value) return this;
     _focusedButton = value;
-    setDirty();
+    notifyListenersAsync();
     return this;
   }
 
   String get title => _title;
   var _title = "Null Page";
   LayoutConfig setTitle(String value) {
+    if (_title == value) return this;
     _title = value;
-    setDirty();
+    notifyListenersAsync();
     return this;
   }
 }

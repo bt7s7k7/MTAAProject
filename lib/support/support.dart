@@ -43,3 +43,21 @@ void alertError(BuildContext context, String title, UserException exception) {
     },
   );
 }
+
+mixin ChangeNotifierAsync on ChangeNotifier {
+  var _dirty = false;
+
+  /// Merges change notifications in one task, so listeners do not need to be rebuild
+  /// for every property changed, but only once. Also prevents an error when called
+  /// during build of a widget.
+  void notifyListenersAsync() {
+    if (_dirty) return;
+    _dirty = true;
+    Future.microtask(
+      () {
+        _dirty = false;
+        notifyListeners();
+      },
+    );
+  }
+}

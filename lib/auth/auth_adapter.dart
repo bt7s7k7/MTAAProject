@@ -1,12 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/local_storate.dart';
-import 'package:mtaa_project/support/observable.dart';
 import 'package:mtaa_project/support/support.dart';
 
-class AuthAdapter extends Observable<AuthAdapter> {
+class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   AuthAdapter._();
   static final instance = AuthAdapter._();
 
@@ -31,7 +31,7 @@ class AuthAdapter extends Observable<AuthAdapter> {
     var user = User.fromIndex(token, data);
 
     _user = user;
-    setDirty();
+    notifyListenersAsync();
 
     return user;
   }
@@ -51,7 +51,7 @@ class AuthAdapter extends Observable<AuthAdapter> {
 
     _user = user;
     await localStorage.setItem("auth-token", user.token);
-    setDirty();
+    notifyListenersAsync();
 
     return user;
   }
@@ -70,7 +70,7 @@ class AuthAdapter extends Observable<AuthAdapter> {
 
     _user = user;
     await localStorage.setItem("auth-token", user.token);
-    setDirty();
+    notifyListenersAsync();
 
     return user;
   }

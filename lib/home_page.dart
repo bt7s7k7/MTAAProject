@@ -11,14 +11,17 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     LayoutConfig.instance.setTitle("Home").setFocusedButton(0);
 
-    var auth = AuthAdapter.instance.bind(context);
+    var auth = AuthAdapter.instance;
 
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text("User: ${jsonEncode(auth.user)}"),
+          ListenableBuilder(
+            listenable: auth,
+            builder: (_, __) => Text("User: ${jsonEncode(auth.user)}"),
+          ),
         ],
       ),
     );
