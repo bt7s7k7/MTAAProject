@@ -14,14 +14,14 @@ export default class Invite extends BaseModel {
   declare updatedAt: DateTime
 
   @column({ serializeAs: null })
-  declare userId: number
+  declare receiverId: number
 
   @column({ serializeAs: null })
-  declare friendId: number
+  declare senderId: number
 
-  @belongsTo(() => User, { foreignKey: 'userId' })
-  declare user: BelongsTo<typeof User>
+  @belongsTo(() => User, { foreignKey: 'receiverId' })
+  declare receiver: BelongsTo<typeof User>
 
-  @belongsTo(() => User, { foreignKey: 'friendId' })
-  declare friend: BelongsTo<typeof User>
+  @belongsTo(() => User, { foreignKey: 'senderId' })
+  declare sender: BelongsTo<typeof User>
 }

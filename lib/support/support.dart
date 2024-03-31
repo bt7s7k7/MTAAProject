@@ -6,7 +6,9 @@ import 'package:mtaa_project/support/exceptions.dart';
 
 Map<String, dynamic> processHTTPResponse(Response response) {
   var error = response.statusCode != 200;
-  var body = jsonDecode(response.body) as Map<String, dynamic>;
+  var body = response.body.isNotEmpty
+      ? jsonDecode(response.body) as Map<String, dynamic>
+      : <String, dynamic>{};
   if (error) {
     debugPrint("API Error ${response.statusCode}: $body");
 
@@ -44,6 +46,13 @@ void alertError(BuildContext context, String title, UserException exception) {
       );
     },
   );
+}
+
+void popupResult(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(message),
+    duration: const Duration(seconds: 1),
+  ));
 }
 
 mixin ChangeNotifierAsync on ChangeNotifier {

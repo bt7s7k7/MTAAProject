@@ -38,7 +38,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare level: HasOne<typeof Level>
 
   @column()
-  declare icon: string
+  declare icon: string | null
 
   @column()
   declare points: number

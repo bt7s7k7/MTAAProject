@@ -17,6 +17,8 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
       children: users
           .map(
             (user) => _UserElement(

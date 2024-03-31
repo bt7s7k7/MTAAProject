@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
+import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/support/support.dart';
 
 class AddFriendsPage extends StatefulWidget {
   const AddFriendsPage({super.key});
@@ -15,6 +17,7 @@ class AddFriendsPage extends StatefulWidget {
 class _AddFriendsPageState extends State<AddFriendsPage> {
   String query = "";
   List<User> users = [];
+  Set<User> interactedUsers = {};
   Timer? _debounce;
 
   Future<void> _searchUsers() async {
@@ -37,6 +40,26 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       query = value;
       _searchUsers();
     });
+  }
+
+  void _sendInvite(User user) async {
+    try {
+      var result = await FriendsAdapter.instance.sendInvite(user);
+      setState(() {
+        interactedUsers.add(user);
+      });
+      if (!mounted) return;
+      popupResult(
+        context,
+        switch (result) {
+          SendInviteResult.accepted => "Added friend",
+          SendInviteResult.sent => "Invite sent",
+        },
+      );
+    } on UserException catch (err) {
+      if (!mounted) return;
+      alertError(context, "Send invite", err);
+    }
   }
 
   @override
@@ -62,10 +85,13 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
             child: UserList(
               users: users,
               onClick: (user) => debugPrint(user.toJson().toString()),
-              actionBuilder: (user) => FilledButton(
-                onPressed: () {},
-                child: const Text("Add"),
-              ),
+              actionBuilder: (user) => switch (interactedUsers.contains(user)) {
+                true => const SizedBox.shrink(),
+                false => FilledButton(
+                    onPressed: () => _sendInvite(user),
+                    child: const Text("Add"),
+                  ),
+              },
             ),
           )
         ],

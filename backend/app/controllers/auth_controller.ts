@@ -21,7 +21,11 @@ export default class AuthController {
 
     let user
     try {
-      user = await User.create(data)
+      user = await User.create({
+        ...data,
+        points: 0,
+        icon: null,
+      })
     } catch (err: any) {
       if (err.constraint === 'users_email_unique') {
         throw new Exception('email_in_use', { status: 400 })

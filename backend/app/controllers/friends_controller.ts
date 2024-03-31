@@ -2,7 +2,6 @@ import Invite from '#models/invite'
 import User from '#models/user'
 import { searchFriendsValidator } from '#validators/friends_validator'
 import { inject } from '@adonisjs/core'
-import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import { UserRepository } from '../repositories/user_repository.js'
 
@@ -17,9 +16,14 @@ export default class FriendsController {
    */
   async index({ auth }: HttpContext) {
     const user = auth.user!
-    await user.preload('friends')
+    await user.load('friends')
 
-    return user.friends.map((friend) => friend.serialize())
+    const invites = await Invite.query().where('receiverId', user.id).preload('sender')
+
+    return {
+      friends: user.friends.map((friend) => friend.serialize()),
+      invites: invites.map((invite) => invite.sender.serialize()),
+    }
   }
 
   /**
@@ -27,11 +31,12 @@ export default class FriendsController {
    *
    * This method searches for users based on a query string
    */
-  async search({ request }: HttpContext) {
+  async search({ request, auth }: HttpContext) {
+    const user = auth.user!
     const { query } = await searchFriendsValidator.validate(request.all())
     const results = await this.userRepository.searchUsers(query) // Assuming a static search method on the User model
 
-    return { users: results.map((user) => user.serialize()) }
+    return { users: results.filter((v) => v.id !== user.id).map((v) => v.serialize()) }
   }
 
   /**
@@ -42,9 +47,9 @@ export default class FriendsController {
   async invite({ request, auth }: HttpContext) {
     const user = auth.user!
     const recipient = await User.findOrFail(request.input('id'))
-    const invite = await this.userRepository.sendInvite(user, recipient) // Assuming a method to send a friend invite
+    const inviteResult = await this.userRepository.sendInvite(user, recipient)
 
-    return invite.serialize()
+    return { result: inviteResult }
   }
 
   /**
@@ -53,9 +58,15 @@ export default class FriendsController {
    * This method allows a user to accept a friend invite
    */
   async accept({ request, auth }: HttpContext) {
-    const invite = await Invite.findOrFail(request.param('id'))
-    if (invite.friendId !== auth.user!.id) throw new Exception('invalid_invite', { status: 400 })
-    await this.userRepository.acceptInvite(invite) // Assuming a method to accept a friend invite
+    const user = auth.user!
+    const senderId = request.param('id')
+
+    const invite = await Invite.query()
+      .where('senderId', senderId)
+      .where('receiverId', user.id)
+      .firstOrFail()
+
+    await this.userRepository.acceptInvite(invite)
   }
 
   /**
@@ -64,8 +75,27 @@ export default class FriendsController {
    * This method allows a user to deny a friend invite
    */
   async deny({ request, auth }: HttpContext) {
-    const invite = await Invite.findOrFail(request.param('id'))
-    if (invite.friendId !== auth.user!.id) throw new Exception('invalid_invite', { status: 400 })
-    await this.userRepository.denyInvite(invite) // Assuming a method to deny a friend invite
+    const user = auth.user!
+    const senderId = request.param('id')
+
+    const invite = await Invite.query()
+      .where('senderId', senderId)
+      .where('receiverId', user.id)
+      .firstOrFail()
+
+    await this.userRepository.denyInvite(invite)
+  }
+
+  /**
+   * POST /friends/remove/:id
+   *
+   * This method allows a user to deny a friend invite
+   */
+  async remove({ request, auth }: HttpContext) {
+    const user = auth.user!
+    const target = request.param('id')
+    const targetUser = await User.findOrFail(target)
+
+    await this.userRepository.removeFriendship(user, targetUser)
   }
 }

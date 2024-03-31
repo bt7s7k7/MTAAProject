@@ -65,6 +65,7 @@ router
     router.post('/invite', [FriendsController, 'invite'])
     router.post('/invite/:id/accept', [FriendsController, 'accept'])
     router.post('/invite/:id/deny', [FriendsController, 'deny'])
+    router.post('/remove/:id', [FriendsController, 'remove'])
   })
   .prefix('friend')
   .use(middleware.auth())
