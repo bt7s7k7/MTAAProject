@@ -1,38 +1,42 @@
-// controllers/ActivityController.ts
-import type { HttpContextContract } from '@adonisjs/core/build/standalone';
-import Activity from '#models/activity';
+import type { HttpContext } from '@adonisjs/core/http'
+import Activity from '#models/activity'
+import { activityValidator } from '#validators/activity_validator'
 
 export default class ActivityController {
-  public async index({ auth }: HttpContextContract) {
-    const user = auth.user!;
-    return await Activity.query().where('userId', user.id);
+  async index({ auth }: HttpContext) {
+    const user = auth.user!
+    return await Activity.query().where('userId', user.id)
   }
 
-  public async store({ auth, request }: HttpContextContract) {
-    const user = auth.user!;
-    const data = request.only(['activityName', 'points', 'distance', 'steps', 'duration', 'path']);
+  async store({ auth, request }: HttpContext) {
+    const user = auth.user!
 
-    const activity = await user.related('activities').create(data);
-    return activity;
+    // Validácia dát použitím activityValidator
+    const data = await activityValidator.validate(request.all())
+
+    const activity = await user.related('activities').create(data)
+    return activity
   }
 
-  public async show({ params }: HttpContextContract) {
-    return await Activity.findOrFail(params.id);
+  async show({ params }: HttpContext) {
+    return await Activity.findOrFail(params.id)
   }
 
-  public async update({ request, params }: HttpContextContract) {
-    const activity = await Activity.findOrFail(params.id);
-    const data = request.only(['activityName', 'points', 'distance', 'steps', 'duration', 'path']);
+  async update({ request, params }: HttpContext) {
+    const activity = await Activity.findOrFail(params.id)
 
-    activity.merge(data);
-    await activity.save();
+    // Validácia dát použitím activityValidator
+    const data = await activityValidator.validate(request.all())
 
-    return activity;
+    activity.merge(data)
+    await activity.save()
+
+    return activity
   }
 
-  public async destroy({ params }: HttpContextContract) {
-    const activity = await Activity.findOrFail(params.id);
-    await activity.delete();
-    return { message: 'Activity deleted' };
+  async destroy({ params }: HttpContext) {
+    const activity = await Activity.findOrFail(params.id)
+    await activity.delete()
+    return { message: 'Activity deleted' }
   }
 }

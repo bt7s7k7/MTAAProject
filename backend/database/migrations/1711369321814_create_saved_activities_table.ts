@@ -23,4 +23,3 @@ export default class UserActivities extends BaseSchema {
     this.schema.dropTable(this.tableName)
   }
 }
-

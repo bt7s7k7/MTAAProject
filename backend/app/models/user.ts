@@ -2,9 +2,11 @@ import { withAuthFinder } from '@adonisjs/auth'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
-import { type HasOne, type ManyToMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, hasMany, column, hasOne, manyToMany } from '@adonisjs/lucid/orm'
+import { type HasOne, type HasMany, type ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Activity from './activity.js' // make sure the path is correct
+
 import Level from './level.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
@@ -51,6 +53,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotTable: 'users_friends',
   })
   declare friends: ManyToMany<typeof User>
+
+  @hasMany(() => Activity, {
+    foreignKey: 'userId', // The name of the foreign key column on the 'activities' table
+  })
+  declare activities: HasMany<typeof Activity>
 
   static accessTokens = DbAccessTokensProvider.forModel(User)
 }
