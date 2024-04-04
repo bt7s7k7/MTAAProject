@@ -9,12 +9,13 @@
 
 import app from '@adonisjs/core/services/app'
 import router from '@adonisjs/core/services/router'
+
 import { normalize, sep } from 'node:path'
 import { middleware } from './kernel.js'
 const FriendsController = () => import('#controllers/friends_controller')
 const UserController = () => import('#controllers/users_controller')
 const AuthController = () => import('#controllers/auth_controller')
-
+const ActivityController = () => import('#controllers/activities_controller')
 router.get('/', async () => {
   return {
     hello: 'world',
@@ -68,4 +69,15 @@ router
     router.post('/remove/:id', [FriendsController, 'remove'])
   })
   .prefix('friend')
+  .use(middleware.auth())
+
+router
+  .group(() => {
+    router.get('/', [ActivityController, 'index'])
+    router.get('/user/:id', [ActivityController, 'userActivities'])
+    router.get('/:id', [ActivityController, 'activityDetails'])
+    router.post('/', [ActivityController, 'store'])
+    // ... other routes ...
+  })
+  .prefix('activity')
   .use(middleware.auth())
