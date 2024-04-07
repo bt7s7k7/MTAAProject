@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
+import 'package:mtaa_project/layout/layout_config.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:mtaa_project/user/user.dart';
 
 class AddFriendsPage extends StatefulWidget {
   const AddFriendsPage({super.key});
@@ -70,6 +71,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   @override
   Widget build(BuildContext context) {
+    LayoutConfig.instance.setTitle("Add friends");
+
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/local_storage.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:mtaa_project/user/user.dart';
 
 class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   AuthAdapter._();
@@ -93,5 +93,12 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     notifyListenersAsync();
 
     return user;
+  }
+
+  Future<void> logOut() async {
+    _user = null;
+    _token = null;
+    await localStorage.setItem("auth-token", null);
+    notifyListenersAsync();
   }
 }

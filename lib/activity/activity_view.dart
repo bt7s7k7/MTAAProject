@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mtaa_project/activity/activity.dart';
-import 'package:mtaa_project/friends/user_icon.dart';
+import 'package:mtaa_project/user/user_icon.dart';
 
 class ActivityView extends StatelessWidget {
   const ActivityView({super.key, required this.activity});

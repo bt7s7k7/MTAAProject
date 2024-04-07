@@ -1,6 +1,6 @@
 import 'package:mtaa_project/auth/auth_adapter.dart';
-import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/user/user.dart';
 
 class Activity {
   Activity({

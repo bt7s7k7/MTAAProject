@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/auth/user.dart';
-import 'package:mtaa_project/friends/user_icon.dart';
+import 'package:mtaa_project/user/user_icon.dart';
+import 'package:mtaa_project/user/user.dart';
 
 class UserList extends StatelessWidget {
   const UserList({

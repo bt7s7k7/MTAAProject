@@ -3,12 +3,11 @@ import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_view.dart';
 
 class ActivityList extends StatefulWidget {
-  const ActivityList({
-    super.key,
-    required this.getter,
-  });
+  const ActivityList(
+      {super.key, required this.getter, this.useListView = true});
 
   final Future<List<Activity>> Function() getter;
+  final bool useListView;
 
   @override
   State<ActivityList> createState() => _ActivityListState();
@@ -33,9 +32,14 @@ class _ActivityListState extends State<ActivityList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        children: _activities
-            .map((activity) => ActivityView(activity: activity))
-            .toList());
+    var children = _activities
+        .map((activity) => ActivityView(activity: activity))
+        .toList();
+
+    if (widget.useListView) {
+      return ListView(children: children);
+    } else {
+      return Column(children: children);
+    }
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-AppBar applicationAppBar(BuildContext context, String title) {
+AppBar applicationAppBar(BuildContext context, String title,
+    {Widget? trailing}) {
   final router = GoRouter.of(context);
   final showBack = router.canPop();
 
@@ -15,5 +16,6 @@ AppBar applicationAppBar(BuildContext context, String title) {
           icon: const Icon(Icons.chevron_left),
         )
     },
+    actions: trailing != null ? [trailing] : [],
   );
 }

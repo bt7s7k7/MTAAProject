@@ -31,7 +31,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activities;
   }
 
-  Future<List<Activity>> getUserActivities(String id) async {
+  Future<List<Activity>> getUserActivities(int id) async {
     var auth = AuthAdapter.instance;
     var response = await get(
       backendURL.resolve("/activity/user/$id"),

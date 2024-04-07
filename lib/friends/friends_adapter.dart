@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
-import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:mtaa_project/user/user.dart';
 
 enum SendInviteResult { accepted, sent }
 

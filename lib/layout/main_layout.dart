@@ -18,8 +18,14 @@ class MainLayout extends StatelessWidget {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: ListenableBuilder(
           listenable: layoutConfig,
-          builder: (context, __) =>
-              applicationAppBar(context, layoutConfig.title),
+          builder: (context, __) => applicationAppBar(
+            context,
+            layoutConfig.title,
+            trailing: IconButton(
+              onPressed: () => router.pushNamed("Profile"),
+              icon: const Icon(Icons.account_circle_outlined),
+            ),
+          ),
         ),
       ),
       body: child,

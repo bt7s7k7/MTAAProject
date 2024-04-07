@@ -6,6 +6,7 @@ import 'package:mtaa_project/friends/add_friends_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
+import 'package:mtaa_project/user/profile_page.dart';
 
 final _rootNavigationKey = GlobalKey<NavigatorState>();
 final _homeNavigationKey = GlobalKey<NavigatorState>();
@@ -32,6 +33,11 @@ final router = GoRouter(
           path: "/",
           name: "Home",
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: "/profile",
+          name: "Profile",
+          builder: (context, state) => const ProfilePage(),
         ),
         GoRoute(
           path: "/recording",

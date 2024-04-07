@@ -15,9 +15,17 @@ class AuthGuard extends StatefulWidget {
 class _AuthGuardState extends State<AuthGuard> {
   var loaded = false;
 
+  void _onAuthChanged() {
+    if (AuthAdapter.instance.user == null) {
+      router.goNamed("Login");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    AuthAdapter.instance.addListener(_onAuthChanged);
 
     AuthAdapter.instance.load().then((value) {
       setState(() {
@@ -33,6 +41,12 @@ class _AuthGuardState extends State<AuthGuard> {
 
       throw error;
     });
+  }
+
+  @override
+  void dispose() {
+    AuthAdapter.instance.removeListener(_onAuthChanged);
+    super.dispose();
   }
 
   @override

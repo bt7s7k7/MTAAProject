@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/user/user.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
