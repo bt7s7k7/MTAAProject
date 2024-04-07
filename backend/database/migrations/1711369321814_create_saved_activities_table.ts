@@ -1,7 +1,7 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
 
 export default class UserActivities extends BaseSchema {
-  protected tableName = 'saved_activities'
+  protected tableName = 'activities'
 
   async up() {
     this.schema.createTable(this.tableName, (table) => {
@@ -16,6 +16,7 @@ export default class UserActivities extends BaseSchema {
       table.integer('duration').unsigned().notNullable() // Assuming duration is stored in seconds as an integer
       table.text('path').nullable() // Storing the path as text, assuming it's a serialized form or a reference
       table.timestamp('created_at').notNullable()
+      table.timestamp('updated_at').notNullable()
     })
   }
 
