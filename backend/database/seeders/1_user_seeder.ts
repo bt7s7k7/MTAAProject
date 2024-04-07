@@ -19,7 +19,7 @@ export default class extends BaseSeeder {
             const level = await levelRepository.getLevelByPoints(points)
 
             return {
-              email: faker.internet.email(),
+              email: faker.word.noun() + '@example.com',
               fullName: faker.person.fullName(),
               password: '12345',
               points,
