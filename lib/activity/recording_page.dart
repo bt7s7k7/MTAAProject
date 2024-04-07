@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
-import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -16,7 +15,6 @@ class RecordingPage extends StatefulWidget {
 
 class _RecordingPageState extends State<RecordingPage> {
   void _createActivity() async {
-    var user = AuthAdapter.instance.user!;
     var random = Random();
     await ActivityAdapter.instance.uploadActivity(
       Activity.fromRecording(

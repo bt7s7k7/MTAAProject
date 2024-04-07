@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
-import 'package:mtaa_project/activity/activity_view.dart';
+import 'package:mtaa_project/activity/activity_list.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
 
@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
             builder: (_, __) => Text("User: ${jsonEncode(auth.user)}"),
           ),
           Expanded(
-            child: ActivityView(
+            child: ActivityList(
               getter: ActivityAdapter.instance.getHomeActivities,
             ),
           ),

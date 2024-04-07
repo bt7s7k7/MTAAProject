@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/auth/user.dart';
-import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/friends/user_icon.dart';
 
 class UserList extends StatelessWidget {
   const UserList({
@@ -54,9 +54,7 @@ class _UserElement extends StatelessWidget {
       onTap: onClick,
       title: Text(title),
       subtitle: Text(subtitle),
-      leading: CircleAvatar(
-        child: Image.network(icon ?? defaultUserIcon, fit: BoxFit.cover),
-      ),
+      leading: UserIcon(icon: icon),
       trailing: action,
     );
   }
