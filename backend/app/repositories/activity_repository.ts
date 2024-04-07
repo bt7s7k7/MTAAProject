@@ -6,22 +6,19 @@ export class ActivityRepository {
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
       .where('id', userId)
-      .preload('activities')
+      .preload('activities', (query) => query.preload('user'))
       .preload('friends', (friendsQuery) => {
-        friendsQuery.preload('activities')
+        friendsQuery.preload('activities', (query) => query.preload('user'))
       })
       .firstOrFail()
 
-    const activities = user.activities
-    user.friends.forEach((friend) => {
-      activities.push(...friend.activities)
-    })
+    const activities = user.activities.concat(user.friends.flatMap((v) => v.activities))
 
     return activities
   }
 
   async findUserActivitiesById(userId: number) {
-    return Activity.query().where('userId', userId)
+    return Activity.query().where('userId', userId).preload('user')
   }
 
   async findActivityDetails(userId: number, activityId: number) {
