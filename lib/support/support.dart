@@ -6,9 +6,17 @@ import 'package:mtaa_project/support/exceptions.dart';
 
 Map<String, dynamic> processHTTPResponse(Response response) {
   var error = response.statusCode != 200;
-  var body = response.body.isNotEmpty
-      ? jsonDecode(response.body) as Map<String, dynamic>
-      : <String, dynamic>{};
+
+  var body = switch (response.body.isNotEmpty) {
+    true => switch (jsonDecode(response.body)) {
+        Map<String, dynamic> result => result,
+        List<dynamic> items => <String, dynamic>{"items": items},
+        dynamic invalid =>
+          throw APIError("Invalid body type ${invalid.runtimeType.toString()}")
+      },
+    false => <String, dynamic>{}
+  };
+
   if (error) {
     debugPrint("API Error ${response.statusCode}: $body");
 

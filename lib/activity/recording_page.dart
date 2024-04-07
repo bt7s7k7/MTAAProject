@@ -1,5 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:mtaa_project/activity/activity.dart';
+import 'package:mtaa_project/activity/activity_adapter.dart';
+import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/support/support.dart';
 
 class RecordingPage extends StatefulWidget {
   const RecordingPage({super.key});
@@ -9,29 +15,35 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingPageState extends State<RecordingPage> {
-  int _counter = 0;
+  void _createActivity() async {
+    var user = AuthAdapter.instance.user!;
+    var random = Random();
+    await ActivityAdapter.instance.uploadActivity(
+      Activity.fromRecording(
+        name: "New Activity",
+        steps: random.nextInt(1000) + 1000,
+        distance: random.nextInt(1000) + 10,
+        duration: random.nextInt(5000),
+        path: "",
+      ),
+    );
 
-  void _incrementCounter() {
-    setState(() => _counter++);
+    if (!mounted) return;
+
+    popupResult(context, "Activity created");
   }
 
   @override
   Widget build(BuildContext context) {
     LayoutConfig.instance.setTitle("Recording").setFocusedButton(1);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text('You have pushed the button this many times:'),
-          Text(
-            '$_counter',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          TextButton(
-              onPressed: _incrementCounter, child: const Text("Increment"))
-        ],
-      ),
+    return Column(
+      children: [
+        FilledButton.tonal(
+          onPressed: _createActivity,
+          child: const Text("Create activity"),
+        )
+      ],
     );
   }
 }
