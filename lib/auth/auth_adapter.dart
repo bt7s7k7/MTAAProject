@@ -3,7 +3,7 @@ import 'package:http/http.dart';
 import 'package:mtaa_project/auth/user.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
-import 'package:mtaa_project/support/local_storate.dart';
+import 'package:mtaa_project/support/local_storage.dart';
 import 'package:mtaa_project/support/support.dart';
 
 class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
