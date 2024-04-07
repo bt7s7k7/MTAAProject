@@ -71,7 +71,7 @@ class _FriendsPageState extends State<FriendsPage> {
     return Scaffold(
       floatingActionButton: IconButton.filled(
         icon: const Icon(Icons.add),
-        onPressed: () => router.goNamed("AddFriends"),
+        onPressed: () => router.pushNamed("AddFriends"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
