@@ -1,25 +1,28 @@
 // controllers/ActivityController.ts
 import { HttpContext } from '@adonisjs/core/http'
 import { activityValidator } from '#validators/activity_validator'
+import { likeValidator } from '#validators/like_validator' // Make sure to import your likeValidator
 import { ActivityRepository } from '../repositories/activity_repository.js'
+import { LikesRepository } from '../repositories/like_repository.js' // Assuming this is the correct path
 import { UserRepository } from '../repositories/user_repository.js'
-import User from '#models/user';
-
 import { inject } from '@adonisjs/core'
-import { Exception } from '@adonisjs/core/exceptions';
+import { Exception } from '@adonisjs/core/exceptions'
+import User from '#models/user'
 
-// controllers/ActivityController.ts
 
 @inject()
 export default class ActivityController {
   private activityRepo: ActivityRepository
   private userRepository: UserRepository
+  private likesRepo: LikesRepository
 
-
-  constructor(activityRepo: ActivityRepository, userRepository: UserRepository) {
+  constructor(activityRepo: ActivityRepository, userRepository: UserRepository, likesRepo: LikesRepository) {
     this.activityRepo = activityRepo
     this.userRepository = userRepository
+    this.likesRepo = likesRepo
   }
+
+
 
   async index({ auth }: HttpContext) {
     const user = auth.user!
@@ -70,5 +73,32 @@ export default class ActivityController {
     const activity = await this.activityRepo.storeActivity(validation, user.id)
     return activity.serialize()
   }
+
+  public async like({ auth, request }: HttpContext) {
+    const userId = auth.user!.id
+    const { activityId } = await likeValidator.validate(request.all())
+
+    try {
+      const like = await this.likesRepo.createLike(userId, activityId)
+      // Use the serialize method on the Like model
+      return like.serialize()
+    } catch (error) {
+      throw new Exception(error.message, { status: 400 })
+    }
+  }
+
+  public async unlike({ auth, request }: HttpContext) {
+    const userId = auth.user!.id
+    const { activityId } = await likeValidator.validate(request.all())
+
+    try {
+      const like = await this.likesRepo.deleteLike(userId, activityId)
+      
+      return { message: 'Like has been removed.' }
+    } catch (error) {
+      throw new Exception(error.message, { status: 400 })
+    }
+  }
+
   
 }
