@@ -29,11 +29,6 @@ class _FriendsPageState extends State<FriendsPage> {
     _refreshState();
   }
 
-  void _removeFriend(User friend) async {
-    await FriendsAdapter.instance.removeFriend(friend);
-    _refreshState();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -93,7 +88,7 @@ class _FriendsPageState extends State<FriendsPage> {
             Expanded(
               child: UserList(
                 users: users,
-                onClick: (user) => _removeFriend(user),
+                onClick: (user) => router.pushNamed("Friend", extra: user),
               ),
             )
           ],
