@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
-import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class FriendsPage extends StatefulWidget {
@@ -37,7 +38,6 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.instance.setFocusedButton(2).setTitle("Friends");
     var router = GoRouter.of(context);
 
     var invitesList = UserList(
@@ -72,6 +72,13 @@ class _FriendsPageState extends State<FriendsPage> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            ListenableBuilder(
+              listenable: LanguageManager.instance,
+              builder: (_, __) => TitleMarker(
+                title: LanguageManager.instance.language.friends(),
+                focusedButton: 2,
+              ),
+            ),
             ...(switch (invites.isNotEmpty) {
               true => [
                   Card(

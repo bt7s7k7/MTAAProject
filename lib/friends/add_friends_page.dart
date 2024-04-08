@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
-import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
@@ -72,12 +72,16 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.instance.setTitle("Add friends");
-
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => TitleMarker(
+              title: LanguageManager.instance.language.addFriends(),
+            ),
+          ),
           ListenableBuilder(
             listenable: LanguageManager.instance,
             builder: (_, __) => TextField(
