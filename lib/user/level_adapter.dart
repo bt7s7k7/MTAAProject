@@ -1,8 +1,8 @@
 import 'package:http/http.dart';
 import 'package:mtaa_project/constants.dart';
-import 'package:mtaa_project/user/level.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:mtaa_project/user/level.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class LevelAdapter {
@@ -34,7 +34,8 @@ class LevelAdapter {
 
   Level getNextLevel(Level level) {
     var index = _levels.indexOf(level);
-    var nextLevel = index >= _levels.length ? _levels.last : _levels[index + 1];
+    var nextLevel =
+        index >= _levels.length - 1 ? _levels.last : _levels[index + 1];
     return nextLevel;
   }
 }
