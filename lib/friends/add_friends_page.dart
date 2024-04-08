@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
@@ -77,11 +78,14 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
       padding: const EdgeInsets.all(20.0),
       child: Column(
         children: [
-          TextField(
-            onChanged: _onSearchChanged,
-            decoration: const InputDecoration(
-              hintText: "Search",
-              icon: Icon(Icons.search),
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => TextField(
+              onChanged: _onSearchChanged,
+              decoration: InputDecoration(
+                hintText: LanguageManager.instance.language.search(),
+                icon: const Icon(Icons.search),
+              ),
             ),
           ),
           Expanded(
@@ -90,9 +94,14 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
               onClick: (user) => debugPrint(user.toJson().toString()),
               actionBuilder: (user) => switch (interactedUsers.contains(user)) {
                 true => const SizedBox.shrink(),
-                false => FilledButton(
-                    onPressed: () => _sendInvite(user),
-                    child: const Text("Add"),
+                false => ListenableBuilder(
+                    listenable: LanguageManager.instance,
+                    builder: (_, __) => FilledButton(
+                      onPressed: () => _sendInvite(user),
+                      child: Text(
+                        LanguageManager.instance.language.addFriendAction(),
+                      ),
+                    ),
                   ),
               },
             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/application_app_bar.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -61,7 +62,7 @@ class _AuthForm extends StatelessWidget {
             ),
             Row(
               children: [
-                Text(alternateText),
+                Text("$alternateText "),
                 TextButton(
                   onPressed: onAlternate,
                   style: ButtonStyle(
@@ -110,18 +111,28 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
 
-    return _AuthForm(
-      title: "Login",
-      fields: [
-        _AuthFormField(label: "Email", onChanged: _setEmail),
-        _AuthFormField(
-            label: "Password", onChanged: _setPassword, obscureText: true),
-      ],
-      submitLabel: "Login",
-      onSubmit: _submit,
-      alternateText: "If you don't have an account you can ",
-      alternateLabel: "Register Here",
-      onAlternate: () => router.goNamed("Register"),
+    return ListenableBuilder(
+      listenable: LanguageManager.instance,
+      builder: (_, __) => _AuthForm(
+        title: LanguageManager.instance.language.login(),
+        fields: [
+          _AuthFormField(
+            label: LanguageManager.instance.language.email(),
+            onChanged: _setEmail,
+          ),
+          _AuthFormField(
+            label: LanguageManager.instance.language.password(),
+            onChanged: _setPassword,
+            obscureText: true,
+          ),
+        ],
+        submitLabel: LanguageManager.instance.language.loginAction(),
+        onSubmit: _submit,
+        alternateText:
+            LanguageManager.instance.language.ifYouDontHaveAnAccount(),
+        alternateLabel: LanguageManager.instance.language.registerHere(),
+        onAlternate: () => router.goNamed("Register"),
+      ),
     );
   }
 
@@ -171,23 +182,37 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
 
-    return _AuthForm(
-      title: "Register",
-      fields: [
-        _AuthFormField(label: "Name", onChanged: _setName),
-        _AuthFormField(label: "Email", onChanged: _setEmail),
-        _AuthFormField(
-            label: "Password", onChanged: _setPassword, obscureText: true),
-        _AuthFormField(
-            label: "Confirm Password",
+    return ListenableBuilder(
+      listenable: LanguageManager.instance,
+      builder: (_, __) => _AuthForm(
+        title: LanguageManager.instance.language.register(),
+        fields: [
+          _AuthFormField(
+            label: LanguageManager.instance.language.name(),
+            onChanged: _setName,
+          ),
+          _AuthFormField(
+            label: LanguageManager.instance.language.email(),
+            onChanged: _setEmail,
+          ),
+          _AuthFormField(
+            label: LanguageManager.instance.language.password(),
+            onChanged: _setPassword,
+            obscureText: true,
+          ),
+          _AuthFormField(
+            label: LanguageManager.instance.language.confirmPassword(),
             onChanged: _setConfirmPassword,
-            obscureText: true),
-      ],
-      submitLabel: "Register",
-      onSubmit: _submit,
-      alternateText: "If you already have an account you can ",
-      alternateLabel: "Login Here",
-      onAlternate: () => router.goNamed("Login"),
+            obscureText: true,
+          ),
+        ],
+        submitLabel: LanguageManager.instance.language.registerAction(),
+        onSubmit: _submit,
+        alternateText:
+            LanguageManager.instance.language.ifYouAlreadyHaveAnAccount(),
+        alternateLabel: LanguageManager.instance.language.loginHere(),
+        onAlternate: () => router.goNamed("Login"),
+      ),
     );
   }
 

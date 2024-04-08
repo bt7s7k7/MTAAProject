@@ -25,14 +25,16 @@ class SettingsError implements Exception {
 }
 
 class _SettingProperty<T> {
-  _SettingProperty._(this._key);
+  _SettingProperty._(this._key, {T? defaultValue}) : _default = defaultValue;
 
   final String _key;
+  final T? _default;
 
   T getValue() {
     var data = _localStorage.getItem(_key);
     if (data == null) {
       if (null is T) return null as T;
+      if (_default != null) return _default;
       throw SettingsError("Stored value $_key: $T is null");
     }
 
@@ -72,6 +74,7 @@ class Settings {
   static final instance = Settings._();
 
   final authToken = _SettingProperty<String?>._("auth-token");
+  final language = _SettingProperty<String>._("language", defaultValue: "en");
 
   Future<void> ready() {
     return _localStorage.ready;

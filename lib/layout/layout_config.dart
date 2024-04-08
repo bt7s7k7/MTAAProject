@@ -15,7 +15,7 @@ class LayoutConfig with ChangeNotifier, ChangeNotifierAsync {
   }
 
   String get title => _title;
-  var _title = "Null Page";
+  var _title = "?";
   LayoutConfig setTitle(String value) {
     if (_title == value) return this;
     _title = value;

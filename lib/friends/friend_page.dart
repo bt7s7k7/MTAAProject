@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/user.dart';
 import 'package:mtaa_project/user/user_header.dart';
 
@@ -23,9 +24,13 @@ class FriendPage extends StatelessWidget {
         children: [
           UserHeader(user: user),
           const SizedBox(height: 10),
-          ListTile(
-            title: const Text("Remove friend"),
-            onTap: _removeFriend,
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => ListTile(
+              title:
+                  Text(LanguageManager.instance.language.removeFriendAction()),
+              onTap: _removeFriend,
+            ),
           ),
           const SizedBox(height: 10),
           UserActivity(user: user)

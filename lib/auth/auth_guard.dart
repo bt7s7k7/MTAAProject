@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 
@@ -34,6 +35,7 @@ class _AuthGuardState extends State<AuthGuard> {
     AuthAdapter.instance.addListener(_onAuthChanged);
 
     await Settings.instance.ready();
+    await LanguageManager.instance.load();
 
     try {
       await AuthAdapter.instance.load();
