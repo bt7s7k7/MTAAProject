@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 
 class AuthGuard extends StatefulWidget {
@@ -24,22 +25,24 @@ class _AuthGuardState extends State<AuthGuard> {
   @override
   void initState() {
     super.initState();
+    load();
+  }
+
+  Future<void> load() async {
+    super.initState();
 
     AuthAdapter.instance.addListener(_onAuthChanged);
 
-    AuthAdapter.instance.load().then((value) {
-      setState(() {
-        loaded = true;
-      });
-    }, onError: (error) {
-      if (error is NotAuthenticatedException) {
-        router.goNamed("Login");
-        setState(() {
-          loaded = true;
-        });
-      }
+    await Settings.instance.ready();
 
-      throw error;
+    try {
+      await AuthAdapter.instance.load();
+    } on NotAuthenticatedException {
+      router.goNamed("Login");
+    }
+
+    setState(() {
+      loaded = true;
     });
   }
 
