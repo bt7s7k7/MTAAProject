@@ -5,7 +5,7 @@ import 'package:mtaa_project/auth/login_register_page.dart';
 import 'package:mtaa_project/friends/add_friends_page.dart';
 import 'package:mtaa_project/friends/friend_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
-import 'package:mtaa_project/home_page.dart';
+import 'package:mtaa_project/home/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
 import 'package:mtaa_project/user/profile_page.dart';
 import 'package:mtaa_project/user/user.dart';

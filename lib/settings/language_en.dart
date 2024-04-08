@@ -84,4 +84,7 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String language() => "Language";
+
+  @override
+  String ofSteps() => "steps";
 }

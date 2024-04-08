@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/user/level_adapter.dart';
+import 'package:mtaa_project/user/level_image.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class UserHeader extends StatelessWidget {
@@ -10,6 +12,8 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var level = LevelAdapter.instance.getUserLevel(user);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,6 +37,11 @@ class UserHeader extends StatelessWidget {
               )
             ],
           ),
+        ),
+        SizedBox(
+          width: 100,
+          height: 100,
+          child: LevelImage(level: level),
         ),
       ],
     );

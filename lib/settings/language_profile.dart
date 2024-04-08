@@ -33,4 +33,5 @@ abstract class LanguageProfile {
   String addFriendAction();
   String logOutAction();
   String language();
+  String ofSteps();
 }

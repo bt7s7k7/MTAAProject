@@ -9,6 +9,7 @@ class User {
     required this.fullName,
     required this.icon,
     required this.points,
+    required this.levelId,
   });
 
   final int id;
@@ -16,6 +17,7 @@ class User {
   final String fullName;
   final String? icon;
   final int points;
+  final int levelId;
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -33,13 +35,16 @@ class User {
         "email": String email,
         "icon": String? icon,
         "points": int points,
+        "levelId": int levelId,
       } =>
         User(
-            id: id,
-            fullName: fullName,
-            email: email,
-            icon: icon,
-            points: points),
+          id: id,
+          fullName: fullName,
+          email: email,
+          icon: icon,
+          points: points,
+          levelId: levelId,
+        ),
       _ => throw const APIError("Invalid fields to load a user"),
     };
   }

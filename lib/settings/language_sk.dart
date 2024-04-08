@@ -83,4 +83,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String language() => "Jazyk";
+
+  @override
+  String ofSteps() => "krokov";
 }
