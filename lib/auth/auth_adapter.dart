@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
-import 'package:mtaa_project/support/local_storage.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
@@ -31,13 +31,8 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   }
 
   Future<User> load() async {
-    await localStorage.ready;
-    var token = localStorage.getItem("auth-token");
+    var token = Settings.instance.authToken.getValue();
     if (token == null) throw NotAuthenticatedException();
-
-    if (token is! String) {
-      throw Error();
-    }
 
     var response = await get(
       backendURL.resolve("/user"),
@@ -69,7 +64,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
     _user = user;
     _token = token;
-    await localStorage.setItem("auth-token", token);
+    await Settings.instance.authToken.setValue(token);
     notifyListenersAsync();
 
     return user;
@@ -89,7 +84,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
     _user = user;
     _token = token;
-    await localStorage.setItem("auth-token", token);
+    await Settings.instance.authToken.setValue(token);
     notifyListenersAsync();
 
     return user;
@@ -98,7 +93,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   Future<void> logOut() async {
     _user = null;
     _token = null;
-    await localStorage.setItem("auth-token", null);
+    await Settings.instance.authToken.setValue(null);
     notifyListenersAsync();
   }
 }

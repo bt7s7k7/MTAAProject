@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/layout/application_app_bar.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required this.child});
@@ -30,7 +31,7 @@ class MainLayout extends StatelessWidget {
       ),
       body: child,
       bottomNavigationBar: ListenableBuilder(
-        listenable: layoutConfig,
+        listenable: Listenable.merge([layoutConfig, LanguageManager.instance]),
         builder: (context, child) => BottomNavigationBar(
           currentIndex: layoutConfig.focusedButton,
           onTap: (value) {
@@ -43,18 +44,18 @@ class MainLayout extends StatelessWidget {
               },
             );
           },
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+              icon: const Icon(Icons.home),
+              label: LanguageManager.instance.language.home(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.radio_button_checked),
-              label: 'Recording',
+              icon: const Icon(Icons.radio_button_checked),
+              label: LanguageManager.instance.language.recording(),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Friends',
+              icon: const Icon(Icons.people),
+              label: LanguageManager.instance.language.friends(),
             ),
           ],
         ),

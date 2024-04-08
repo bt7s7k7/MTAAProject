@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class UserHeader extends StatelessWidget {
@@ -22,7 +23,13 @@ class UserHeader extends StatelessWidget {
             children: [
               ListTile(
                 title: Text(user.fullName),
-                subtitle: Text("${user.points} points"),
+                subtitle: ListenableBuilder(
+                  listenable: LanguageManager.instance,
+                  builder: (_, __) => Text(
+                    LanguageManager.instance.language
+                        .userPoints(points: user.points),
+                  ),
+                ),
               )
             ],
           ),

@@ -3,7 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
-import 'package:mtaa_project/layout/layout_config.dart';
+import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 
 class RecordingPage extends StatefulWidget {
@@ -33,10 +34,15 @@ class _RecordingPageState extends State<RecordingPage> {
 
   @override
   Widget build(BuildContext context) {
-    LayoutConfig.instance.setTitle("Recording").setFocusedButton(1);
-
     return Column(
       children: [
+        ListenableBuilder(
+          listenable: LanguageManager.instance,
+          builder: (_, __) => TitleMarker(
+            title: LanguageManager.instance.language.recording(),
+            focusedButton: 1,
+          ),
+        ),
         FilledButton.tonal(
           onPressed: _createActivity,
           child: const Text("Create activity"),

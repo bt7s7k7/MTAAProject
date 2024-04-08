@@ -3,10 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/recording_page.dart';
 import 'package:mtaa_project/auth/login_register_page.dart';
 import 'package:mtaa_project/friends/add_friends_page.dart';
+import 'package:mtaa_project/friends/friend_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
 import 'package:mtaa_project/user/profile_page.dart';
+import 'package:mtaa_project/user/user.dart';
 
 final _rootNavigationKey = GlobalKey<NavigatorState>();
 final _homeNavigationKey = GlobalKey<NavigatorState>();
@@ -38,6 +40,11 @@ final router = GoRouter(
           path: "/profile",
           name: "Profile",
           builder: (context, state) => const ProfilePage(),
+        ),
+        GoRoute(
+          path: "/friend",
+          name: "Friend",
+          builder: (context, state) => FriendPage(user: state.extra as User),
         ),
         GoRoute(
           path: "/recording",
