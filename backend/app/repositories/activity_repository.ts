@@ -1,4 +1,3 @@
-// repositories/ActivityRepository.ts
 import Activity from '#models/activity'
 import User from '#models/user'
 

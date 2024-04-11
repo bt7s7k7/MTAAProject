@@ -1,8 +1,11 @@
 import Like from '#models/like'
 
 export class LikesRepository {
-  public async createLike(userId: number, activityId: number): Promise<Like> {
-    const existingLike = await Like.query().where('user_id', userId).andWhere('activity_id', activityId).first()
+  async createLike(userId: number, activityId: number): Promise<Like> {
+    const existingLike = await Like.query()
+      .where('user_id', userId)
+      .andWhere('activity_id', activityId)
+      .first()
 
     if (existingLike) {
       throw new Error('User has already liked this activity.')
@@ -17,8 +20,11 @@ export class LikesRepository {
     return like
   }
 
-  public async deleteLike(userId: number, activityId: number): Promise<boolean> {
-    const like = await Like.query().where('user_id', userId).andWhere('activity_id', activityId).first()
+  async deleteLike(userId: number, activityId: number): Promise<boolean> {
+    const like = await Like.query()
+      .where('user_id', userId)
+      .andWhere('activity_id', activityId)
+      .first()
 
     if (!like) {
       throw new Error('Like does not exist.')

@@ -3,9 +3,9 @@ import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import { compose } from '@adonisjs/core/helpers'
 import hash from '@adonisjs/core/services/hash'
 import { BaseModel, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/orm'
-import { type HasMany, type HasOne, type ManyToMany } from '@adonisjs/lucid/types/relations'
+import type { HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
-import Activity from './activity.js'; // make sure the path is correct
+import Activity from './activity.js'
 
 import Level from './level.js'
 

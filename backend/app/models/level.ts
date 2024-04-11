@@ -1,5 +1,5 @@
 import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
-import { type HasOne } from '@adonisjs/lucid/types/relations'
+import type { HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
 export default class Level extends BaseModel {

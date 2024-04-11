@@ -1,9 +1,9 @@
 import User from '#models/user'
 import { userUpdateValidator } from '#validators/user_validator'
 import { inject } from '@adonisjs/core'
+import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import { UserRepository } from '../repositories/user_repository.js'
-import { Exception } from '@adonisjs/core/exceptions'
 
 @inject()
 export default class UserController {

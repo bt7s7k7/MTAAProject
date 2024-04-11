@@ -1,40 +1,38 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
-import User from './user.js'
-import Activity from './activity.js'
+import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-
+import { DateTime } from 'luxon'
+import Activity from './activity.js'
+import User from './user.js'
 
 export default class Like extends BaseModel {
-    @column({ isPrimary: true })
-    public id!: number // Non-null assertion here
-  
-    @column()
-    public userId!: number // Non-null assertion here
-  
-    @column()
-    public activityId!: number // Non-null assertion here
-  
-    @column.dateTime({ autoCreate: true })
-    public createdAt!: DateTime // Non-null assertion here
-  
-    @column.dateTime({ autoCreate: true, autoUpdate: true })
-    public updatedAt!: DateTime // Non-null assertion here
-  
-    @belongsTo(() => User)
-    public user!: BelongsTo<typeof User> // Non-null assertion here
-  
-    @belongsTo(() => Activity)
-    public activity!: BelongsTo<typeof Activity> // Non-null assertion here
+  @column({ isPrimary: true })
+  declare id: number
 
-    public serialize() {
-        return {
-          id: this.id,
-          userId: this.userId,
-          activityId: this.activityId,
-          createdAt: this.createdAt.toISO(),
-          updatedAt: this.updatedAt.toISO(),
-        }
-      }
+  @column()
+  declare userId: number
 
+  @column()
+  declare activityId: number
+
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime
+
+  @belongsTo(() => User)
+  declare user: BelongsTo<typeof User>
+
+  @belongsTo(() => Activity)
+  declare activity: BelongsTo<typeof Activity>
+
+  serialize() {
+    return {
+      id: this.id,
+      userId: this.userId,
+      activityId: this.activityId,
+      createdAt: this.createdAt.toISO(),
+      updatedAt: this.updatedAt.toISO(),
+    }
+  }
 }
