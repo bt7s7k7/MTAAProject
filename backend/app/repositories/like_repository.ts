@@ -1,14 +1,21 @@
+import Activity from '#models/activity'
 import Like from '#models/like'
+import { UserEventRouter } from '#services/user_event_router'
+import { inject } from '@adonisjs/core'
+import { Exception } from '@adonisjs/core/exceptions'
 
+@inject()
 export class LikesRepository {
-  async createLike(userId: number, activityId: number): Promise<Like> {
+  constructor(protected eventRouter: UserEventRouter) {}
+
+  async createLike(userId: number, activityId: number) {
     const existingLike = await Like.query()
       .where('user_id', userId)
       .andWhere('activity_id', activityId)
       .first()
 
     if (existingLike) {
-      throw new Error('User has already liked this activity.')
+      throw new Exception('User has already liked this activity', { status: 409 })
     }
 
     const like = new Like()
@@ -17,21 +24,33 @@ export class LikesRepository {
 
     await like.save()
 
-    return like
+    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+
+    this.eventRouter.notifyUserAndFriends(userId, {
+      type: 'activity',
+      id: activity.id,
+      value: activity.serialize(),
+    })
   }
 
-  async deleteLike(userId: number, activityId: number): Promise<boolean> {
+  async deleteLike(userId: number, activityId: number) {
     const like = await Like.query()
       .where('user_id', userId)
       .andWhere('activity_id', activityId)
       .first()
 
     if (!like) {
-      throw new Error('Like does not exist.')
+      throw new Exception('User has not yet liked this activity', { status: 404 })
     }
 
     await like.delete()
 
-    return true
+    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+
+    this.eventRouter.notifyUserAndFriends(userId, {
+      type: 'activity',
+      id: activity.id,
+      value: activity.serialize(),
+    })
   }
 }

@@ -10,21 +10,6 @@ enum SendInviteResult { accepted, sent }
 
 enum InviteResponse { accept, deny }
 
-class Invite {
-  Invite({required this.id, required this.sender});
-
-  final int id;
-  final User sender;
-
-  factory Invite.fromJson(Map<String, dynamic> json) {
-    return switch (json) {
-      {"id": int id, "sender": Map<String, dynamic> sender} =>
-        Invite(id: id, sender: User.fromJson(sender)),
-      _ => throw const APIError("Invalid fields to load a user"),
-    };
-  }
-}
-
 @immutable
 class FriendState {
   const FriendState({required this.friends, required this.invites});

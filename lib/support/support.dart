@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 
 Map<String, dynamic> processHTTPResponse(Response response) {
@@ -78,5 +79,37 @@ mixin ChangeNotifierAsync on ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+}
+
+void updateList<T>(
+    {required UpdateEvent event,
+    required List<T> list,
+    required int Function(T) idGetter,
+    required T Function(Map<String, dynamic>) factory,
+    required void Function(void Function()) callback,
+    bool updateOnly = false}) {
+  var index = list.indexWhere((v) => idGetter(v) == event.id);
+  if (index == -1) {
+    if (updateOnly) return;
+    if (event.value == null) return;
+
+    var activity = factory(event.value!);
+    callback(() {
+      list.insert(0, activity);
+    });
+
+    return;
+  }
+  if (event.value == null) {
+    if (updateOnly) return;
+    callback(() {
+      list.removeAt(index);
+    });
+  } else {
+    var activity = factory(event.value!);
+    callback(() {
+      list[index] = activity;
+    });
   }
 }

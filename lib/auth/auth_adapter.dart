@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
@@ -12,6 +13,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
   User? get user => _user;
   User? _user;
+  String? get token => _token;
   String? _token;
 
   (String, User) _parseAuthJson(Map<String, dynamic> json) {
@@ -31,6 +33,15 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   }
 
   Future<User> load() async {
+    UpdateService.instance.addListener((event) {
+      if (_user == null) return;
+      if (event.type != "user" || event.id != _user!.id) return;
+      if (event.value == null) return;
+
+      _user = User.fromJson(event.value!);
+      notifyListenersAsync();
+    });
+
     var token = Settings.instance.authToken.getValue();
     if (token == null) throw NotAuthenticatedException();
 

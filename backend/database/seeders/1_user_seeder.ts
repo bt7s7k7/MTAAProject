@@ -17,10 +17,11 @@ export default class extends BaseSeeder {
           async () => {
             const points = faker.helpers.rangeToNumber({ min: 0, max: 100000 })
             const level = await levelRepository.getLevelByPoints(points)
+            const name = faker.person.firstName()
 
             return {
-              email: faker.word.noun() + '@example.com',
-              fullName: faker.person.fullName(),
+              email: `${name.toLowerCase()}@example.com`,
+              fullName: `${name} ${faker.person.lastName()}`,
               password: '12345',
               points,
               levelId: level?.id,

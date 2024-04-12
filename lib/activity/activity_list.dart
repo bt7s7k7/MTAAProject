@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_view.dart';
+import 'package:mtaa_project/services/update_service.dart';
+import 'package:mtaa_project/support/support.dart';
 
 class ActivityList extends StatefulWidget {
   const ActivityList(
@@ -15,8 +19,9 @@ class ActivityList extends StatefulWidget {
 
 class _ActivityListState extends State<ActivityList> {
   List<Activity> _activities = [];
+  StreamSubscription<UpdateEvent>? _subscription;
 
-  Future<void> _searchUsers() async {
+  Future<void> _loadActivities() async {
     var activitiesResult = await widget.getter();
     setState(() {
       _activities = activitiesResult;
@@ -27,7 +32,24 @@ class _ActivityListState extends State<ActivityList> {
   void initState() {
     super.initState();
 
-    _searchUsers();
+    _subscription = UpdateService.instance.addListener((event) {
+      if (event.type != "activity") return;
+      updateList(
+        event: event,
+        list: _activities,
+        idGetter: (activity) => activity.id,
+        factory: (json) => Activity.fromJson(json),
+        callback: setState,
+      );
+    });
+
+    _loadActivities();
+  }
+
+  @override
+  void dispose() {
+    _subscription!.cancel();
+    super.dispose();
   }
 
   @override

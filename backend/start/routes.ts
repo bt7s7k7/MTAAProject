@@ -78,6 +78,7 @@ router
     router.get('/user/:id', [ActivityController, 'userActivities'])
     router.get('/:id', [ActivityController, 'activityDetails'])
     router.post('/', [ActivityController, 'store'])
+    router.delete('/:id', [ActivityController, 'deleteActivity'])
     // ... other routes ...
   })
   .prefix('activity')

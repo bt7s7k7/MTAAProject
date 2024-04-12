@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
+import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/user_icon.dart';
 
@@ -17,31 +18,36 @@ class ActivityView extends StatelessWidget {
             : "${activity.distance} km";
 
     return Card(
-      child: ListTile(
-        leading: UserIcon(icon: activity.user.icon),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(activity.activityName)],
-        ),
-        subtitle: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ListenableBuilder(
-              listenable: LanguageManager.instance,
-              builder: (_, __) => Text(LanguageManager.instance.language
-                  .activitySubtitle(
-                      userName: activity.user.fullName,
-                      distance: distance,
-                      steps: activity.steps)),
-            ),
-            const Spacer(),
-            ListenableBuilder(
-              listenable: LanguageManager.instance,
-              builder: (_, __) => Text(LanguageManager
-                  .instance.language.dateFormat
-                  .format(activity.createdAt)),
-            ),
-          ],
+      child: InkWell(
+        onTap: () {
+          ActivityAdapter.instance.deleteActivity(activity);
+        },
+        child: ListTile(
+          leading: UserIcon(icon: activity.user.icon),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text(activity.activityName)],
+          ),
+          subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ListenableBuilder(
+                listenable: LanguageManager.instance,
+                builder: (_, __) => Text(LanguageManager.instance.language
+                    .activitySubtitle(
+                        userName: activity.user.fullName,
+                        distance: distance,
+                        steps: activity.steps)),
+              ),
+              const Spacer(),
+              ListenableBuilder(
+                listenable: LanguageManager.instance,
+                builder: (_, __) => Text(LanguageManager
+                    .instance.language.dateFormat
+                    .format(activity.createdAt)),
+              ),
+            ],
+          ),
         ),
       ),
     );

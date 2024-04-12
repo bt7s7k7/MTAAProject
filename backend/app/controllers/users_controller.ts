@@ -22,18 +22,7 @@ export default class UserController {
     const user = auth.user!
     const data = await userUpdateValidator.validate(request.all())
 
-    for (const [key, value] of Object.entries(data)) {
-      if (value === '' || value === null) {
-        continue
-      }
-
-      const original = user[key as keyof typeof user]
-      if (original !== value) {
-        void ((user as any)[key] = value)
-      }
-    }
-
-    await user.save()
+    this.userRepository.updateUser(user, data)
 
     return user.serialize()
   }
@@ -43,17 +32,9 @@ export default class UserController {
   async uploadPhoto({ auth, request }: HttpContext) {
     const user = auth.user!
     const photo = request.file('photo', { size: '2mb' }) // Validate file size
+    if (!photo) throw new Exception('Missing photo file', { status: 400 })
 
-    if (photo) {
-      await photo.move(`./uploads/users/${user.id}`, {
-        name: `profile.${photo.extname}`, // Save with a custom name
-      })
-
-      // Update user's profile picture URL/path in the database
-      // Assuming there's a field `profile_photo` in the User model
-      user.icon = `uploads/users/${user.id}/profile.${photo.extname}`
-      await user.save()
-    }
+    this.userRepository.uploadIcon(user, photo)
 
     return user.serialize()
   }

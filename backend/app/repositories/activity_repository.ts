@@ -1,7 +1,14 @@
 import Activity from '#models/activity'
 import User from '#models/user'
+import { UserEventRouter } from '#services/user_event_router'
+import { activityValidator } from '#validators/activity_validator'
+import { inject } from '@adonisjs/core'
+import { Infer } from '@vinejs/vine/types'
 
+@inject()
 export class ActivityRepository {
+  constructor(protected eventRouter: UserEventRouter) {}
+
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
       .where('id', userId)
@@ -33,18 +40,34 @@ export class ActivityRepository {
     }
   }
 
-  async storeActivity(data: any, userId: number) {
-    const user = await User.findOrFail(userId)
-    return await user.related('activities').create(data)
+  async storeActivity(user: User, data: Infer<typeof activityValidator>) {
+    const activity = await user.related('activities').create(data)
+    // @ts-ignore
+    activity.user = user
+
+    this.eventRouter.notifyUserAndFriends(user.id, {
+      type: 'activity',
+      id: activity.id,
+      value: activity.serialize(),
+    })
+
+    return activity
   }
 
   async destroyActivity(activityId: number, userId: number) {
     const activity = await Activity.query()
       .where('id', activityId)
       .where('userId', userId)
+      .preload('user')
       .firstOrFail()
 
     await activity.delete()
+
+    this.eventRouter.notifyUserAndFriends(userId, {
+      type: 'activity',
+      id: activityId,
+      value: null,
+    })
   }
 
   async updateActivity(activityId: number, userId: number, data: any) {
@@ -56,9 +79,5 @@ export class ActivityRepository {
     activity.merge(data)
     await activity.save()
     return activity
-  }
-
-  async createActivity(userId: number, data: any) {
-    return await this.storeActivity(data, userId)
   }
 }

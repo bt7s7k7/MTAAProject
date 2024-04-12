@@ -28,6 +28,10 @@ export default defineConfig({
       file: () => import('@adonisjs/core/providers/repl_provider'),
       environment: ['repl', 'test'],
     },
+    {
+      file: () => import('./providers/ws_provider.js'),
+      environment: ['web'],
+    },
     () => import('@adonisjs/core/providers/vinejs_provider'),
     () => import('@adonisjs/cors/cors_provider'),
     () => import('@adonisjs/lucid/database_provider'),

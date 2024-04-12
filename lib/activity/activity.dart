@@ -36,6 +36,7 @@ class Activity {
       };
 
   factory Activity.fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey("path")) json["path"] = null;
     return switch (json) {
       {
         "id": int id,

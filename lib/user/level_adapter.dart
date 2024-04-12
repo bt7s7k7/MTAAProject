@@ -10,7 +10,7 @@ class LevelAdapter {
   static final instance = LevelAdapter._();
 
   List<Level> _levels = [];
-  Map<int, Level> _levelsLookup = {};
+  final Map<int, Level> _levelsLookup = {};
 
   Future<void> load() async {
     var result = await get(backendURL.resolve("/levels"));

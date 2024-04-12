@@ -28,6 +28,8 @@ class User {
       };
 
   factory User.fromJson(Map<String, dynamic> json) {
+    if (!json.containsKey("icon")) json["icon"] = null;
+
     return switch (json) {
       {
         "id": int id,
@@ -45,7 +47,7 @@ class User {
           points: points,
           levelId: levelId,
         ),
-      _ => throw const APIError("Invalid fields to load a user"),
+      _ => throw APIError("Invalid fields to load a User $json"),
     };
   }
 }

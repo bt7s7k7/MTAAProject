@@ -76,4 +76,14 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
 
     processHTTPResponse(response);
   }
+
+  Future<void> deleteActivity(Activity activity) async {
+    var auth = AuthAdapter.instance;
+    var response = await delete(
+      backendURL.resolve("/activity/${activity.id}"),
+      headers: auth.getAuthorizationHeaders(),
+    );
+
+    processHTTPResponse(response);
+  }
 }

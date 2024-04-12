@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
-import 'package:mtaa_project/user/level_adapter.dart';
+import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/user/level_adapter.dart';
 
-class AuthGuard extends StatefulWidget {
-  const AuthGuard({super.key, required this.child});
+class ServiceLoader extends StatefulWidget {
+  const ServiceLoader({super.key, required this.child});
 
   final Widget child;
 
   @override
-  State<AuthGuard> createState() => _AuthGuardState();
+  State<ServiceLoader> createState() => _ServiceLoaderState();
 }
 
-class _AuthGuardState extends State<AuthGuard> {
+class _ServiceLoaderState extends State<ServiceLoader> {
   var loaded = false;
 
   void _onAuthChanged() {
+    UpdateService.instance.updateConnection();
+
     if (AuthAdapter.instance.user == null) {
       router.goNamed("Login");
     }
@@ -44,6 +47,8 @@ class _AuthGuardState extends State<AuthGuard> {
     } on NotAuthenticatedException {
       router.goNamed("Login");
     }
+
+    await UpdateService.instance.updateConnection();
 
     setState(() {
       loaded = true;

@@ -1,10 +1,18 @@
 import Invite from '#models/invite'
 import User from '#models/user'
+import { UserEventRouter } from '#services/user_event_router'
+import { userUpdateValidator } from '#validators/user_validator'
+import { inject } from '@adonisjs/core'
+import { MultipartFile } from '@adonisjs/core/bodyparser'
 import { Exception } from '@adonisjs/core/exceptions'
 import app from '@adonisjs/core/services/app'
+import { Infer } from '@vinejs/vine/types'
 import { mkdir } from 'node:fs/promises'
 
+@inject()
 export class UserRepository {
+  constructor(protected eventRouter: UserEventRouter) {}
+
   async isFriendsWith(user: User, friend: User) {
     const result = await user.related('friends').pivotQuery().where('friend_id', friend.id).first()
     return !!result
@@ -48,8 +56,18 @@ export class UserRepository {
       return 'accepted'
     }
 
-    await Invite.create({ receiverId: to.id, senderId: from.id })
-    // TODO: sent notification
+    const invite = await Invite.create({ receiverId: to.id, senderId: from.id })
+    // @ts-ignore
+    invite.sender = from
+    // @ts-ignore
+    invite.receiver = to
+
+    this.eventRouter.notifyUser(to.id, {
+      type: 'invite',
+      id: invite.sender.id,
+      value: invite.sender.serialize(),
+    })
+
     return 'sent'
   }
 
@@ -60,11 +78,23 @@ export class UserRepository {
     const to = invite.receiver
     await this.addFriendship(from, to)
     await invite.delete()
+
+    this.eventRouter.notifyUser(to.id, {
+      type: 'invite',
+      id: invite.sender.id,
+      value: null,
+    })
     // TODO: send notification
   }
 
   async denyInvite(invite: Invite) {
     await invite.delete()
+
+    this.eventRouter.notifyUser(invite.receiverId, {
+      type: 'invite',
+      id: invite.senderId,
+      value: null,
+    })
     // TODO: send notification
   }
 
@@ -73,15 +103,80 @@ export class UserRepository {
       from.related('friends').attach([to.id]),
       to.related('friends').attach([from.id]),
     ])
+    this.eventRouter.updateFriendshipState(from.id, to.id, 'added')
+
+    this.eventRouter.notifyUser(from.id, {
+      type: 'friend',
+      id: to.id,
+      value: to.serialize(),
+    })
+
+    this.eventRouter.notifyUser(to.id, {
+      type: 'friend',
+      id: from.id,
+      value: from.serialize(),
+    })
+
     // TODO send notifications
   }
 
   async removeFriendship(from: User, to: User) {
     if (!this.isFriendsWith(from, to)) throw new Exception('Not friends', { status: 400 })
+
     await Promise.all([
       from.related('friends').detach([to.id]),
       to.related('friends').detach([from.id]),
     ])
+
+    this.eventRouter.updateFriendshipState(from.id, to.id, 'removed')
+
+    this.eventRouter.notifyUser(from.id, {
+      type: 'friend',
+      id: to.id,
+      value: null,
+    })
+
+    this.eventRouter.notifyUser(to.id, {
+      type: 'friend',
+      id: from.id,
+      value: null,
+    })
     // TODO send notifications
+  }
+
+  async uploadIcon(user: User, photo: MultipartFile) {
+    await photo.move(`./uploads/users/${user.id}`, {
+      name: `profile.${photo.extname}`, // Save with a custom name
+    })
+
+    user.icon = `uploads/users/${user.id}/profile.${photo.extname}`
+    await user.save()
+
+    this.eventRouter.notifyUserAndFriends(user.id, {
+      type: 'user',
+      id: user.id,
+      value: user.serialize(),
+    })
+  }
+
+  async updateUser(user: User, data: Infer<typeof userUpdateValidator>) {
+    for (const [key, value] of Object.entries(data)) {
+      if (value === '' || value === null) {
+        continue
+      }
+
+      const original = user[key as keyof typeof user]
+      if (original !== value) {
+        void ((user as any)[key] = value)
+      }
+    }
+
+    await user.save()
+
+    this.eventRouter.notifyUserAndFriends(user.id, {
+      type: 'user',
+      id: user.id,
+      value: user.serialize(),
+    })
   }
 }

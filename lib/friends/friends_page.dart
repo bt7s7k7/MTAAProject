@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class FriendsPage extends StatefulWidget {
@@ -16,6 +20,8 @@ class FriendsPage extends StatefulWidget {
 class _FriendsPageState extends State<FriendsPage> {
   List<User> users = [];
   List<User> invites = [];
+
+  StreamSubscription<UpdateEvent>? _subscription;
 
   void _refreshState() async {
     var (users, invites) = await FriendsAdapter.instance.getFriendState();
@@ -33,7 +39,58 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   void initState() {
     super.initState();
+
+    _subscription = UpdateService.instance.addListener((event) {
+      if (event.type == "friend") {
+        updateList(
+          event: event,
+          list: users,
+          idGetter: (user) => user.id,
+          factory: (json) => User.fromJson(json),
+          callback: setState,
+        );
+        return;
+      }
+
+      if (event.type == "invite") {
+        updateList(
+          event: event,
+          list: invites,
+          idGetter: (user) => user.id,
+          factory: (json) => User.fromJson(json),
+          callback: setState,
+        );
+        return;
+      }
+
+      if (event.type == "user") {
+        updateList(
+          event: event,
+          list: users,
+          idGetter: (user) => user.id,
+          factory: (json) => User.fromJson(json),
+          callback: setState,
+          updateOnly: true,
+        );
+
+        updateList(
+          event: event,
+          list: invites,
+          idGetter: (user) => user.id,
+          factory: (json) => User.fromJson(json),
+          callback: setState,
+          updateOnly: true,
+        );
+      }
+    });
+
     _refreshState();
+  }
+
+  @override
+  void dispose() {
+    _subscription!.cancel();
+    super.dispose();
   }
 
   @override

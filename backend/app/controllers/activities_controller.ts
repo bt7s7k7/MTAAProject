@@ -10,23 +10,15 @@ import { UserRepository } from '../repositories/user_repository.js'
 
 @inject()
 export default class ActivityController {
-  private activityRepo: ActivityRepository
-  private userRepository: UserRepository
-  private likesRepo: LikesRepository
-
   constructor(
-    activityRepo: ActivityRepository,
-    userRepository: UserRepository,
-    likesRepo: LikesRepository
-  ) {
-    this.activityRepo = activityRepo
-    this.userRepository = userRepository
-    this.likesRepo = likesRepo
-  }
+    protected activityRepository: ActivityRepository,
+    protected userRepository: UserRepository,
+    protected likesRepository: LikesRepository
+  ) {}
 
   async index({ auth }: HttpContext) {
     const user = auth.user!
-    const activities = await this.activityRepo.findAllUserAndFriendsActivities(user.id)
+    const activities = await this.activityRepository.findAllUserAndFriendsActivities(user.id)
     return activities.map((activity) => activity.serialize())
   }
 
@@ -36,7 +28,7 @@ export default class ActivityController {
 
     // Allow direct access if the target user ID is the same as the current user's ID
     if (currentUser.id === targetUserId) {
-      const activities = await this.activityRepo.findUserActivitiesById(targetUserId)
+      const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
       return activities.map((activity) => activity.serialize()) // Serialize the activities
     }
 
@@ -45,7 +37,7 @@ export default class ActivityController {
 
     // Check if the currentUser and targetUser are friends
     if (await this.userRepository.isFriendsWith(currentUser, targetUser)) {
-      const activities = await this.activityRepo.findUserActivitiesById(targetUserId)
+      const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
       return activities.map((activity) => activity.serialize()) // Serialize the activities
     } else {
       // If not friends, return an appropriate response
@@ -57,21 +49,23 @@ export default class ActivityController {
 
   async activityDetails({ auth, params }: HttpContext) {
     const user = auth.user!
-    const activity = await this.activityRepo.findActivityDetails(
+    const activity = await this.activityRepository.findActivityDetails(
       user.id,
       Number.parseInt(params.id)
     )
     return activity.serialize()
   }
 
+  async deleteActivity({ auth, params }: HttpContext) {
+    const user = auth.user!
+    const id = Number(params.id)
+    await this.activityRepository.destroyActivity(id, user.id)
+  }
+
   async store({ auth, request }: HttpContext) {
     const user = auth.user!
-    if (!user) {
-      return 'User is not authenticated'
-    }
-
-    const validation = await activityValidator.validate(request.all())
-    const activity = await this.activityRepo.storeActivity(validation, user.id)
+    const activityData = await activityValidator.validate(request.all())
+    const activity = await this.activityRepository.storeActivity(user, activityData)
     return activity.serialize()
   }
 
@@ -79,25 +73,13 @@ export default class ActivityController {
     const userId = auth.user!.id
     const { activityId } = await likeValidator.validate(request.all())
 
-    try {
-      const like = await this.likesRepo.createLike(userId, activityId)
-      // Use the serialize method on the Like model
-      return like.serialize()
-    } catch (error) {
-      throw new Exception(error.message, { status: 400 })
-    }
+    await this.likesRepository.createLike(userId, activityId)
   }
 
   async unlike({ auth, request }: HttpContext) {
     const userId = auth.user!.id
     const { activityId } = await likeValidator.validate(request.all())
 
-    try {
-      const like = await this.likesRepo.deleteLike(userId, activityId)
-
-      return { message: 'Like has been removed.' }
-    } catch (error) {
-      throw new Exception(error.message, { status: 400 })
-    }
+    await this.likesRepository.deleteLike(userId, activityId)
   }
 }
