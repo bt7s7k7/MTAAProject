@@ -9,7 +9,7 @@ class LevelImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image(
-      image: AssetImage("levels/${level.name}.png"),
+      image: AssetImage("assets/levels/${level.name}.png"),
     );
   }
 }

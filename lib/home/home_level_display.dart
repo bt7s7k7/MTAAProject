@@ -26,7 +26,7 @@ class HomeLevelDisplay extends StatelessWidget {
               Transform.scale(
                 scale: 5.5,
                 child: CircularProgressIndicator(
-                  value: (user.points as double) / nextLevel.pointsRequired,
+                  value: (user.points.toDouble()) / nextLevel.pointsRequired,
                 ),
               ),
               const SizedBox(width: 250, height: 250),

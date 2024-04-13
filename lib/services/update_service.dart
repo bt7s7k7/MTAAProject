@@ -35,7 +35,8 @@ class UpdateService {
 
   final _streamController = StreamController<UpdateEvent>.broadcast();
 
-  StreamSubscription<UpdateEvent>? addListener(void Function(UpdateEvent) listener) {
+  StreamSubscription<UpdateEvent>? addListener(
+      void Function(UpdateEvent) listener) {
     return _streamController.stream.listen(listener);
   }
 
@@ -60,7 +61,7 @@ class UpdateService {
       backendURL.toString(),
       io.OptionBuilder().setAuth({
         "token": AuthAdapter.instance.token,
-      }).build(),
+      }).setTransports(["websocket"]).build(),
     );
 
     debugPrint("[WS] Connecting to the server...");
