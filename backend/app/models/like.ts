@@ -25,14 +25,4 @@ export default class Like extends BaseModel {
 
   @belongsTo(() => Activity)
   declare activity: BelongsTo<typeof Activity>
-
-  serialize() {
-    return {
-      id: this.id,
-      userId: this.userId,
-      activityId: this.activityId,
-      createdAt: this.createdAt.toISO(),
-      updatedAt: this.updatedAt.toISO(),
-    }
-  }
 }

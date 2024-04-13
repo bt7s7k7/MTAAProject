@@ -1,9 +1,13 @@
-import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
+import Like from './like.js'
 import User from './user.js'
 
 export default class Activity extends BaseModel {
+  @hasMany(() => Like)
+  declare likes: HasMany<typeof Like>
+
   @column({ isPrimary: true })
   declare id: number
 
