@@ -87,4 +87,7 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String ofSteps() => "steps";
+
+  @override
+  String darkTheme() => "Dark theme";
 }

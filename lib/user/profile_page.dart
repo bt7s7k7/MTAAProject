@@ -3,6 +3,8 @@ import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/settings/settings.dart';
+import 'package:mtaa_project/settings/theme_switcher.dart';
 import 'package:mtaa_project/user/user_header.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -55,6 +57,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 value: LanguageManager.instance.language.code,
                 onChanged: (value) =>
                     LanguageManager.instance.setLanguage(value!),
+              ),
+            ),
+          ),
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => SettingsBuilder(
+              property: Settings.instance.darkTheme,
+              builder: (darkTheme) => ListTile(
+                title: Text(LanguageManager.instance.language.darkTheme()),
+                trailing: Checkbox(
+                  value: darkTheme,
+                  onChanged: (value) =>
+                      Settings.instance.darkTheme.setValue(value ?? false),
+                ),
               ),
             ),
           ),

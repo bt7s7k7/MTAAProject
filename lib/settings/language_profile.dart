@@ -34,4 +34,5 @@ abstract class LanguageProfile {
   String logOutAction();
   String language();
   String ofSteps();
+  String darkTheme();
 }

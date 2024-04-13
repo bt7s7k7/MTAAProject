@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -24,11 +25,17 @@ class SettingsError implements Exception {
   String toString() => 'SettingsError: $msg';
 }
 
-class _SettingProperty<T> {
-  _SettingProperty._(this._key, {T? defaultValue}) : _default = defaultValue;
+class SettingProperty<T> {
+  SettingProperty._(this._key, {T? defaultValue}) : _default = defaultValue;
 
   final String _key;
   final T? _default;
+  final _controller = StreamController<T>.broadcast();
+  Stream<T> get stream => _controller.stream;
+
+  StreamSubscription<T> addListener(void Function(T newValue) handler) {
+    return _controller.stream.listen(handler);
+  }
 
   T getValue() {
     var data = _localStorage.getItem(_key);
@@ -43,13 +50,15 @@ class _SettingProperty<T> {
     }
 
     if (0 is T || false is T) {
-      return jsonDecode(T as String) as T;
+      return jsonDecode(data as String) as T;
     }
 
     throw SettingsError("Invalid type $T for settings property");
   }
 
   Future<void> setValue(T value) async {
+    _controller.add(value);
+
     if (value == null) {
       await _localStorage.deleteItem(_key);
       return;
@@ -73,8 +82,9 @@ class Settings {
   Settings._();
   static final instance = Settings._();
 
-  final authToken = _SettingProperty<String?>._("auth-token");
-  final language = _SettingProperty<String>._("language", defaultValue: "en");
+  final authToken = SettingProperty<String?>._("auth-token");
+  final language = SettingProperty<String>._("language", defaultValue: "en");
+  final darkTheme = SettingProperty<bool>._("dark-theme", defaultValue: false);
 
   Future<void> ready() {
     return _localStorage.ready;

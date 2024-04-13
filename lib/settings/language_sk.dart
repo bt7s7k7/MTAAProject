@@ -86,4 +86,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String ofSteps() => "krokov";
+
+  @override
+  String darkTheme() => "Tmavá téma";
 }
