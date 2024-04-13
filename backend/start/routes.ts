@@ -10,7 +10,8 @@
 import app from '@adonisjs/core/services/app'
 import router from '@adonisjs/core/services/router'
 
-import { normalize, sep } from 'node:path'
+import { dirname, join, normalize, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { middleware } from './kernel.js'
 const LevelsController = () => import('#controllers/levels_controller')
 const FriendsController = () => import('#controllers/friends_controller')
@@ -39,6 +40,19 @@ router.get('/uploads/*', ({ request, response }) => {
 
   const absolutePath = app.makePath('uploads', normalizedPath)
   console.log(absolutePath)
+  return response.download(absolutePath)
+})
+
+router.get('/quick-front/*', ({ request, response }) => {
+  const filePath = request.param('*').join(sep)
+  const normalizedPath = normalize(filePath)
+
+  if (PATH_TRAVERSAL_REGEX.test(normalizedPath)) {
+    return response.badRequest('Malformed path')
+  }
+
+  const assetsBase = fileURLToPath(dirname(import.meta.resolve('quick-front')))
+  const absolutePath = join(assetsBase, normalizedPath)
   return response.download(absolutePath)
 })
 

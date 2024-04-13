@@ -54,10 +54,12 @@
     "@adonisjs/core": "^6.5.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/lucid": "^20.1.0",
+    "@adonisjs/static": "^1.1.1",
     "@faker-js/faker": "^8.4.1",
     "@vinejs/vine": "^1.7.1",
     "luxon": "^3.4.4",
     "pg": "^8.11.3",
+    "quick-front": "^1.2.0",
     "reflect-metadata": "^0.2.1",
     "socket.io": "^4.7.5"
   },
