@@ -49,9 +49,9 @@ class _ProfilePageState extends State<ProfilePage> {
               trailing: DropdownButton(
                 items: LanguageManager.instance
                     .getAvailableLanguages()
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
+                    .map((language) => DropdownMenuItem(
+                          value: language.code,
+                          child: Text(language.label),
                         ))
                     .toList(),
                 value: LanguageManager.instance.language.code,

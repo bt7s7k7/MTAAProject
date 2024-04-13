@@ -5,6 +5,9 @@ class _LanguageSK extends LanguageProfile {
   String get code => "sk";
 
   @override
+  String get label => "Slovenský";
+
+  @override
   String get locale => "sk_SK";
 
   @override

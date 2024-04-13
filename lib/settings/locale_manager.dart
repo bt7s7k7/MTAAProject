@@ -40,7 +40,7 @@ class LanguageManager with ChangeNotifier, ChangeNotifierAsync {
     _setLanguage(Settings.instance.language.getValue());
   }
 
-  List<String> getAvailableLanguages() {
-    return [..._languages.keys];
+  List<LanguageProfile> getAvailableLanguages() {
+    return [..._languages.values];
   }
 }

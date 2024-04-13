@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 abstract class LanguageProfile {
   abstract final String code;
+  abstract final String label;
   abstract final String locale;
   late final DateFormat dateFormat = DateFormat.yMd(locale);
 

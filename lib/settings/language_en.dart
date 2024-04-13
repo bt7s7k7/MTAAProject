@@ -5,6 +5,9 @@ class _LanguageEN extends LanguageProfile {
   String get code => "en";
 
   @override
+  String get label => "English";
+
+  @override
   String get locale => "en_GB";
 
   @override
