@@ -39,7 +39,6 @@ router.get('/uploads/*', ({ request, response }) => {
   }
 
   const absolutePath = app.makePath('uploads', normalizedPath)
-  console.log(absolutePath)
   return response.download(absolutePath)
 })
 
