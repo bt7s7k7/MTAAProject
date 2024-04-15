@@ -84,7 +84,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
   Future<void> respondInvite(User sender, InviteResponse inviteResponse) async {
     var auth = AuthAdapter.instance;
     var id = sender.id;
-    var response = await post(
+    var response = await put(
       backendURL.resolve("/friend/invite/$id/${inviteResponse.name}"),
       headers: auth.getAuthorizationHeaders(),
     );
