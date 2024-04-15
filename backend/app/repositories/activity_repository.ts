@@ -12,21 +12,24 @@ export class ActivityRepository {
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
       .where('id', userId)
-      .preload('activities', (query) => query.preload('user'))
-      .preload('friends', (friendsQuery) => {
-        friendsQuery.preload('activities', (query) => query.preload('user'))
+      .preload('activities', (query) => {
+        query.preload('user').preload('likes'); // Preload likes here
       })
-      .firstOrFail()
-
-    const activities = user.activities.concat(user.friends.flatMap((v) => v.activities))
-
-    return activities
+      .preload('friends', (friendsQuery) => {
+        friendsQuery.preload('activities', (query) => {
+          query.preload('user').preload('likes'); // Preload likes here
+        });
+      })
+      .firstOrFail();
+  
+    const activities = user.activities.concat(user.friends.flatMap((friend) => friend.activities));
+    return activities;
   }
 
   async findUserActivitiesById(userId: number) {
-    return Activity.query().where('userId', userId).preload('user')
+    return Activity.query().where('userId', userId).preload('user').preload('likes');
   }
-
+  
   async findActivityDetails(userId: number, activityId: number) {
     const activity = await Activity.query().where('id', activityId).preload('user').firstOrFail()
 

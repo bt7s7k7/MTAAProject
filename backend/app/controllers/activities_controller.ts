@@ -19,42 +19,52 @@ export default class ActivityController {
   async index({ auth }: HttpContext) {
     const user = auth.user!
     const activities = await this.activityRepository.findAllUserAndFriendsActivities(user.id)
-    return activities.map((activity) => activity.serialize())
+    return activities.map((activity) => {
+      const serializedActivity = activity.serialize();
+      serializedActivity.likesCount = activity.likes.length; // Append likes count
+      return serializedActivity;
+    });
   }
+  
 
   async userActivities({ auth, params }: HttpContext) {
     const currentUser = auth.user!
     const targetUserId = Number.parseInt(params.id)
-
-    // Allow direct access if the target user ID is the same as the current user's ID
+  
     if (currentUser.id === targetUserId) {
       const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
-      return activities.map((activity) => activity.serialize()) // Serialize the activities
+      return activities.map((activity) => {
+        const serializedActivity = activity.serialize();
+        serializedActivity.likesCount = activity.likes.length; // Append likes count
+        return serializedActivity;
+      });
     }
-
-    // Fetch the target user
-    const targetUser = await User.findOrFail(targetUserId)
-
-    // Check if the currentUser and targetUser are friends
+  
+    const targetUser = await User.findOrFail(targetUserId);
     if (await this.userRepository.isFriendsWith(currentUser, targetUser)) {
       const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
-      return activities.map((activity) => activity.serialize()) // Serialize the activities
+      return activities.map((activity) => {
+        const serializedActivity = activity.serialize();
+        serializedActivity.likesCount = activity.likes.length; // Append likes count
+        return serializedActivity;
+      });
     } else {
-      // If not friends, return an appropriate response
       throw new Exception('Access Denied: User is not a friend or the user themself.', {
         status: 403,
-      })
+      });
     }
   }
-
+  
   async activityDetails({ auth, params }: HttpContext) {
     const user = auth.user!
-    const activity = await this.activityRepository.findActivityDetails(
-      user.id,
-      Number.parseInt(params.id)
-    )
-    return activity.serialize()
+    const activityId = Number.parseInt(params.id);
+    const activity = await this.activityRepository.findActivityDetails(user.id, activityId);
+  
+    const serializedActivity = activity.serialize();
+    serializedActivity.likesCount = activity.likes.length; // Append likes count
+    return serializedActivity;
   }
+  
 
   async deleteActivity({ auth, params }: HttpContext) {
     const user = auth.user!
