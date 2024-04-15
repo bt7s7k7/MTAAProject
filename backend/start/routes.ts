@@ -67,7 +67,7 @@ router
   .group(() => {
     router.get('/', [UserController, 'index'])
     router.put('/', [UserController, 'update'])
-    router.put('/photo', [UserController, 'uploadPhoto'])    
+    router.put('/photo', [UserController, 'uploadPhoto'])
     router.post('/:id', [UserController, 'show'])
   })
   .prefix('user')
