@@ -52,4 +52,7 @@ K dispozícií sú tieto stránky:
      - Pri každom zázname aktivity je možné jej dať like, zrušiť like alebo ju vymazať
      - Testovacia stránka netestuje či je možné akciu vykonať, spätnú väzbu dostanete z backendu
   - Add Friends ⇒ možné vyhľadať a poslať pozvánku novému priateľovy  
-  - User Photo ⇒ upload and view user profile photo
+  - User Photo ⇒ možnosť uploadnúť a pozrieť profilovku používateľa
+  - Websocket ⇒ po pripojení na websocket server posiela nový stav relevaných entít
+     - Môžte si na v novom okne otvoriť stránku a prihlásiť sa za používateľa alebo jeho priateľa
+     - Akcie ako vytvorenie aktivity, like, pozvanie na priateľstvo atď. budú poslané
