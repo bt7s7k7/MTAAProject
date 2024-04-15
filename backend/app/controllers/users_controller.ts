@@ -34,7 +34,7 @@ export default class UserController {
     const photo = request.file('photo', { size: '2mb' }) // Validate file size
     if (!photo) throw new Exception('Missing photo file', { status: 400 })
 
-    this.userRepository.uploadIcon(user, photo)
+    await this.userRepository.uploadIcon(user, photo)
 
     return user.serialize()
   }
