@@ -1,11 +1,11 @@
-import { BaseModel, belongsTo, column, hasMany,computed } from '@adonisjs/lucid/orm'
+import { BaseModel, belongsTo, column, hasMany } from '@adonisjs/lucid/orm'
 import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Like from './like.js'
 import User from './user.js'
 
 export default class Activity extends BaseModel {
-  @hasMany(() => Like)
+  @hasMany(() => Like, { serializeAs: null })
   declare likes: HasMany<typeof Like>
 
   @column({ isPrimary: true })
@@ -38,12 +38,6 @@ export default class Activity extends BaseModel {
 
   @column()
   declare path: string | null
-
-  @computed()
-  get likesCount() {
-    return this.likes.length;
-  }
-
 
   // Definícia vzťahu s modelom User
   @belongsTo(() => User, {
