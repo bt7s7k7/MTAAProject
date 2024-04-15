@@ -92,4 +92,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String darkTheme() => "Tmavá téma";
+
+  @override
+  String cannotLikeOwnActivity() => "Nemôžte dať like na svoju aktivitu";
 }

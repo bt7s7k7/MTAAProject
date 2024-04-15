@@ -85,17 +85,17 @@ export default class ActivityController {
     return activity.serialize()
   }
 
-  async like({ auth, request }: HttpContext) {
+  async like({ auth, params }: HttpContext) {
     const userId = auth.user!.id
-    const { activityId } = await likeValidator.validate(request.all())
+    const id = Number(params.id)
 
-    await this.likesRepository.createLike(userId, activityId)
+    await this.likesRepository.createLike(userId, id)
   }
 
-  async unlike({ auth, request }: HttpContext) {
+  async unlike({ auth, params }: HttpContext) {
     const userId = auth.user!.id
-    const { activityId } = await likeValidator.validate(request.all())
+    const id = Number(params.id)
 
-    await this.likesRepository.deleteLike(userId, activityId)
+    await this.likesRepository.deleteLike(userId, id)
   }
 }

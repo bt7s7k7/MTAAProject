@@ -86,4 +86,24 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
 
     processHTTPResponse(response);
   }
+
+  Future<void> likeActivity(Activity activity) async {
+    var auth = AuthAdapter.instance;
+    var response = await post(
+      backendURL.resolve("/activity/like/${activity.id}"),
+      headers: auth.getAuthorizationHeaders(),
+    );
+
+    processHTTPResponse(response);
+  }
+
+  Future<void> unlikeActivity(Activity activity) async {
+    var auth = AuthAdapter.instance;
+    var response = await delete(
+      backendURL.resolve("/activity/like/${activity.id}"),
+      headers: auth.getAuthorizationHeaders(),
+    );
+
+    processHTTPResponse(response);
+  }
 }

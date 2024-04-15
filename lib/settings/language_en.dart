@@ -93,4 +93,7 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String darkTheme() => "Dark theme";
+
+  @override
+  String cannotLikeOwnActivity() => "Cannot like own activity";
 }
