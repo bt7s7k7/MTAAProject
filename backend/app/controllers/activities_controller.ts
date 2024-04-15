@@ -19,12 +19,17 @@ export default class ActivityController {
   async index({ auth }: HttpContext) {
     const user = auth.user!
     const activities = await this.activityRepository.findAllUserAndFriendsActivities(user.id)
-    return activities.map((activity) => {
+  
+    const activitiesWithLikeStatus = await Promise.all(activities.map(async (activity) => {
       const serializedActivity = activity.serialize();
-      serializedActivity.likesCount = activity.likes.length; // Append likes count
+      serializedActivity.likesCount = activity.likes.length;
+      serializedActivity.hasLiked = await this.likesRepository.userHasLikedActivity(user.id, activity.id);
       return serializedActivity;
-    });
+    }));
+  
+    return activitiesWithLikeStatus;
   }
+  
   
 
   async userActivities({ auth, params }: HttpContext) {
@@ -46,6 +51,7 @@ export default class ActivityController {
       return activities.map((activity) => {
         const serializedActivity = activity.serialize();
         serializedActivity.likesCount = activity.likes.length; // Append likes count
+      
         return serializedActivity;
       });
     } else {
