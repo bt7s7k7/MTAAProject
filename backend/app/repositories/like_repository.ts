@@ -34,10 +34,13 @@ export class LikesRepository {
   }
 
   async userHasLikedActivity(userId: number, activityId: number) {
-    const like = await Like.query().where('userId', userId).andWhere('activityId', activityId).first();
-    return !!like;
+    const like = await Like.query()
+      .where('userId', userId)
+      .andWhere('activityId', activityId)
+      .first()
+    return !!like
   }
-  
+
   async deleteLike(userId: number, activityId: number) {
     const like = await Like.query()
       .where('user_id', userId)
