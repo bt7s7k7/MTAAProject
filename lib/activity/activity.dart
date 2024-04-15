@@ -1,8 +1,9 @@
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/user.dart';
 
-class Activity {
+class Activity with UpdateAware {
   Activity({
     required this.id,
     required this.user,
@@ -27,7 +28,7 @@ class Activity {
   final String path;
   final DateTime createdAt;
   final int likesCount;
-  final bool hasLiked;
+  bool hasLiked;
 
   Map<String, dynamic> toJson() => {
         "userId": user.id,
@@ -92,5 +93,10 @@ class Activity {
       likesCount: 0,
       hasLiked: false,
     );
+  }
+
+  @override
+  void patchUpdate(Map<String, dynamic> json) {
+    json["hasLiked"] = hasLiked;
   }
 }

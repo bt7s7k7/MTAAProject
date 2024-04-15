@@ -19,8 +19,10 @@ class ActivityView extends StatelessWidget {
 
     if (activity.hasLiked) {
       ActivityAdapter.instance.unlikeActivity(activity);
+      activity.hasLiked = false;
     } else {
       ActivityAdapter.instance.likeActivity(activity);
+      activity.hasLiked = true;
     }
   }
 

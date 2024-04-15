@@ -24,12 +24,20 @@ export class LikesRepository {
 
     await like.save()
 
-    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+    const activity = await Activity.query()
+      .preload('user')
+      .preload('likes')
+      .where('id', activityId)
+      .firstOrFail()
 
     this.eventRouter.notifyUserAndFriends(userId, {
       type: 'activity',
       id: activity.id,
-      value: activity.serialize(),
+      value: {
+        ...activity.serialize(),
+        likesCount: activity.likes.length,
+        hasLiked: false,
+      },
     })
   }
 
@@ -53,12 +61,20 @@ export class LikesRepository {
 
     await like.delete()
 
-    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+    const activity = await Activity.query()
+      .preload('user')
+      .preload('likes')
+      .where('id', activityId)
+      .firstOrFail()
 
     this.eventRouter.notifyUserAndFriends(userId, {
       type: 'activity',
       id: activity.id,
-      value: activity.serialize(),
+      value: {
+        ...activity.serialize(),
+        likesCount: activity.likes.length,
+        hasLiked: false,
+      },
     })
   }
 }
