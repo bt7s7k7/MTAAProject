@@ -9,6 +9,11 @@ export class LikesRepository {
   constructor(protected eventRouter: UserEventRouter) {}
 
   async createLike(userId: number, activityId: number) {
+    const prevActivity = await Activity.query().where('id', activityId).firstOrFail()
+    if (prevActivity.userId === userId) {
+      throw new Exception('Cannot like your own activity', { status: 409 })
+    }
+
     const existingLike = await Like.query()
       .where('user_id', userId)
       .andWhere('activity_id', activityId)
