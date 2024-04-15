@@ -1,6 +1,5 @@
 import User from '#models/user'
 import { activityValidator } from '#validators/activity_validator'
-import { likeValidator } from '#validators/like_validator'
 import { inject } from '@adonisjs/core'
 import { Exception } from '@adonisjs/core/exceptions'
 import { HttpContext } from '@adonisjs/core/http'
@@ -19,58 +18,60 @@ export default class ActivityController {
   async index({ auth }: HttpContext) {
     const user = auth.user!
     const activities = await this.activityRepository.findAllUserAndFriendsActivities(user.id)
-  
-    const activitiesWithLikeStatus = await Promise.all(activities.map(async (activity) => {
-      const serializedActivity = activity.serialize();
-      serializedActivity.likesCount = activity.likes.length;
-      serializedActivity.hasLiked = await this.likesRepository.userHasLikedActivity(user.id, activity.id);
-      return serializedActivity;
-    }));
-  
-    return activitiesWithLikeStatus;
+
+    const activitiesWithLikeStatus = await Promise.all(
+      activities.map(async (activity) => {
+        const serializedActivity = activity.serialize()
+        serializedActivity.likesCount = activity.likes.length
+        serializedActivity.hasLiked = await this.likesRepository.userHasLikedActivity(
+          user.id,
+          activity.id
+        )
+        return serializedActivity
+      })
+    )
+
+    return activitiesWithLikeStatus
   }
-  
-  
 
   async userActivities({ auth, params }: HttpContext) {
     const currentUser = auth.user!
     const targetUserId = Number.parseInt(params.id)
-  
+
     if (currentUser.id === targetUserId) {
       const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
       return activities.map((activity) => {
-        const serializedActivity = activity.serialize();
-        serializedActivity.likesCount = activity.likes.length; // Append likes count
-        return serializedActivity;
-      });
+        const serializedActivity = activity.serialize()
+        serializedActivity.likesCount = activity.likes.length // Append likes count
+        return serializedActivity
+      })
     }
-  
-    const targetUser = await User.findOrFail(targetUserId);
+
+    const targetUser = await User.findOrFail(targetUserId)
     if (await this.userRepository.isFriendsWith(currentUser, targetUser)) {
       const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
       return activities.map((activity) => {
-        const serializedActivity = activity.serialize();
-        serializedActivity.likesCount = activity.likes.length; // Append likes count
-      
-        return serializedActivity;
-      });
+        const serializedActivity = activity.serialize()
+        serializedActivity.likesCount = activity.likes.length // Append likes count
+
+        return serializedActivity
+      })
     } else {
       throw new Exception('Access Denied: User is not a friend or the user themself.', {
         status: 403,
-      });
+      })
     }
   }
-  
+
   async activityDetails({ auth, params }: HttpContext) {
     const user = auth.user!
-    const activityId = Number.parseInt(params.id);
-    const activity = await this.activityRepository.findActivityDetails(user.id, activityId);
-  
-    const serializedActivity = activity.serialize();
-    serializedActivity.likesCount = activity.likes.length; // Append likes count
-    return serializedActivity;
+    const activityId = Number.parseInt(params.id)
+    const activity = await this.activityRepository.findActivityDetails(user.id, activityId)
+
+    const serializedActivity = activity.serialize()
+    serializedActivity.likesCount = activity.likes.length // Append likes count
+    return serializedActivity
   }
-  
 
   async deleteActivity({ auth, params }: HttpContext) {
     const user = auth.user!
@@ -85,17 +86,17 @@ export default class ActivityController {
     return activity.serialize()
   }
 
-  async like({ auth, request }: HttpContext) {
+  async like({ auth, params }: HttpContext) {
     const userId = auth.user!.id
-    const { activityId } = await likeValidator.validate(request.all())
+    const id = Number(params.id)
 
-    await this.likesRepository.createLike(userId, activityId)
+    await this.likesRepository.createLike(userId, id)
   }
 
-  async unlike({ auth, request }: HttpContext) {
+  async unlike({ auth, params }: HttpContext) {
     const userId = auth.user!.id
-    const { activityId } = await likeValidator.validate(request.all())
+    const id = Number(params.id)
 
-    await this.likesRepository.deleteLike(userId, activityId)
+    await this.likesRepository.deleteLike(userId, id)
   }
 }

@@ -93,6 +93,8 @@ router
     router.get('/:id', [ActivityController, 'activityDetails'])
     router.post('/', [ActivityController, 'store'])
     router.delete('/:id', [ActivityController, 'deleteActivity'])
+    router.post('/like/:id', [ActivityController, 'like'])
+    router.delete('/like/:id', [ActivityController, 'unlike'])
   })
   .prefix('activity')
   .use(middleware.auth())

@@ -9,6 +9,11 @@ export class LikesRepository {
   constructor(protected eventRouter: UserEventRouter) {}
 
   async createLike(userId: number, activityId: number) {
+    const prevActivity = await Activity.query().where('id', activityId).firstOrFail()
+    if (prevActivity.userId === userId) {
+      throw new Exception('Cannot like your own activity', { status: 409 })
+    }
+
     const existingLike = await Like.query()
       .where('user_id', userId)
       .andWhere('activity_id', activityId)
@@ -24,20 +29,31 @@ export class LikesRepository {
 
     await like.save()
 
-    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+    const activity = await Activity.query()
+      .preload('user')
+      .preload('likes')
+      .where('id', activityId)
+      .firstOrFail()
 
     this.eventRouter.notifyUserAndFriends(userId, {
       type: 'activity',
       id: activity.id,
-      value: activity.serialize(),
+      value: {
+        ...activity.serialize(),
+        likesCount: activity.likes.length,
+        hasLiked: false,
+      },
     })
   }
 
   async userHasLikedActivity(userId: number, activityId: number) {
-    const like = await Like.query().where('userId', userId).andWhere('activityId', activityId).first();
-    return !!like;
+    const like = await Like.query()
+      .where('userId', userId)
+      .andWhere('activityId', activityId)
+      .first()
+    return !!like
   }
-  
+
   async deleteLike(userId: number, activityId: number) {
     const like = await Like.query()
       .where('user_id', userId)
@@ -50,12 +66,20 @@ export class LikesRepository {
 
     await like.delete()
 
-    const activity = await Activity.query().preload('user').where('id', activityId).firstOrFail()
+    const activity = await Activity.query()
+      .preload('user')
+      .preload('likes')
+      .where('id', activityId)
+      .firstOrFail()
 
     this.eventRouter.notifyUserAndFriends(userId, {
       type: 'activity',
       id: activity.id,
-      value: activity.serialize(),
+      value: {
+        ...activity.serialize(),
+        likesCount: activity.likes.length,
+        hasLiked: false,
+      },
     })
   }
 }

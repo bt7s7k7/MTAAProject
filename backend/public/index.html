@@ -115,47 +115,45 @@
                 </div>
                 <div form-type="Levels_t" path="levels"></div>
             </div>
-            <div data-tab-name="Friends + Activities" class="p-2 flex as-panel-splitter gap-2 as-panel">
-                <div class="flex-fill flex column gap-2">
-                    <div class="border rounded p-2">
-                        <button data-action="getFriends" class="as-button as-clickable bg-primary">Get Friends</button>
-                        <button data-action="getHomeActivities" class="as-button as-clickable bg-primary">Get Home Activities</button>
-                        <button onclick="randomActivity()" class="as-button as-clickable bg-secondary">Make Random Activity</button>
-                    </div>
-                    <div class="border rounded p-2 h-max-fill">
-                        <b>Friends</b>
-                        <div form-type="Users_t" path="friends.friends" suffix="friends-buttons"></div>
-
-                        <template name="friends-buttons" when="props.path.toArray().length == 3" class="w-0 nowrap">
-                            <div class="flex row">
-                                <button class="as-clickable as-button flat" data-icon="mdiDelete" data-action="removeFriend" data-data="{id: STATE.value.friends.friends[$index].id}"></button>
-                            </div>
-                        </template>
-                    </div>
-                    <div class="border rounded p-2 h-max-fill">
-                        <b>Invitations</b>
-                        <div form-type="Users_t" path="friends.invites" suffix="invites-buttons"></div>
-
-                        <template name="invites-buttons" when="props.path.toArray().length == 3" class="w-0 nowrap">
-                            <div class="flex row">
-                                <button class="as-clickable as-button flat" data-icon="mdiCheck" data-action="acceptInvite" data-data="{id: STATE.value.friends.invites[$index].id}"></button>
-                                <button class="as-clickable as-button flat" data-icon="mdiClose" data-action="denyInvite" data-data="{id: STATE.value.friends.invites[$index].id}"></button>
-                            </div>
-                        </template>
-                    </div>
+            <div data-tab-name="Friends + Activities" class="p-2 flex flex column gap-2 as-panel">
+                <div class="border rounded p-2">
+                    <button data-action="getFriends" class="as-button as-clickable bg-primary">Get Friends</button>
+                    <button data-action="getHomeActivities" class="as-button as-clickable bg-primary">Get Home Activities</button>
+                    <button onclick="randomActivity()" class="as-button as-clickable bg-secondary">Make Random Activity</button>
                 </div>
-                <div class="flex-fill flex column gap-2">
-                    <div class="border rounded p-2 h-max-fill">
-                        <b>Activities</b>
-                        <div form-type="Activities_t" path="activities" suffix="activities-buttons"></div>
-                    </div>
+                <div class="border rounded p-2 h-max-fill">
+                    <b>Friends</b>
+                    <div form-type="Users_t" path="friends.friends" suffix="friends-buttons"></div>
 
-                    <template name="activities-buttons" when="props.path.toArray().length == 2" class="w-0 nowrap">
+                    <template name="friends-buttons" when="props.path.toArray().length == 3" class="w-0 nowrap">
                         <div class="flex row">
-                            <button class="as-clickable as-button flat" data-icon="mdiDelete" data-action="activityDelete" data-data="{id: STATE.value.activities[$index].id}"></button>
+                            <button class="as-clickable as-button flat" data-icon="mdiDelete" data-action="removeFriend" data-data="{id: STATE.value.friends.friends[$index].id}"></button>
                         </div>
                     </template>
                 </div>
+                <div class="border rounded p-2 h-max-fill">
+                    <b>Invitations</b>
+                    <div form-type="Users_t" path="friends.invites" suffix="invites-buttons"></div>
+
+                    <template name="invites-buttons" when="props.path.toArray().length == 3" class="w-0 nowrap">
+                        <div class="flex row">
+                            <button class="as-clickable as-button flat" data-icon="mdiCheck" data-action="acceptInvite" data-data="{id: STATE.value.friends.invites[$index].id}"></button>
+                            <button class="as-clickable as-button flat" data-icon="mdiClose" data-action="denyInvite" data-data="{id: STATE.value.friends.invites[$index].id}"></button>
+                        </div>
+                    </template>
+                </div>
+                <div class="border rounded p-2 h-max-fill">
+                    <b>Activities</b>
+                    <div form-type="Activities_t" path="activities" suffix="activities-buttons"></div>
+                </div>
+
+                <template name="activities-buttons" when="props.path.toArray().length == 2" class="w-0 nowrap">
+                    <div class="flex row">
+                        <button class="as-clickable as-button flat" data-action="activityLike" data-data="{id: STATE.value.activities[$index].id}">👍</button>
+                        <button class="as-clickable as-button flat" data-action="activityUnlike" data-data="{id: STATE.value.activities[$index].id}">!👍</button>
+                        <button class="as-clickable as-button flat" data-icon="mdiDelete" data-action="activityDelete" data-data="{id: STATE.value.activities[$index].id}"></button>
+                    </div>
+                </template>
             </div>
             <div data-tab-name="Add Friend" class="p-2 flex column gap-2 as-panel">
                 <div form-type="FriendsSearchQuery_t" path="friendsSearchQuery"></div>
@@ -201,7 +199,9 @@
 
                     getHomeActivities: { method: "GET", route: "/activity", store: ["activities"] },
                     makeActivity: { method: "POST", route: "/activity" },
-                    activityDelete: { method: "DELETE", route: "/activity/:id" }
+                    activityDelete: { method: "DELETE", route: "/activity/:id" },
+                    activityLike: { method: "POST", route: "/activity/like/:id" },
+                    activityUnlike: { method: "DELETE", route: "/activity/like/:id" },
                 },
                 auth: ["auth", "token"],
                 errorHandler(error) {
@@ -252,7 +252,9 @@
                 points: makeOutput(),
                 steps: makeOutput(),
                 distance: makeOutput(),
-                duration: makeOutput()
+                duration: makeOutput(),
+                likesCount: makeOutput(),
+                hasLiked: makeOutput()
             })
 
             const Activities_t = Activity_t.as(Type.array).as(Type.annotate, new TableAttribute())

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 
@@ -107,9 +108,16 @@ void updateList<T>(
       list.removeAt(index);
     });
   } else {
-    var activity = factory(event.value!);
+    var sourceJSON = event.value!;
+    var currentValue = list[index];
+
+    if (currentValue is UpdateAware) {
+      currentValue.patchUpdate(sourceJSON);
+    }
+
+    var newValue = factory(sourceJSON);
     callback(() {
-      list[index] = activity;
+      list[index] = newValue;
     });
   }
 }

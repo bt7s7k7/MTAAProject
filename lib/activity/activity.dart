@@ -1,8 +1,9 @@
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/user.dart';
 
-class Activity {
+class Activity with UpdateAware {
   Activity({
     required this.id,
     required this.user,
@@ -13,6 +14,8 @@ class Activity {
     required this.duration,
     required this.path,
     required this.createdAt,
+    required this.likesCount,
+    required this.hasLiked,
   });
 
   final int id;
@@ -24,6 +27,8 @@ class Activity {
   final int duration;
   final String path;
   final DateTime createdAt;
+  final int likesCount;
+  bool hasLiked;
 
   Map<String, dynamic> toJson() => {
         "userId": user.id,
@@ -48,6 +53,8 @@ class Activity {
         "duration": int duration,
         "path": String? path,
         "createdAt": String createdAt,
+        "likesCount": int likesCount,
+        "hasLiked": bool hasLiked,
       } =>
         Activity(
           id: id,
@@ -59,6 +66,8 @@ class Activity {
           duration: duration,
           path: path ?? "",
           createdAt: DateTime.parse(createdAt),
+          likesCount: likesCount,
+          hasLiked: hasLiked,
         ),
       _ => throw APIError("Invalid fields to load an Activity: $json")
     };
@@ -81,6 +90,13 @@ class Activity {
       duration: duration,
       path: path,
       createdAt: DateTime.now(),
+      likesCount: 0,
+      hasLiked: false,
     );
+  }
+
+  @override
+  void patchUpdate(Map<String, dynamic> json) {
+    json["hasLiked"] = hasLiked;
   }
 }
