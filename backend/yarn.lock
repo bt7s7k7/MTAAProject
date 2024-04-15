@@ -3533,10 +3533,10 @@ quick-format-unescaped@^4.0.3:
   resolved "https://registry.npmjs.org/quick-format-unescaped/-/quick-format-unescaped-4.0.4.tgz"
   integrity sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==
 
-quick-front@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/quick-front/-/quick-front-1.2.0.tgz#c496079f9552297b5ceb4a7a68c5ec2a57379cd6"
-  integrity sha512-bNaflXpH4Os+hg/B1tANDdXDq8wImHSZOfLRZrMQQPEf8dUdCm3KSOphazg12HgyvspZUkMizH7jsSS34RU4TQ==
+quick-front@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/quick-front/-/quick-front-1.3.0.tgz#0ebab6ec19f0a2f3c19046ac075902ad92a29497"
+  integrity sha512-tS/Kgov82bO+V/dF+HKRJ91eK0XTcK1Yzemy0UyBuP23Ol8opcvhSGCdkU0rt/U0gyleZ90Y4YFDtqwMvnOpUQ==
 
 random-bytes@~1.0.0:
   version "1.0.0"

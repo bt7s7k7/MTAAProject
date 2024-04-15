@@ -165,6 +165,18 @@
                     </div>
                 </template>
             </div>
+            <div data-tab-name="User Photo" class="p-2 flex column gap-2 as-panel">
+                <div class="border p-2 gap-2 flex row">
+                    <div class="flex column gap-2">
+                        <img class="w-200 h-200 border border-black" style="border-style: dashed;" id="photo" />
+                        <button class="as-button as-clickable bg-secondary" onclick="reloadPhoto()">Reload</button>
+                    </div>
+                    <form class="flex column gap-2" onsubmit="event.preventDefault(); uploadPhoto()">
+                        <input type="file" accept="image/*" id="photoSource" />
+                        <input type="submit" value="Upload" submit class="as-button as-clickable bg-primary" />
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="flex column as-looker">
             <div class="border-bottom flex row gap-2 px-2">
@@ -182,19 +194,21 @@
         function init() {
             const looker = document.getElementById("looker")
 
+            const base = new URL(location.href.includes("/examples/") ? "http://localhost:3333" : location.href)
             useRestConnection({
-                base: location.href.includes("/examples/") ? "http://localhost:3333" : undefined,
+                base,
                 actions: {
                     getLevels: { method: "GET", route: "/levels", store: ["levels"] },
                     login: { method: "POST", route: "/auth/login", store: ["auth"] },
                     register: { method: "POST", route: "/auth/register", store: ["auth"] },
                     me: { method: "GET", route: "/user", store: ["auth", "user"] },
+                    uploadPhoto: { method: "PUT", route: "/user/photo", multipart: true, store: ["auth", "user"] },
 
                     getFriends: { method: "GET", route: "/friend", store: ["friends"] },
                     searchFriends: { method: "GET", route: "/friend/search?query=:search", store: ["friendsSearch"] },
                     addFriend: { method: "POST", route: "/friend/invite" },
-                    acceptInvite: { method: "POST", route: "/friend/invite/:id/accept" },
-                    denyInvite: { method: "POST", route: "/friend/invite/:id/deny" },
+                    acceptInvite: { method: "PUT", route: "/friend/invite/:id/accept" },
+                    denyInvite: { method: "PUT", route: "/friend/invite/:id/deny" },
                     removeFriend: { method: "POST", route: "/friend/remove/:id" },
 
                     getHomeActivities: { method: "GET", route: "/activity", store: ["activities"] },
@@ -307,7 +321,25 @@
                 STATE.action("searchFriends", STATE.value.friendsSearchQuery)
             })
 
-            startApp({ Levels_t, Login_t, Register_t, User_t, Users_t, Auth_t, Activity_t, Activities_t, randomActivity, FriendsSearchQuery_t })
+            const photoElement = document.getElementById("photo")
+            const photoSourceElement = /** @type {HTMLInputElement} */(document.getElementById("photoSource"))
+            function uploadPhoto() {
+                const photo = photoSourceElement.files[0]
+                if (photo == null) {
+                    emitter.alert("No photo file specified")
+                    return
+                }
+
+                STATE.action("uploadPhoto", { photo })
+            }
+
+            function reloadPhoto() {
+                const iconURL = new URL(STATE.value.auth?.user?.icon ?? "/uploads/icons/default", base)
+                iconURL.searchParams.set("t", Math.random().toString().slice(2))
+                photoElement.src = iconURL.href
+            }
+
+            startApp({ Levels_t, Login_t, Register_t, User_t, Users_t, Auth_t, Activity_t, Activities_t, randomActivity, FriendsSearchQuery_t, uploadPhoto, reloadPhoto })
         }
     </script>
 </body>
