@@ -52,3 +52,4 @@ K dispozícií sú tieto stránky:
      - Pri každom zázname aktivity je možné jej dať like, zrušiť like alebo ju vymazať
      - Testovacia stránka netestuje či je možné akciu vykonať, spätnú väzbu dostanete z backendu
   - Add Friends ⇒ možné vyhľadať a poslať pozvánku novému priateľovy  
+  - User Photo ⇒ upload and view user profile photo
