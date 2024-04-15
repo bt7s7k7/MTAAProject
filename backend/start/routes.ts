@@ -67,8 +67,8 @@ router
 router
   .group(() => {
     router.get('/', [UserController, 'index'])
-    router.post('/', [UserController, 'update'])
-    router.post('/photo', [UserController, 'uploadPhoto'])
+    router.put('/', [UserController, 'update'])
+    router.put('/photo', [UserController, 'uploadPhoto'])    
     router.post('/:id', [UserController, 'show'])
   })
   .prefix('user')
@@ -79,8 +79,8 @@ router
     router.get('/', [FriendsController, 'index'])
     router.get('/search', [FriendsController, 'search'])
     router.post('/invite', [FriendsController, 'invite'])
-    router.post('/invite/:id/accept', [FriendsController, 'accept'])
-    router.post('/invite/:id/deny', [FriendsController, 'deny'])
+    router.put('/invite/:id/accept', [FriendsController, 'accept'])
+    router.put('/invite/:id/deny', [FriendsController, 'deny'])
     router.post('/remove/:id', [FriendsController, 'remove'])
   })
   .prefix('friend')
@@ -93,7 +93,6 @@ router
     router.get('/:id', [ActivityController, 'activityDetails'])
     router.post('/', [ActivityController, 'store'])
     router.delete('/:id', [ActivityController, 'deleteActivity'])
-    // ... other routes ...
   })
   .prefix('activity')
   .use(middleware.auth())
