@@ -1,6 +1,6 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
@@ -15,6 +15,9 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingPageState extends State<RecordingPage> {
+  MapboxMapController? mapController;
+  final String _accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox access token
+
   void _createActivity() async {
     var random = Random();
     await ActivityAdapter.instance.uploadActivity(
@@ -32,10 +35,24 @@ class _RecordingPageState extends State<RecordingPage> {
     popupResult(context, "Activity created");
   }
 
+  void _onMapCreated(MapboxMapController controller) {
+    mapController = controller;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Expanded(
+          child: MapboxMap(
+            accessToken: _accessToken,
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(45.521563, -122.677433), // This is a sample location, change it to the desired initial position
+              zoom: 11.0,
+            ),
+          ),
+        ),
         ListenableBuilder(
           listenable: LanguageManager.instance,
           builder: (_, __) => TitleMarker(
@@ -46,7 +63,7 @@ class _RecordingPageState extends State<RecordingPage> {
         FilledButton.tonal(
           onPressed: _createActivity,
           child: const Text("Create activity"),
-        )
+        ),
       ],
     );
   }

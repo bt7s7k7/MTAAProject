@@ -1,0 +1,52 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>backend</title><meta name="description" content="Documentation for backend"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="assets/icons.svg#icon-search"></use></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div><div class="field"><div id="tsd-toolbar-links"></div></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">backend</a></div><div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h2>backend</h2></div><div class="tsd-panel tsd-typography"><a id="md:digisenior-backend" class="tsd-anchor"></a><h1><a href="#md:digisenior-backend">DigiSenior backend</a></h1><a id="md:setup" class="tsd-anchor"></a><h2><a href="#md:setup">Setup</a></h2><p>Na spustenie tohto programu je potrebné NodeJS verzie aspoň 20.11.1 a yarn package manager. Tiež je potrebný prístup k databázy PostgreSQL aspoň 16.2. </p>
+<ol>
+<li>Nainstalovať dependencies</li>
+</ol>
+<pre><code class="language-bash"><span class="hl-0">yarn</span>
+</code><button>Copy</button></pre>
+<ol start="2">
+<li><p>Vložiť prístupové údaje k databáze</p>
+<ol>
+<li>Skopírovať <code>.env.example</code> do  <code>.env</code></li>
+<li>V <code>.env</code> nastaviť hodnoty: <code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>, <code>DB_DATABASE</code></li>
+</ol>
+</li>
+<li><p>Spustiť databázovú migráciu a seedovanie databázy</p>
+</li>
+</ol>
+<pre><code class="language-bash"><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-2">ace</span><span class="hl-1"> </span><span class="hl-2">migration:fresh</span><br/><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-2">ace</span><span class="hl-1"> </span><span class="hl-2">db:seed</span>
+</code><button>Copy</button></pre>
+<a id="md:spustenie" class="tsd-anchor"></a><h2><a href="#md:spustenie">Spustenie</a></h2><p>Vo východzej konfigurácií je server spustení na porte 3333, čo je možné zmeniť v <code>.env</code> v prípade konfliktu.</p>
+<pre><code class="language-bash"><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-2">dev</span>
+</code><button>Copy</button></pre>
+<a id="md:testovanie" class="tsd-anchor"></a><h2><a href="#md:testovanie">Testovanie</a></h2><p>Na vypísanie všetkých endpointov je možné následovným príkazom:</p>
+<pre><code class="language-bash"><span class="hl-0">node</span><span class="hl-1"> </span><span class="hl-2">ace</span><span class="hl-1"> </span><span class="hl-2">list:routes</span>
+</code><button>Copy</button></pre>
+<p>Na roote stránky servera, pre výdhozie nastavenie <code>http://localhost:3333</code> je testovacia stránka umožnujúca prístup k funkcionalite backendu. Pri spustení podľa tohto dokumentu je backend vo vývojovom móde takže k chybám budú vložené aj diagnostické údaje, ktoré v produkcií nie sú viditeľné.</p>
+<p>Testovacia stránka je rozdelená na segment kde je možné vykonávať akcie a segment ukazujúci výstup z predošlého volania endpointu alebo v prípade chyby jej údaje. </p>
+<p>K dispozícií sú tieto stránky:</p>
+<ul>
+<li>Login ⇒ možnosť prihlásenia a registrácie<ul>
+<li>V seede databázy bolo vytvorených niekoľko používateľských účtov, pre ľahší prístup sú k dispozícií tlačidlá <strong>Use Joy</strong> a <strong>Use Kale</strong> ktoré automaticky vložia prihlasovacie údaje a prihlásia sa.</li>
+<li>Systém ukladá posledný access token takže po znovunačítaní stránky je možné sa autorizovať cez tlačidlo <strong>Load saved token</strong></li>
+</ul>
+</li>
+<li>Levels ⇒ výpis možných level, ktoré používateľ môže dosiahnuť</li>
+<li>Friend + Activities ⇒ umožnuje zobrazenie priateľov, pozvánok na priateľstvo a aktivít<ul>
+<li>Zoznamy sú načítané tlačidlami <strong>Get Friends</strong> a <strong>Get Home Activities</strong></li>
+<li>Po akcií vykonávajúcu zmenu týchto zoznamov je nutné ich znovu načítač</li>
+<li>Pri každom záznamu priateľstva je tlačidlo na zrušenie priateľstva</li>
+<li>Pri každom zázname pozvánky sú tlačidlá na prijatie a zrušenie priateľstva</li>
+<li>Pri každom zázname aktivity je možné jej dať like, zrušiť like alebo ju vymazať</li>
+<li>Testovacia stránka netestuje či je možné akciu vykonať, spätnú väzbu dostanete z backendu</li>
+</ul>
+</li>
+<li>Add Friends ⇒ možné vyhľadať a poslať pozvánku novému priateľovy  </li>
+<li>User Photo ⇒ možnosť uploadnúť a pozrieť profilovku používateľa</li>
+<li>Websocket ⇒ po pripojení na websocket server posiela nový stav relevaných entít<ul>
+<li>Môžte si na v novom okne otvoriť stránku a prihlásiť sa za používateľa alebo jeho priateľa</li>
+<li>Akcie ako vytvorenie aktivity, like, pozvanie na priateľstvo atď. budú poslané</li>
+</ul>
+</li>
+</ul>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-index-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><h4 class="uppercase">Member Visibility</h4><form><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div><div class="tsd-theme-toggle"><h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#md:digisenior-backend"><span>Digi<wbr/>Senior backend</span></a><ul><li><a href="#md:setup"><span>Setup</span></a></li><li><a href="#md:spustenie"><span>Spustenie</span></a></li><li><a href="#md:testovanie"><span>Testovanie</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="assets/icons.svg#icon-1"></use></svg><span>backend</span></a><ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="."><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
