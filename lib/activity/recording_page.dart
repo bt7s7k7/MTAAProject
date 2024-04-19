@@ -16,7 +16,7 @@ class RecordingPage extends StatefulWidget {
 
 class _RecordingPageState extends State<RecordingPage> {
   MapboxMapController? mapController;
-  final String _accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; // Replace with your Mapbox access token
+  final String _accessToken = 'pk.eyJ1IjoiYnQ3czdrNyIsImEiOiJjbHVxdXNtdzcwMGZzMml1ajB3MnlwbXMyIn0.p6HRxtdpwY5KP1FNrjiQqg'; // Replace with your Mapbox access token
 
   void _createActivity() async {
     var random = Random();
