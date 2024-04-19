@@ -1,22 +1,22 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 
+
 class RecordingPage extends StatefulWidget {
-  const RecordingPage({super.key});
+  const RecordingPage({Key? key}) : super(key: key);
 
   @override
-  State<RecordingPage> createState() => _RecordingPageState();
+  _RecordingPageState createState() => _RecordingPageState();
 }
 
 class _RecordingPageState extends State<RecordingPage> {
-  MapboxMapController? mapController;
-  final String _accessToken = 'pk.eyJ1IjoiYnQ3czdrNyIsImEiOiJjbHVxdXNtdzcwMGZzMml1ajB3MnlwbXMyIn0.p6HRxtdpwY5KP1FNrjiQqg'; // Replace with your Mapbox access token
+  final GlobalKey mapGlobalKey = GlobalKey();
 
   void _createActivity() async {
     var random = Random();
@@ -35,21 +35,40 @@ class _RecordingPageState extends State<RecordingPage> {
     popupResult(context, "Activity created");
   }
 
-  void _onMapCreated(MapboxMapController controller) {
-    mapController = controller;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
-          child: MapboxMap(
-            accessToken: _accessToken,
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: const CameraPosition(
-              target: LatLng(45.521563, -122.677433), // This is a sample location, change it to the desired initial position
-              zoom: 11.0,
+          child: OSMFlutter(
+            key: mapGlobalKey,
+            trackMyPosition: false,
+            initZoom: 12,
+            minZoomLevel: 8,
+            maxZoomLevel: 14,
+            stepZoom: 1.0,
+            staticPoints: [
+              StaticPositionGeoPoint(
+                'id_0',
+                MarkerIcon(
+                  icon: Icon(
+                    Icons.location_pin,
+                    color: Colors.red,
+                    size: 48,
+                  ),
+                ),
+                GeoPoint(latitude: 48.8584, longitude: 2.2945), // Example location (Eiffel Tower)
+              ),
+            ],
+            roadConfiguration: RoadConfiguration(
+              startIcon: MarkerIcon(
+                icon: Icon(
+                  Icons.person,
+                  size: 64,
+                  color: Colors.green,
+                ),
+              ),
+              roadColor: Colors.yellowAccent,
             ),
           ),
         ),
@@ -60,7 +79,7 @@ class _RecordingPageState extends State<RecordingPage> {
             focusedButton: 1,
           ),
         ),
-        FilledButton.tonal(
+        ElevatedButton(
           onPressed: _createActivity,
           child: const Text("Create activity"),
         ),
