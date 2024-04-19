@@ -9,10 +9,10 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 
 class RecordingPage extends StatefulWidget {
-  const RecordingPage({Key? key}) : super(key: key);
+  const RecordingPage({super.key});
 
   @override
-  _RecordingPageState createState() => _RecordingPageState();
+  State<RecordingPage> createState() => _RecordingPageState();
 }
 
 class _RecordingPageState extends State<RecordingPage> {
