@@ -61,6 +61,8 @@ class NotificationService {
     var initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage == null) return null;
 
-    return initialMessage.data["route"];
+    var initialRoute = initialMessage.data["route"];
+    if (initialRoute == "") initialRoute = null;
+    return initialRoute;
   }
 }

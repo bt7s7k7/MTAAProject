@@ -4,10 +4,14 @@ import { UserEventRouter } from '#services/user_event_router'
 import { activityValidator } from '#validators/activity_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
+import { NotificationRepository } from './notification_repository.js'
 
 @inject()
 export class ActivityRepository {
-  constructor(protected eventRouter: UserEventRouter) {}
+  constructor(
+    protected eventRouter: UserEventRouter,
+    protected notificationRepository: NotificationRepository
+  ) {}
 
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
@@ -52,6 +56,12 @@ export class ActivityRepository {
       type: 'activity',
       id: activity.id,
       value: activity.serialize(),
+    })
+
+    this.notificationRepository.sendNotificationUserFriends(user, {
+      title: data.activityName,
+      body: `User ${user.fullName} has submitted a new activity`,
+      route: '',
     })
 
     return activity

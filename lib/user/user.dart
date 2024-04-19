@@ -17,7 +17,7 @@ class User {
   final String fullName;
   final String? icon;
   final int points;
-  final int levelId;
+  final int? levelId;
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -29,6 +29,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     if (!json.containsKey("icon")) json["icon"] = null;
+    if (!json.containsKey("levelId")) json["levelId"] = null;
 
     return switch (json) {
       {
@@ -37,7 +38,7 @@ class User {
         "email": String email,
         "icon": String? icon,
         "points": int points,
-        "levelId": int levelId,
+        "levelId": int? levelId,
       } =>
         User(
           id: id,

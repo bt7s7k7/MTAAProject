@@ -28,11 +28,16 @@ class LevelAdapter {
     }
   }
 
-  Level getUserLevel(User user) {
+  Level? getUserLevel(User user) {
+    if (user.levelId == null) return null;
     return _levelsLookup[user.levelId]!;
   }
 
-  Level getNextLevel(Level level) {
+  Level getNextLevel(Level? level) {
+    if (level == null) {
+      return _levels[0];
+    }
+
     var index = _levels.indexOf(level);
     var nextLevel =
         index >= _levels.length - 1 ? _levels.last : _levels[index + 1];
