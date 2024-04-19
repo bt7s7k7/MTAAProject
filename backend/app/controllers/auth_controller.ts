@@ -28,7 +28,7 @@ export default class AuthController {
       })
     } catch (err: any) {
       if (err.constraint === 'users_email_unique') {
-        throw new Exception('email_in_use', { status: 400 })
+        throw new Exception('Email already used', { status: 400 })
       }
 
       throw err
@@ -36,8 +36,10 @@ export default class AuthController {
 
     const token = await User.accessTokens.create(user)
 
+    const resultUser = await User.findOrFail(user.id)
+
     return {
-      user: user.serialize(),
+      user: resultUser.serialize(),
       token: token.value!.release(),
     }
   }
