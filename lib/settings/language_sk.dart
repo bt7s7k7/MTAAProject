@@ -100,5 +100,9 @@ class _LanguageSK extends LanguageProfile {
   String notifications() => "Notifikácie";
 
   @override
-  String pleaseEnableNotificationPermissions() => "Prosím udeľte povolenie aplikácie pre notifikácie";
+  String pleaseEnableNotificationPermissions() =>
+      "Prosím udeľte povolenie aplikácie pre notifikácie";
+
+  @override
+  String loadingMap() => "Načítavam mapu...";
 }

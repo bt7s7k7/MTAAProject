@@ -16,7 +16,7 @@ class RecordingPage extends StatefulWidget {
 }
 
 class _RecordingPageState extends State<RecordingPage> {
-  final GlobalKey mapGlobalKey = GlobalKey();
+  bool ready = false;
 
   void _createActivity() async {
     var random = Random();
@@ -53,8 +53,36 @@ class _RecordingPageState extends State<RecordingPage> {
     mapController.setZoom(zoomLevel: 40);
   }
 
+  void _setReady() {
+    setState(() {
+      ready = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    var map = OSMFlutter(
+      controller: mapController,
+      onMapIsReady: (ready) {
+        if (ready) _setReady();
+      },
+      osmOption: const OSMOption(
+        showContributorBadgeForOSM: true,
+        zoomOption: ZoomOption(
+          initZoom: 15,
+          minZoomLevel: 3,
+          maxZoomLevel: 19,
+          stepZoom: 1.0,
+        ),
+        enableRotationByGesture: false,
+        roadConfiguration: RoadOption(
+          roadColor: Colors.yellowAccent,
+        ),
+      ),
+    );
+
+    var theme = Theme.of(context);
+
     return Column(
       children: [
         ListenableBuilder(
@@ -65,22 +93,35 @@ class _RecordingPageState extends State<RecordingPage> {
           ),
         ),
         Expanded(
-          child: OSMFlutter(
-            controller: mapController,
-            osmOption: const OSMOption(
-              zoomOption: ZoomOption(
-                initZoom: 15,
-                minZoomLevel: 3,
-                maxZoomLevel: 19,
-                stepZoom: 1.0,
-              ),
-              enableRotationByGesture: false,
-              roadConfiguration: RoadOption(
-                roadColor: Colors.yellowAccent,
-              ),
-            ),
-          ),
-        ),
+            child: Stack(
+          children: switch (ready) {
+            true => [map],
+            false => [
+                map,
+                Container(
+                  decoration:
+                      BoxDecoration(color: theme.colorScheme.background),
+                ),
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(
+                        value: null,
+                      ),
+                      const SizedBox(height: 10),
+                      ListenableBuilder(
+                        listenable: LanguageManager.instance,
+                        builder: (_, __) => Text(
+                            LanguageManager.instance.language.loadingMap()),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+          },
+        )),
         ElevatedButton(
           onPressed: _createActivity,
           child: const Text("Create activity"),

@@ -103,4 +103,7 @@ class _LanguageEN extends LanguageProfile {
   @override
   String pleaseEnableNotificationPermissions() =>
       "Please enable notification permission in app settings";
+
+  @override
+  String loadingMap() => "Loading map...";
 }

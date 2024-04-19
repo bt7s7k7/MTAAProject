@@ -39,4 +39,5 @@ abstract class LanguageProfile {
   String cannotLikeOwnActivity();
   String notifications();
   String pleaseEnableNotificationPermissions();
+  String loadingMap();
 }
