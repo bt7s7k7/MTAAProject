@@ -31,6 +31,8 @@ export class NotificationRepository {
   }
 
   protected async _sendNotification(tokens: string[], notification: Notification) {
+    if (tokens.length === 0) return
+
     logger.info({ tokens, ...notification }, 'Sending notifications')
 
     const messaging = await this.firebase.getMessaging()
