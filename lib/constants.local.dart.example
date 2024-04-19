@@ -1,10 +1,10 @@
 part of "constants.dart";
 
-const _backendURL = "http://localhost:3333";
-const _vapidToken = "";
+const _backendURL = "$backendURL";
+const _vapidToken = "$vapidToken";
 const _firebaseOptions = FirebaseOptions(
-  apiKey: "",
-  appId: "",
-  messagingSenderId: "",
-  projectId: "",
+  apiKey: "$apiKey",
+  appId: "$appId",
+  messagingSenderId: "$messagingSenderId",
+  projectId: "$projectId",
 );
