@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/activity/activity.dart';
@@ -6,7 +7,6 @@ import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
-
 
 class RecordingPage extends StatefulWidget {
   const RecordingPage({Key? key}) : super(key: key);
@@ -35,48 +35,49 @@ class _RecordingPageState extends State<RecordingPage> {
     popupResult(context, "Activity created");
   }
 
+  MapController mapController = MapController(
+    initPosition:
+        GeoPoint(latitude: 48.11977120843681, longitude: 17.118147610953137),
+  );
+
+  @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    mapController.setZoom(zoomLevel: 40);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Expanded(
-          child: OSMFlutter(
-            key: mapGlobalKey,
-            trackMyPosition: false,
-            initZoom: 12,
-            minZoomLevel: 8,
-            maxZoomLevel: 14,
-            stepZoom: 1.0,
-            staticPoints: [
-              StaticPositionGeoPoint(
-                'id_0',
-                MarkerIcon(
-                  icon: Icon(
-                    Icons.location_pin,
-                    color: Colors.red,
-                    size: 48,
-                  ),
-                ),
-                GeoPoint(latitude: 48.8584, longitude: 2.2945), // Example location (Eiffel Tower)
-              ),
-            ],
-            roadConfiguration: RoadConfiguration(
-              startIcon: MarkerIcon(
-                icon: Icon(
-                  Icons.person,
-                  size: 64,
-                  color: Colors.green,
-                ),
-              ),
-              roadColor: Colors.yellowAccent,
-            ),
-          ),
-        ),
         ListenableBuilder(
           listenable: LanguageManager.instance,
           builder: (_, __) => TitleMarker(
             title: LanguageManager.instance.language.recording(),
             focusedButton: 1,
+          ),
+        ),
+        Expanded(
+          child: OSMFlutter(
+            controller: mapController,
+            osmOption: const OSMOption(
+              zoomOption: ZoomOption(
+                initZoom: 15,
+                minZoomLevel: 3,
+                maxZoomLevel: 15,
+                stepZoom: 1.0,
+              ),
+              roadConfiguration: RoadOption(
+                roadColor: Colors.yellowAccent,
+              ),
+            ),
           ),
         ),
         ElevatedButton(
