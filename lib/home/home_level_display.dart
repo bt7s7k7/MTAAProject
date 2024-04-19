@@ -16,6 +16,8 @@ class HomeLevelDisplay extends StatelessWidget {
     var theme = Theme.of(context);
     var maskColor =
         Color.lerp(theme.cardColor, theme.colorScheme.surfaceTint, 0.05);
+    var bgColor =
+        Color.lerp(theme.cardColor, theme.colorScheme.surfaceTint, 0.2);
 
     return Card(
       child: Column(
@@ -23,6 +25,14 @@ class HomeLevelDisplay extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
+              Container(
+                width: 220,
+                height: 220,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: bgColor,
+                ),
+              ),
               Transform.scale(
                 scale: 5.5,
                 child: CircularProgressIndicator(
