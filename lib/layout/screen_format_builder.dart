@@ -10,7 +10,7 @@ class ScreenFormatBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context);
-    var isTablet = mediaQuery.size.width > 1050 &&
+    var isTablet = mediaQuery.size.width > 900 &&
         mediaQuery.size.width > mediaQuery.size.height;
 
     return isTablet ? tabletLayout() : phoneLayout();

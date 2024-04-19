@@ -100,7 +100,17 @@ class MainLayout extends StatelessWidget {
                 thickness: 1,
                 width: 1,
               ),
-              Expanded(child: child),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: Expanded(child: child),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
