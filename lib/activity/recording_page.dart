@@ -71,9 +71,10 @@ class _RecordingPageState extends State<RecordingPage> {
               zoomOption: ZoomOption(
                 initZoom: 15,
                 minZoomLevel: 3,
-                maxZoomLevel: 15,
+                maxZoomLevel: 19,
                 stepZoom: 1.0,
               ),
+              enableRotationByGesture: false,
               roadConfiguration: RoadOption(
                 roadColor: Colors.yellowAccent,
               ),
