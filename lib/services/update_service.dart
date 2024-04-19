@@ -81,7 +81,7 @@ class UpdateService {
     });
 
     _socket!.onError((data) {
-      debugPrint("[WS] Error ${data["type"]} ${data["msg"]} ${data["desc"]}");
+      debugPrint("[WS] Error $data");
     });
 
     _socket!.on("debug", (data) {

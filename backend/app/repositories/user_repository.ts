@@ -8,10 +8,14 @@ import { Exception } from '@adonisjs/core/exceptions'
 import app from '@adonisjs/core/services/app'
 import { Infer } from '@vinejs/vine/types'
 import { mkdir } from 'node:fs/promises'
+import { NotificationRepository } from './notification_repository.js'
 
 @inject()
 export class UserRepository {
-  constructor(protected eventRouter: UserEventRouter) {}
+  constructor(
+    protected eventRouter: UserEventRouter,
+    protected notificationRepository: NotificationRepository
+  ) {}
 
   async isFriendsWith(user: User, friend: User) {
     const result = await user.related('friends').pivotQuery().where('friend_id', friend.id).first()
@@ -68,6 +72,12 @@ export class UserRepository {
       value: invite.sender.serialize(),
     })
 
+    this.notificationRepository.sendNotificationUser(to, {
+      title: 'Friendship invitation',
+      body: `User ${from.fullName} has invited you to become friends`,
+      route: 'Friend',
+    })
+
     return 'sent'
   }
 
@@ -84,10 +94,19 @@ export class UserRepository {
       id: invite.sender.id,
       value: null,
     })
-    // TODO: send notification
+
+    this.notificationRepository.sendNotificationUser(from, {
+      title: 'Friendship accepted',
+      body: `User ${to.fullName} has accepted your invite`,
+      route: 'Friend',
+    })
   }
 
   async denyInvite(invite: Invite) {
+    await Promise.all([invite.load('receiver'), invite.load('sender')])
+
+    const from = invite.sender
+    const to = invite.receiver
     await invite.delete()
 
     this.eventRouter.notifyUser(invite.receiverId, {
@@ -95,7 +114,12 @@ export class UserRepository {
       id: invite.senderId,
       value: null,
     })
-    // TODO: send notification
+
+    this.notificationRepository.sendNotificationUser(from, {
+      title: 'Friendship rejected',
+      body: `User ${to.fullName} has rejected your invite`,
+      route: 'Friend',
+    })
   }
 
   async addFriendship(from: User, to: User) {
@@ -116,8 +140,6 @@ export class UserRepository {
       id: from.id,
       value: from.serialize(),
     })
-
-    // TODO send notifications
   }
 
   async removeFriendship(from: User, to: User) {
@@ -141,7 +163,6 @@ export class UserRepository {
       id: from.id,
       value: null,
     })
-    // TODO send notifications
   }
 
   async uploadIcon(user: User, photo: MultipartFile) {

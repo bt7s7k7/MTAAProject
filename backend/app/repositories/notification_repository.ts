@@ -1,6 +1,7 @@
 import User from '#models/user'
 import { FirebaseService } from '#services/firebase_service'
 import { inject } from '@adonisjs/core'
+import logger from '@adonisjs/core/services/logger'
 
 export interface Notification {
   title: string
@@ -17,12 +18,9 @@ export class NotificationRepository {
     await user.save()
   }
 
-  async sendNotificationUserAndFriends(user: User, notification: Notification) {
+  async sendNotificationUserFriends(user: User, notification: Notification) {
     await user.load('friends')
-    const tokens = [user]
-      .concat(user.friends)
-      .map((v) => v.pushToken)
-      .filter((v): v is string => v !== null)
+    const tokens = user.friends.map((v) => v.pushToken).filter((v): v is string => v !== null)
 
     await this._sendNotification(tokens, notification)
   }
@@ -33,6 +31,8 @@ export class NotificationRepository {
   }
 
   protected async _sendNotification(tokens: string[], notification: Notification) {
+    logger.info({ tokens, ...notification }, 'Sending notifications')
+
     const messaging = await this.firebase.getMessaging()
     messaging.sendEachForMulticast({
       tokens,
