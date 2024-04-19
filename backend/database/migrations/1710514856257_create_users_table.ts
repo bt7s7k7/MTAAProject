@@ -19,6 +19,7 @@ export default class Users extends BaseSchema {
         .onDelete('SET NULL')
       table.integer('points').notNullable().defaultTo(0)
       table.text('icon').nullable()
+      table.text('push_token').nullable()
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

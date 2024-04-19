@@ -95,4 +95,10 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String cannotLikeOwnActivity() => "Nemôžte dať like na svoju aktivitu";
+
+  @override
+  String notifications() => "Notifikácie";
+
+  @override
+  String pleaseEnableNotificationPermissions() => "Prosím udeľte povolenie aplikácie pre notifikácie";
 }

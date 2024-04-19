@@ -37,4 +37,6 @@ abstract class LanguageProfile {
   String ofSteps();
   String darkTheme();
   String cannotLikeOwnActivity();
+  String notifications();
+  String pleaseEnableNotificationPermissions();
 }

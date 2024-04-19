@@ -96,4 +96,11 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String cannotLikeOwnActivity() => "Cannot like own activity";
+
+  @override
+  String notifications() => "Notifications";
+
+  @override
+  String pleaseEnableNotificationPermissions() =>
+      "Please enable notification permission in app settings";
 }

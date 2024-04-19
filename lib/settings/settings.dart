@@ -85,6 +85,10 @@ class Settings {
   final authToken = SettingProperty<String?>._("auth-token");
   final language = SettingProperty<String>._("language", defaultValue: "en");
   final darkTheme = SettingProperty<bool>._("dark-theme", defaultValue: false);
+  final notificationsEnabled = SettingProperty<bool>._(
+    "notifications-enabled",
+    defaultValue: false,
+  );
 
   Future<void> ready() {
     return _localStorage.ready;

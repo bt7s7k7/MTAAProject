@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/services/notification_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/settings/theme_switcher.dart';
+import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_header.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -17,6 +20,20 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   void _logOut() {
     AuthAdapter.instance.logOut();
+  }
+
+  Future<void> _setNotificationEnabled(bool enabled) async {
+    if (Settings.instance.notificationsEnabled.getValue()) {
+      await NotificationService.instance.disableNotifications();
+      return;
+    }
+
+    try {
+      await NotificationService.instance.enableNotifications();
+    } on UserException catch (err) {
+      if (!mounted) return;
+      popupResult(context, err.msg);
+    }
   }
 
   @override
@@ -70,6 +87,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   value: darkTheme,
                   onChanged: (value) =>
                       Settings.instance.darkTheme.setValue(value ?? false),
+                ),
+              ),
+            ),
+          ),
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => SettingsBuilder(
+              property: Settings.instance.notificationsEnabled,
+              builder: (notificationsEnabled) => ListTile(
+                title: Text(LanguageManager.instance.language.notifications()),
+                trailing: Checkbox(
+                  value: notificationsEnabled,
+                  onChanged: (value) => _setNotificationEnabled(value ?? false),
                 ),
               ),
             ),

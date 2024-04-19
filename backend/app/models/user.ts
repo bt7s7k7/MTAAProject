@@ -59,5 +59,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
   })
   declare activities: HasMany<typeof Activity>
 
+  @column({ serializeAs: null })
+  declare pushToken: string | null
+
   static accessTokens = DbAccessTokensProvider.forModel(User)
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/services/notification_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
@@ -41,6 +42,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     await Settings.instance.ready();
     await LanguageManager.instance.load();
     await LevelAdapter.instance.load();
+    var initRoute = await NotificationService.instance.load();
 
     try {
       await AuthAdapter.instance.load();
@@ -49,6 +51,10 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     }
 
     await UpdateService.instance.updateConnection();
+
+    if (initRoute != null) {
+      router.goNamed(initRoute);
+    }
 
     setState(() {
       loaded = true;

@@ -13,6 +13,7 @@ import router from '@adonisjs/core/services/router'
 import { dirname, join, normalize, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { middleware } from './kernel.js'
+const NotificationsController = () => import('#controllers/notifications_controller')
 const LevelsController = () => import('#controllers/levels_controller')
 const FriendsController = () => import('#controllers/friends_controller')
 const UserController = () => import('#controllers/users_controller')
@@ -96,6 +97,14 @@ router
     router.delete('/like/:id', [ActivityController, 'unlike'])
   })
   .prefix('activity')
+  .use(middleware.auth())
+
+router
+  .group(() => {
+    router.post('/', [NotificationsController, 'enableNotifications'])
+    router.delete('/', [NotificationsController, 'disableNotifications'])
+  })
+  .prefix('notifications')
   .use(middleware.auth())
 
 router.get('/levels', [LevelsController, 'getLevels'])
