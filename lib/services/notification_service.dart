@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
@@ -54,8 +54,8 @@ class NotificationService {
     await Firebase.initializeApp(options: firebaseOptions);
 
     FirebaseMessaging.onMessage.listen((event) {
-      debugPrint(
-          "Title: ${event.notification?.title} Body: ${event.notification?.body}");
+      debugMessage(
+          "[Push] Foreground notification, {title: ${event.notification?.title}, body: ${event.notification?.body}}");
     });
 
     var initialMessage = await FirebaseMessaging.instance.getInitialMessage();

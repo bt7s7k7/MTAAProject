@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/recording_page.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/auth/login_register_page.dart';
 import 'package:mtaa_project/friends/add_friends_page.dart';
 import 'package:mtaa_project/friends/friend_page.dart';
@@ -60,6 +61,11 @@ final router = GoRouter(
           path: "/friends/add",
           name: "AddFriends",
           builder: (context, state) => const AddFriendsPage(),
+        ),
+        GoRoute(
+          path: "/_debug",
+          name: "Debug",
+          builder: (context, state) => const DebugPage(),
         ),
       ],
     ),

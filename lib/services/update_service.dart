@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
@@ -64,32 +64,32 @@ class UpdateService {
       }).setTransports(["websocket"]).build(),
     );
 
-    debugPrint("[WS] Connecting to the server...");
+    debugMessage("[WS] Connecting to the server...");
     _socket!.onConnect((_) {
       if (completer == null) {
-        debugPrint("[WS] Reconnected to server");
+        debugMessage("[WS] Reconnected to server");
         return;
       }
 
-      debugPrint("[WS] Connected to server");
+      debugMessage("[WS] Connected to server");
       completer?.complete();
       completer = null;
     });
 
     _socket!.onDisconnect((_) {
-      debugPrint("[WS] Disconnected from the server");
+      debugMessage("[WS] Disconnected from the server");
     });
 
     _socket!.onError((data) {
-      debugPrint("[WS] Error $data");
+      debugMessage("[WS] Error $data");
     });
 
     _socket!.on("debug", (data) {
-      debugPrint("[WS] Debug: $data");
+      debugMessage("[WS] Debug: $data");
     });
 
     _socket!.on("update", (data) {
-      debugPrint("[WS] Update: $data");
+      debugMessage("[WS] Update: $data");
       _streamController.add(UpdateEvent.fromJson(data));
     });
 

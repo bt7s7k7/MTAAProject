@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
@@ -20,7 +21,7 @@ Map<String, dynamic> processHTTPResponse(Response response) {
   };
 
   if (error) {
-    debugPrint("API Error ${response.statusCode}: $body");
+    debugMessage("[HTTP] API Error ${response.statusCode}: $body");
 
     final message = switch (body) {
       {"message": String message} => message,

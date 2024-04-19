@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 
 LocalStorage? _localStorageInstance;
 LocalStorage get _localStorage {
   if (_localStorageInstance == null) {
     _localStorageInstance = LocalStorage("store.json");
     _localStorageInstance!.onError.addListener(() {
-      debugPrint("Error initializing local storage");
+      debugMessage("[Settings] Error initializing local storage");
     });
   }
 

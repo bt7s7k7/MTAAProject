@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
@@ -37,11 +38,16 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   }
 
   void _onSearchChanged(String value) {
+    if (value == "×××dddd") {
+      GoRouter.of(context).goNamed("Debug");
+      return;
+    }
+
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 100), () {
       query = value;
-      _searchUsers();
     });
+    _searchUsers();
   }
 
   void _sendInvite(User user) async {
@@ -95,7 +101,6 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
           Expanded(
             child: UserList(
               users: users,
-              onClick: (user) => debugPrint(user.toJson().toString()),
               actionBuilder: (user) => switch (interactedUsers.contains(user)) {
                 true => const SizedBox.shrink(),
                 false => ListenableBuilder(

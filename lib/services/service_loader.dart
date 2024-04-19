@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/services/notification_service.dart';
@@ -24,6 +25,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     UpdateService.instance.updateConnection();
 
     if (AuthAdapter.instance.user == null) {
+      debugMessage("[Auth] Login required");
       router.goNamed("Login");
     }
   }
@@ -39,22 +41,34 @@ class _ServiceLoaderState extends State<ServiceLoader> {
 
     AuthAdapter.instance.addListener(_onAuthChanged);
 
+    debugMessage("[Loader] Settings");
     await Settings.instance.ready();
+    debugMessage("[Loader] LanguageManager");
     await LanguageManager.instance.load();
+    debugMessage("[Loader] LevelAdapter");
     await LevelAdapter.instance.load();
+    debugMessage("[Loader] NotificationService");
     var initRoute = await NotificationService.instance.load();
 
+    debugMessage("[Loader] AuthAdapter");
     try {
       await AuthAdapter.instance.load();
+      debugMessage(
+          "[Auth] Authenticated: ${AuthAdapter.instance.user?.toJson()}");
     } on NotAuthenticatedException {
       router.goNamed("Login");
+      debugMessage("[Auth] Login required");
     }
 
+    debugMessage("[Loader] UpdateService");
     await UpdateService.instance.updateConnection();
 
     if (initRoute != null) {
+      debugMessage("[Loader] Has init route: $initRoute");
       router.goNamed(initRoute);
     }
+
+    debugMessage("[Loader] Done.");
 
     setState(() {
       loaded = true;

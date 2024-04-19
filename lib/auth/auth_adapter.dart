@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/settings.dart';
@@ -38,12 +39,17 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
       if (event.type != "user" || event.id != _user!.id) return;
       if (event.value == null) return;
 
+      debugMessage("[Auth] User update ${event.value}");
+
       _user = User.fromJson(event.value!);
       notifyListenersAsync();
     });
 
     var token = Settings.instance.authToken.getValue();
-    if (token == null) throw NotAuthenticatedException();
+    if (token == null) {
+      debugMessage("[Auth] Missing token");
+      throw NotAuthenticatedException();
+    }
 
     var response = await get(
       backendURL.resolve("/user"),
