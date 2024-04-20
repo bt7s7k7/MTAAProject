@@ -11,7 +11,6 @@ import { mkdir } from 'node:fs/promises'
 import { NotificationRepository } from './notification_repository.js'
 import Level from '#models/level'
 
-
 @inject()
 export class UserRepository {
   constructor(
@@ -203,24 +202,23 @@ export class UserRepository {
     })
   }
 
-  public async addPoints(user: User, points: number): Promise<void> {
-    user.points += points;
-    await user.save();
+  async addPoints(user: User, points: number): Promise<void> {
+    user.points += points
+    await user.save()
   }
-  
-  public async checkAndUpdateLevel(user: User): Promise<boolean> {
+
+  async checkAndUpdateLevel(user: User): Promise<boolean> {
     const currentLevel = await Level.query()
       .where('points', '<=', user.points)
       .orderBy('points', 'desc')
-      .first();
-  
-    if (currentLevel && currentLevel.id !== user.levelId) {
-      user.levelId = currentLevel.id; // Assuming 'levelId' is the FK in 'users' table for 'levels'
-      await user.save();
-      return true; // Indicates the user has leveled up
-    }
-    
-    return false; // No level change
-  }
+      .first()
 
+    if (currentLevel && currentLevel.id !== user.levelId) {
+      user.levelId = currentLevel.id // Assuming 'levelId' is the FK in 'users' table for 'levels'
+      await user.save()
+      return true // Indicates the user has leveled up
+    }
+
+    return false // No level change
+  }
 }

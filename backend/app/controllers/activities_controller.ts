@@ -77,11 +77,11 @@ export default class ActivityController {
     await this.activityRepository.destroyActivity(id, user.id)
   }
 
-  public async store({ auth, request }: HttpContext) {
+  async store({ auth, request }: HttpContext) {
     const user = auth.user!
     const activityData = await activityValidator.validate(request.all())
     const activity = await this.activityRepository.storeActivity(user, activityData)
-    
+
     // Example: Award 10 points for every new activity
     await this.userRepository.addPoints(user, 10)
 
