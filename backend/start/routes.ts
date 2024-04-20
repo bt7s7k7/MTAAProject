@@ -19,6 +19,7 @@ const FriendsController = () => import('#controllers/friends_controller')
 const UserController = () => import('#controllers/users_controller')
 const AuthController = () => import('#controllers/auth_controller')
 const ActivityController = () => import('#controllers/activities_controller')
+
 router.get('/', async () => {
   return {
     hello: 'world',

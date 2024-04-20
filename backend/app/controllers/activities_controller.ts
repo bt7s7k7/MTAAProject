@@ -95,6 +95,7 @@ export default class ActivityController {
       leveledUp,
     }
   }
+  
 
   async like({ auth, params }: HttpContext) {
     const userId = auth.user!.id

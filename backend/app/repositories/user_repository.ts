@@ -203,8 +203,8 @@ export class UserRepository {
   }
 
   async addPoints(user: User, points: number): Promise<void> {
-    user.points += points
-    await user.save()
+    user.points += points; // Pridaj body k existujúcemu počtu
+    await user.save(); // Ulož zmeny
   }
 
   async checkAndUpdateLevel(user: User): Promise<boolean> {

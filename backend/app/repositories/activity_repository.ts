@@ -5,13 +5,17 @@ import { activityValidator } from '#validators/activity_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
 import { NotificationRepository } from './notification_repository.js'
+import { UserRepository } from './user_repository.js';
+
 
 @inject()
 export class ActivityRepository {
   constructor(
     protected eventRouter: UserEventRouter,
-    protected notificationRepository: NotificationRepository
+    protected notificationRepository: NotificationRepository,
+    protected userRepository: UserRepository // Inject the UserRepository here
   ) {}
+
 
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
@@ -48,9 +52,13 @@ export class ActivityRepository {
   }
 
   async storeActivity(user: User, data: Infer<typeof activityValidator>) {
-    const activity = await user.related('activities').create(data)
+    const activity = await user.related('activities').create(data);
+    const pointsForActivity = this.calculatePointsForActivity(data.steps); // Assume `data` has `steps`
+    await this.userRepository.addPoints(user, pointsForActivity);
     // @ts-ignore
     activity.user = user
+
+
 
     this.eventRouter.notifyUserAndFriends(user.id, {
       type: 'activity',
@@ -92,5 +100,11 @@ export class ActivityRepository {
     activity.merge(data)
     await activity.save()
     return activity
+  }
+
+   // Pridanie metódy na výpočet bodov
+   calculatePointsForActivity(steps: number): number {
+    // Implement your points calculation logic based on steps
+    return Math.floor(steps / 100);
   }
 }
