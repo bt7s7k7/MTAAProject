@@ -5,8 +5,10 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class RecordingPage extends StatefulWidget {
   const RecordingPage({super.key});
@@ -122,6 +124,34 @@ class _RecordingPageState extends State<RecordingPage> {
               ],
           },
         )),
+        ListenableBuilder(
+            listenable: PermissionService.instance,
+            builder: (_, __) => switch (PermissionService
+                    .instance.activityRecognition.status.isGranted) {
+                  true => const SizedBox(height: 0),
+                  false => Card(
+                      child: ListenableBuilder(
+                        listenable: LanguageManager.instance,
+                        builder: (_, __) => ListTile(
+                          title: Text(
+                            LanguageManager.instance.language
+                                .stepCountingPermission(),
+                          ),
+                          subtitle: Text(
+                            LanguageManager.instance.language
+                                .stepCountingPermissionRequired(),
+                          ),
+                          leading: const Icon(Icons.directions_walk),
+                          trailing: FilledButton(
+                            onPressed: PermissionService
+                                .instance.activityRecognition.request,
+                            child: Text(LanguageManager.instance.language
+                                .grantPermission()),
+                          ),
+                        ),
+                      ),
+                    ),
+                }),
         ElevatedButton(
           onPressed: _createActivity,
           child: const Text("Create activity"),

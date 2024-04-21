@@ -105,4 +105,14 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String loadingMap() => "Načítavam mapu...";
+
+  @override
+  String stepCountingPermission() => "Počítanie krokov";
+
+  @override
+  String stepCountingPermissionRequired() =>
+      "Prosím udeľte povolenie na počítanie krokov";
+
+  @override
+  String grantPermission() => "Udeliť";
 }

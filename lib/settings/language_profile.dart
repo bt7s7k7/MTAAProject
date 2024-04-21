@@ -40,4 +40,7 @@ abstract class LanguageProfile {
   String notifications();
   String pleaseEnableNotificationPermissions();
   String loadingMap();
+  String stepCountingPermission();
+  String stepCountingPermissionRequired();
+  String grantPermission();
 }

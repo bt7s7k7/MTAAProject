@@ -42,6 +42,8 @@ dependencies:
   firebase_messaging: ^14.8.2
   firebase_core: ^2.30.0
   flutter_osm_plugin: 0.70.4
+  pedometer: ^4.0.1
+  permission_handler: ^11.3.1
 
 
 dev_dependencies:
