@@ -1,0 +1,8 @@
+  {
+    "entryPoints": ["./bin/server.ts"],
+    "out": "./docs",
+    "exclude": ["**/*+(index|.spec|.test).ts"],
+    "excludePrivate": true,
+    "excludeProtected": true
+  }
+  
