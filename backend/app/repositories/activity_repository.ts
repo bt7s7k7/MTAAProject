@@ -102,14 +102,7 @@ export class ActivityRepository {
     return activity
   }
 
-<<<<<<< HEAD
-   // Pridanie metódy na výpočet bodov
-   calculatePointsForActivity(steps: number): number {
-    // Implement your points calculation logic based on steps
-    return Math.floor(steps);
-=======
   calculatePointsForActivity(steps: number): number {
     return steps
->>>>>>> ee4fc5e6c50ea2e12665959c5a769f10211c2eb7
   }
 }

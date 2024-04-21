@@ -221,19 +221,4 @@ export class UserRepository {
       value: user.serialize(),
     })
   }
-
-  async checkAndUpdateLevel(user: User): Promise<boolean> {
-    const currentLevel = await Level.query()
-      .where('points', '<=', user.points)
-      .orderBy('points', 'desc')
-      .first()
-
-    if (currentLevel && currentLevel.id !== user.levelId) {
-      user.levelId = currentLevel.id // Assuming 'levelId' is the FK in 'users' table for 'levels'
-      await user.save()
-      return true // Indicates the user has leveled up
-    }
-
-    return false // No level change
-  }
 }
