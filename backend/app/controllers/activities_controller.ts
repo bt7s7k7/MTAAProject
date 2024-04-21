@@ -7,6 +7,9 @@ import { ActivityRepository } from '../repositories/activity_repository.js'
 import { LikesRepository } from '../repositories/like_repository.js'
 import { UserRepository } from '../repositories/user_repository.js'
 
+
+
+
 @inject()
 export default class ActivityController {
   constructor(
@@ -87,6 +90,9 @@ export default class ActivityController {
 
     // Check for level up
     const leveledUp = await this.userRepository.checkAndUpdateLevel(user)
+
+    
+
 
     // Include level up information in the response
     return {

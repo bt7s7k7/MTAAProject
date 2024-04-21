@@ -8,6 +8,7 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/level_adapter.dart';
+import 'package:mtaa_project/services/firebase_service.dart'; // Import FirebaseService
 
 class ServiceLoader extends StatefulWidget {
   const ServiceLoader({super.key, required this.child});
@@ -21,24 +22,17 @@ class ServiceLoader extends StatefulWidget {
 class _ServiceLoaderState extends State<ServiceLoader> {
   var loaded = false;
 
-  void _onAuthChanged() {
-    UpdateService.instance.updateConnection();
-
-    if (AuthAdapter.instance.user == null) {
-      debugMessage("[Auth] Login required");
-      router.goNamed("Login");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    load();
+    loadServices();
   }
 
-  Future<void> load() async {
-    super.initState();
+  Future<void> loadServices() async {
+    // First, initialize Firebase
+    await FirebaseService().initializeFirebase();
 
+    // Then load other services
     AuthAdapter.instance.addListener(_onAuthChanged);
 
     debugMessage("[Loader] Settings");
@@ -73,6 +67,15 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     setState(() {
       loaded = true;
     });
+  }
+
+  void _onAuthChanged() {
+    UpdateService.instance.updateConnection();
+
+    if (AuthAdapter.instance.user == null) {
+      debugMessage("[Auth] Login required");
+      router.goNamed("Login");
+    }
   }
 
   @override

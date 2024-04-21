@@ -105,6 +105,6 @@ export class ActivityRepository {
    // Pridanie metódy na výpočet bodov
    calculatePointsForActivity(steps: number): number {
     // Implement your points calculation logic based on steps
-    return Math.floor(steps / 100);
+    return Math.floor(steps);
   }
 }
