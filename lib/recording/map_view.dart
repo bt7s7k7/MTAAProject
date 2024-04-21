@@ -57,7 +57,8 @@ class _MapViewState extends State<MapView> {
       _positionSubscription = null;
     }
 
-    Geolocator.getPositionStream().listen((currentLocation) {
+    _positionSubscription =
+        Geolocator.getPositionStream().listen((currentLocation) {
       _handleLocationChange(GeoPoint(
         latitude: currentLocation.latitude,
         longitude: currentLocation.longitude,
@@ -94,6 +95,7 @@ class _MapViewState extends State<MapView> {
   @override
   void dispose() {
     PermissionService.instance.removeListener(_onPermissionChanged);
+    _positionSubscription?.cancel();
     _mapController.dispose();
     super.dispose();
   }
