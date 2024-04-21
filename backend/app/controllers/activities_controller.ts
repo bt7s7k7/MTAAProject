@@ -82,20 +82,8 @@ export default class ActivityController {
     const activityData = await activityValidator.validate(request.all())
     const activity = await this.activityRepository.storeActivity(user, activityData)
 
-    // Example: Award 10 points for every new activity
-    await this.userRepository.addPoints(user, 10)
-
-    // Check for level up
-    const leveledUp = await this.userRepository.checkAndUpdateLevel(user)
-
-    // Include level up information in the response
-    return {
-      ...activity.serialize(),
-      points: user.points,
-      leveledUp,
-    }
+    return activity.serialize()
   }
-  
 
   async like({ auth, params }: HttpContext) {
     const userId = auth.user!.id
