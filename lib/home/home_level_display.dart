@@ -65,14 +65,41 @@ class HomeLevelDisplay extends StatelessWidget {
           ),
           ListenableBuilder(
             listenable: AuthAdapter.instance,
-            builder: (_, __) => Text(
-                "${AuthAdapter.instance.user!.points} / ${LevelAdapter.instance.getNextLevel(LevelAdapter.instance.getUserLevel(AuthAdapter.instance.user!)).pointsRequired}"),
-          ),
-          ListenableBuilder(
-            listenable: LanguageManager.instance,
-            builder: (_, __) => Text(
-              LanguageManager.instance.language.ofSteps(),
-            ),
+            builder: (_, __) {
+              var points = AuthAdapter.instance.user!.points;
+              var pointsRequired = LevelAdapter.instance
+                  .getNextLevel(LevelAdapter.instance
+                      .getUserLevel(AuthAdapter.instance.user!))
+                  .pointsRequired;
+
+              return Column(
+                children: switch (points < pointsRequired) {
+                  true => [
+                      Text("$points / $pointsRequired"),
+                      ListenableBuilder(
+                        listenable: LanguageManager.instance,
+                        builder: (_, __) => Text(
+                          LanguageManager.instance.language.ofSteps(),
+                        ),
+                      ),
+                    ],
+                  false => [
+                      ListenableBuilder(
+                        listenable: LanguageManager.instance,
+                        builder: (_, __) => Text(
+                          "$points ${LanguageManager.instance.language.ofSteps()}",
+                        ),
+                      ),
+                      ListenableBuilder(
+                        listenable: LanguageManager.instance,
+                        builder: (_, __) => Text(
+                          LanguageManager.instance.language.maxLevel(),
+                        ),
+                      ),
+                    ]
+                },
+              );
+            },
           ),
           const SizedBox(width: 10, height: 10)
         ],
