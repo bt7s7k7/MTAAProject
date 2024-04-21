@@ -148,4 +148,13 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String beginRecording() => "Začať";
+
+  @override
+  String recordingPaused() => "Nahrávanie zastavené";
+
+  @override
+  String recordingPausedDesc() => "Nadýchnite sa, času je dosť";
+
+  @override
+  String unpauseRecording() => "Pokračovať";
 }

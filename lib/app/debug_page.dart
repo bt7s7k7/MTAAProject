@@ -73,7 +73,7 @@ class _DebugPageState extends State<DebugPage> {
         steps: random.nextInt(1000) + 1000,
         distance: random.nextInt(1000) + 10,
         duration: random.nextInt(5000),
-        path: "",
+        path: [],
       ),
     );
 

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mtaa_project/activity/activity.dart';
+import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/recording/map_view.dart';
@@ -23,6 +26,44 @@ class _RecordingPageState extends State<RecordingPage> {
 
   void _updateLocation(GeoPoint location) {
     tracker.appendLocation(location);
+  }
+
+  Future<void> _pause() async {
+    tracker.paused = true;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(LanguageManager.instance.language.recordingPaused()),
+          content:
+              Text(LanguageManager.instance.language.recordingPausedDesc()),
+          actions: <Widget>[
+            TextButton(
+              child: Text(LanguageManager.instance.language.unpauseRecording()),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    tracker.paused = false;
+  }
+
+  void _finish() {
+    ActivityAdapter.instance.uploadActivity(
+      Activity.fromRecording(
+        name: LanguageManager.instance.language.recording(),
+        steps: tracker.steps,
+        distance: tracker.distance.floor(),
+        duration: tracker.duration.floor(),
+        path: tracker.path,
+      ),
+    );
+
+    GoRouter.of(context).goNamed("RecordingResult", extra: tracker);
   }
 
   @override
@@ -58,7 +99,7 @@ class _RecordingPageState extends State<RecordingPage> {
                         steps: tracker.steps.toString(),
                         meters: tracker.distance.floor().toString(),
                         duration:
-                            "${(tracker.duration / 60).floor().toString().padLeft(2, "0")}:${(tracker.duration % 60).toString().padLeft(2, "0")}",
+                            "${(tracker.duration / 60).floor().toString().padLeft(2, "0")}:${(tracker.duration.floor() % 60).toString().padLeft(2, "0")}",
                       ),
                     ),
                   ),
@@ -67,7 +108,7 @@ class _RecordingPageState extends State<RecordingPage> {
                     children: [
                       Expanded(
                         child: FilledButton(
-                          onPressed: () {},
+                          onPressed: _finish,
                           child: Text(
                             LanguageManager.instance.language.endRecording(),
                           ),
@@ -76,7 +117,7 @@ class _RecordingPageState extends State<RecordingPage> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: FilledButton(
-                          onPressed: () {},
+                          onPressed: _pause,
                           child: Text(
                             LanguageManager.instance.language.pauseRecording(),
                           ),

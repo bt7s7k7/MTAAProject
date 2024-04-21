@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
@@ -12,10 +13,11 @@ final _defaultLocation = GeoPoint(latitude: 0, longitude: 0);
 final mapGlobalKey = GlobalKey(debugLabel: "map-view");
 
 class MapView extends StatefulWidget {
-  const MapView({super.key, this.onLocationUpdate, this.tracker});
+  const MapView({super.key, this.onLocationUpdate, this.tracker, this.path});
 
   final void Function(GeoPoint location)? onLocationUpdate;
   final ActivityTracker? tracker;
+  final List<GeoPoint>? path;
 
   @override
   State<MapView> createState() => _MapViewState();
@@ -36,6 +38,8 @@ class _MapViewState extends State<MapView> {
   }
 
   Future<void> _handleLocationPermissionChanged() async {
+    if (widget.path != null) return;
+
     if (!_locationEnabled) {
       debugMessage("[Map] Disabled location");
       return;
@@ -89,6 +93,40 @@ class _MapViewState extends State<MapView> {
     _mapController.drawRoadManually(_tracker!.path, const RoadOption.empty());
   }
 
+  void _drawPath() async {
+    await _mapController.clearAllRoads();
+    if (widget.path!.length < 2) return;
+    var path = widget.path!;
+    var lat1 = path[0].latitude;
+    var lat2 = path[0].latitude;
+    var lng1 = path[0].longitude;
+    var lng2 = path[0].longitude;
+
+    for (final point in path.skip(1)) {
+      lat1 = min(point.latitude, lat1);
+      lng1 = min(point.longitude, lng1);
+      lat2 = max(point.latitude, lat2);
+      lng2 = max(point.longitude, lng2);
+    }
+
+    var latBuffer = (lat1 - lat2).abs() * 0.3;
+    var lngBuffer = (lng1 - lng2).abs() * 0.3;
+
+    lat1 -= latBuffer;
+    lat2 += latBuffer;
+    lng1 -= lngBuffer;
+    lng2 += lngBuffer;
+
+    _mapController.limitAreaMap(BoundingBox(
+      north: lat2,
+      south: lat1,
+      west: lng1,
+      east: lng2,
+    ));
+
+    _mapController.drawRoadManually(widget.path!, const RoadOption.empty());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -105,6 +143,10 @@ class _MapViewState extends State<MapView> {
       widget.tracker!.addListener(_handleTrackerUpdate);
       _tracker = widget.tracker;
     }
+
+    if (widget.path != null) {
+      _drawPath();
+    }
   }
 
   @override
@@ -119,6 +161,10 @@ class _MapViewState extends State<MapView> {
       debugMessage("[Map] Tracker bound in map");
       widget.tracker!.addListener(_handleTrackerUpdate);
       _tracker = widget.tracker;
+    }
+
+    if (widget.path != null) {
+      _drawPath();
     }
   }
 

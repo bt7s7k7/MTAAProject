@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/support/exceptions.dart';
@@ -25,7 +29,7 @@ class Activity with UpdateAware {
   final int steps;
   final int distance;
   final int duration;
-  final String path;
+  final List<GeoPoint> path;
   final DateTime createdAt;
   final int likesCount;
   bool hasLiked;
@@ -37,7 +41,7 @@ class Activity with UpdateAware {
         "steps": steps,
         "distance": distance,
         "duration": duration,
-        "path": path,
+        "path": encodePath(path),
       };
 
   factory Activity.fromJson(Map<String, dynamic> json) {
@@ -64,7 +68,7 @@ class Activity with UpdateAware {
           steps: steps,
           distance: distance,
           duration: duration,
-          path: path ?? "",
+          path: decodePath(path ?? ""),
           createdAt: DateTime.parse(createdAt),
           likesCount: likesCount,
           hasLiked: hasLiked,
@@ -78,7 +82,7 @@ class Activity with UpdateAware {
     required int steps,
     required int distance,
     required int duration,
-    required String path,
+    required List<GeoPoint> path,
   }) {
     return Activity(
       id: 0,
@@ -98,5 +102,34 @@ class Activity with UpdateAware {
   @override
   void patchUpdate(Map<String, dynamic> json) {
     json["hasLiked"] = hasLiked;
+  }
+
+  static String encodePath(List<GeoPoint> path) {
+    var pathNumbers = Float64List(path.length * 2);
+    for (var i = 0; i < path.length; i++) {
+      var point = path[i];
+      pathNumbers[i * 2 + 0] = point.latitude;
+      pathNumbers[i * 2 + 1] = point.longitude;
+    }
+    var data = pathNumbers.buffer.asUint8List();
+    return base64.encode(data);
+  }
+
+  static List<GeoPoint> decodePath(String rawData) {
+    try {
+      var data = base64.decode(rawData);
+      var pathNumbers = data.buffer.asFloat64List();
+      var path = List<GeoPoint>.filled((pathNumbers.length / 2).floor(),
+          GeoPoint(latitude: 0, longitude: 0));
+      for (var i = 0; i < path.length; i++) {
+        path[i] = GeoPoint(
+          latitude: pathNumbers[i * 2 + 0],
+          longitude: pathNumbers[i * 2 + 1],
+        );
+      }
+      return path;
+    } catch (_) {
+      return [];
+    }
   }
 }

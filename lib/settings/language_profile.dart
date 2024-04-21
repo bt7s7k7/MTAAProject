@@ -56,5 +56,8 @@ abstract class LanguageProfile {
       required String duration});
   String endRecording();
   String pauseRecording();
+  String recordingPaused();
+  String recordingPausedDesc();
+  String unpauseRecording();
   String grantPermission();
 }

@@ -12,7 +12,10 @@ class ActivityTracker with ChangeNotifier, ChangeNotifierAsync {
 
   int steps = 0;
   double distance = 0;
-  int duration = 0;
+  double duration = 0;
+  bool paused = false;
+
+  int _lastTick = DateTime.now().millisecondsSinceEpoch;
 
   final path = <GeoPoint>[];
 
@@ -22,6 +25,8 @@ class ActivityTracker with ChangeNotifier, ChangeNotifierAsync {
   }
 
   Future<void> appendLocation(GeoPoint location) async {
+    if (paused) return;
+
     if (path.isNotEmpty) {
       var localDistance = await distance2point(path.last, location);
       distance += localDistance;
@@ -46,7 +51,11 @@ class ActivityTracker with ChangeNotifier, ChangeNotifierAsync {
   ActivityTracker() {
     PedometerService.instance.addListener(_handleStepUpdate);
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      duration += 1;
+      var now = DateTime.now().millisecondsSinceEpoch;
+      var deltaTime = (now.toDouble() - _lastTick) / 1000;
+      _lastTick = now;
+      if (paused) return;
+      duration += deltaTime;
       notifyListenersAsync();
     });
 

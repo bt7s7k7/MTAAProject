@@ -149,4 +149,13 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String pauseRecording() => "Pause";
+
+  @override
+  String recordingPaused() => "Recording paused";
+
+  @override
+  String recordingPausedDesc() => "Take a breath, there is always enough time";
+
+  @override
+  String unpauseRecording() => "Resume";
 }
