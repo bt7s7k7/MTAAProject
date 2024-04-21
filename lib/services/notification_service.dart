@@ -51,8 +51,6 @@ class NotificationService {
   }
 
   Future<String?> load() async {
-    await Firebase.initializeApp(options: firebaseOptions);
-
     FirebaseMessaging.onMessage.listen((event) {
       debugMessage(
           "[Push] Foreground notification, {title: ${event.notification?.title}, body: ${event.notification?.body}}");
