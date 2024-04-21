@@ -92,6 +92,9 @@ class _LanguageEN extends LanguageProfile {
   String ofSteps() => "steps";
 
   @override
+  String maxLevel() => "Max level reached";
+
+  @override
   String darkTheme() => "Dark theme";
 
   @override
@@ -106,4 +109,17 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String loadingMap() => "Loading map...";
+
+  @override
+  String stepCountingPermission() => "Step counting";
+
+  @override
+  String stepCountingPermissionRequired() =>
+      "Please grant step counting permission to continue";
+
+  @override
+  String grantPermission() => "Grant";
+
+  @override
+  String beginRecording() => "Begin";
 }

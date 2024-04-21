@@ -35,9 +35,14 @@ abstract class LanguageProfile {
   String logOutAction();
   String language();
   String ofSteps();
+  String maxLevel();
   String darkTheme();
   String cannotLikeOwnActivity();
   String notifications();
   String pleaseEnableNotificationPermissions();
   String loadingMap();
+  String beginRecording();
+  String stepCountingPermission();
+  String stepCountingPermissionRequired();
+  String grantPermission();
 }

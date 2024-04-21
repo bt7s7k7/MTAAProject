@@ -1,4 +1,5 @@
 import Invite from '#models/invite'
+import Level from '#models/level'
 import User from '#models/user'
 import { UserEventRouter } from '#services/user_event_router'
 import { userUpdateValidator } from '#validators/user_validator'
@@ -8,14 +9,15 @@ import { Exception } from '@adonisjs/core/exceptions'
 import app from '@adonisjs/core/services/app'
 import { Infer } from '@vinejs/vine/types'
 import { mkdir } from 'node:fs/promises'
+import { LevelRepository } from './level_repository.js'
 import { NotificationRepository } from './notification_repository.js'
-import Level from '#models/level'
 
 @inject()
 export class UserRepository {
   constructor(
     protected eventRouter: UserEventRouter,
-    protected notificationRepository: NotificationRepository
+    protected notificationRepository: NotificationRepository,
+    protected levelRepository: LevelRepository
   ) {}
 
   async isFriendsWith(user: User, friend: User) {
@@ -203,8 +205,21 @@ export class UserRepository {
   }
 
   async addPoints(user: User, points: number): Promise<void> {
-    user.points += points; // Pridaj body k existujúcemu počtu
-    await user.save(); // Ulož zmeny
+    user.points += points // Pridaj body k existujúcemu počtu
+
+    const targetLevel = await this.levelRepository.getLevelByPoints(user.points)
+    const currLevelID = user.levelId
+    if (currLevelID !== targetLevel.id) {
+      user.levelId = targetLevel.id
+    }
+
+    await user.save()
+
+    this.eventRouter.notifyUserAndFriends(user.id, {
+      type: 'user',
+      id: user.id,
+      value: user.serialize(),
+    })
   }
 
   async checkAndUpdateLevel(user: User): Promise<boolean> {

@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/services/pedometer_service.dart';
+import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
 class _MessageList with ChangeNotifier {
@@ -66,6 +68,16 @@ class _DebugPageState extends State<DebugPage> {
                 "Language: ${jsonEncode(LanguageManager.instance.language.label)}"),
           ),
           Text("Backend: $backendURL"),
+          ListenableBuilder(
+            listenable: PermissionService.instance,
+            builder: (_, __) => Text(
+                "Permissions: {${PermissionService.instance.getStateString()}}"),
+          ),
+          ListenableBuilder(
+            listenable: PedometerService.instance,
+            builder: (_, __) => Text(
+                "Steps: ${PedometerService.instance.steps} (${PedometerService.instance.status})"),
+          ),
           const Divider(height: 1, thickness: 1),
           ListenableBuilder(
             listenable: _messages,

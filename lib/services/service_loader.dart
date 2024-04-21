@@ -3,6 +3,8 @@ import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/services/notification_service.dart';
+import 'package:mtaa_project/services/pedometer_service.dart';
+import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
@@ -43,6 +45,10 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     await LevelAdapter.instance.load();
     debugMessage("[Loader] NotificationService");
     var initRoute = await NotificationService.instance.load();
+    debugMessage("[Loader] PermissionService");
+    await PermissionService.instance.load();
+    debugMessage("[Loader] PedometerService");
+    await PedometerService.instance.load();
 
     debugMessage("[Loader] AuthAdapter");
     try {

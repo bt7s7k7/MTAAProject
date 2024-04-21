@@ -5,8 +5,7 @@ import { activityValidator } from '#validators/activity_validator'
 import { inject } from '@adonisjs/core'
 import { Infer } from '@vinejs/vine/types'
 import { NotificationRepository } from './notification_repository.js'
-import { UserRepository } from './user_repository.js';
-
+import { UserRepository } from './user_repository.js'
 
 @inject()
 export class ActivityRepository {
@@ -15,7 +14,6 @@ export class ActivityRepository {
     protected notificationRepository: NotificationRepository,
     protected userRepository: UserRepository // Inject the UserRepository here
   ) {}
-
 
   async findAllUserAndFriendsActivities(userId: number) {
     const user = await User.query()
@@ -52,18 +50,20 @@ export class ActivityRepository {
   }
 
   async storeActivity(user: User, data: Infer<typeof activityValidator>) {
-    const activity = await user.related('activities').create(data);
-    const pointsForActivity = this.calculatePointsForActivity(data.steps); // Assume `data` has `steps`
-    await this.userRepository.addPoints(user, pointsForActivity);
+    const activity = await user.related('activities').create(data)
+    const pointsForActivity = this.calculatePointsForActivity(data.steps) // Assume `data` has `steps`
+    await this.userRepository.addPoints(user, pointsForActivity)
     // @ts-ignore
     activity.user = user
-
-
 
     this.eventRouter.notifyUserAndFriends(user.id, {
       type: 'activity',
       id: activity.id,
-      value: activity.serialize(),
+      value: {
+        ...activity.serialize(),
+        hasLiked: false,
+        likesCount: 0,
+      },
     })
 
     this.notificationRepository.sendNotificationUserFriends(user, {
@@ -102,9 +102,14 @@ export class ActivityRepository {
     return activity
   }
 
+<<<<<<< HEAD
    // Pridanie metódy na výpočet bodov
    calculatePointsForActivity(steps: number): number {
     // Implement your points calculation logic based on steps
     return Math.floor(steps);
+=======
+  calculatePointsForActivity(steps: number): number {
+    return steps
+>>>>>>> ee4fc5e6c50ea2e12665959c5a769f10211c2eb7
   }
 }
