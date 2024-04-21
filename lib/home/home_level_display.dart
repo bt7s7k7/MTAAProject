@@ -9,10 +9,6 @@ class HomeLevelDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = AuthAdapter.instance.user!;
-    var level = LevelAdapter.instance.getUserLevel(user);
-    var nextLevel = LevelAdapter.instance.getNextLevel(level);
-
     var theme = Theme.of(context);
     var maskColor =
         Color.lerp(theme.cardColor, theme.colorScheme.surfaceTint, 0.05);
@@ -35,8 +31,15 @@ class HomeLevelDisplay extends StatelessWidget {
               ),
               Transform.scale(
                 scale: 5.5,
-                child: CircularProgressIndicator(
-                  value: (user.points.toDouble()) / nextLevel.pointsRequired,
+                child: ListenableBuilder(
+                  listenable: AuthAdapter.instance,
+                  builder: (_, __) => CircularProgressIndicator(
+                    value: (AuthAdapter.instance.user!.points.toDouble()) /
+                        LevelAdapter.instance
+                            .getNextLevel(LevelAdapter.instance
+                                .getUserLevel(AuthAdapter.instance.user!))
+                            .pointsRequired,
+                  ),
                 ),
               ),
               const SizedBox(width: 250, height: 250),
@@ -48,14 +51,23 @@ class HomeLevelDisplay extends StatelessWidget {
                   color: maskColor,
                 ),
               ),
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: LevelImage(level: level),
+              ListenableBuilder(
+                listenable: AuthAdapter.instance,
+                builder: (_, __) => SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: LevelImage(
+                      level: LevelAdapter.instance
+                          .getUserLevel(AuthAdapter.instance.user!)),
+                ),
               ),
             ],
           ),
-          Text("${user.points} / ${nextLevel.pointsRequired}"),
+          ListenableBuilder(
+            listenable: AuthAdapter.instance,
+            builder: (_, __) => Text(
+                "${AuthAdapter.instance.user!.points} / ${LevelAdapter.instance.getNextLevel(LevelAdapter.instance.getUserLevel(AuthAdapter.instance.user!)).pointsRequired}"),
+          ),
           ListenableBuilder(
             listenable: LanguageManager.instance,
             builder: (_, __) => Text(
