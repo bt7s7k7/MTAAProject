@@ -9,7 +9,6 @@ import 'package:mtaa_project/recording/map_view.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class RecordingSetupPage extends StatefulWidget {
   const RecordingSetupPage({super.key});
@@ -54,7 +53,7 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
         Widget success = const SizedBox(height: 0)}) {
       return ListenableBuilder(
         listenable: PermissionService.instance,
-        builder: (_, __) => switch (handle.status.isGranted) {
+        builder: (_, __) => switch (handle.isGranted) {
           true => success,
           false => Card(
               child: ListenableBuilder(

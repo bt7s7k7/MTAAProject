@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/services/firebase_service.dart'; // Import FirebaseService
 import 'package:mtaa_project/services/notification_service.dart';
 import 'package:mtaa_project/services/pedometer_service.dart';
 import 'package:mtaa_project/services/permission_service.dart';
@@ -10,7 +11,6 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/level_adapter.dart';
-import 'package:mtaa_project/services/firebase_service.dart'; // Import FirebaseService
 
 class ServiceLoader extends StatefulWidget {
   const ServiceLoader({super.key, required this.child});
@@ -31,12 +31,11 @@ class _ServiceLoaderState extends State<ServiceLoader> {
   }
 
   Future<void> loadServices() async {
-    // First, initialize Firebase
-    await FirebaseService().initializeFirebase();
-
     // Then load other services
     AuthAdapter.instance.addListener(_onAuthChanged);
 
+    debugMessage("[Loader] FirebaseService");
+    await FirebaseService.instance.load();
     debugMessage("[Loader] Settings");
     await Settings.instance.ready();
     debugMessage("[Loader] LanguageManager");

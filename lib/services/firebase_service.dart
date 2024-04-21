@@ -1,34 +1,17 @@
 // firebase_service.dart
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/constants.dart';
 
 class FirebaseService {
-  static final FirebaseService _instance = FirebaseService._internal();
-  late FirebaseApp app;
-  late FirebaseAnalytics analytics;
-  bool _initialized =
-      false; // Add this line to track if Firebase is initialized
+  FirebaseService._();
+  static final instance = FirebaseService._();
 
-  factory FirebaseService() {
-    return _instance;
-  }
-
-  FirebaseService._internal();
-
-  Future<void> initializeFirebase() async {
-    if (!_initialized) {
-      // Check to prevent re-initialization
-      _initialized =
-          true; // Set this to true first to prevent multiple initializations
-      app = await Firebase.initializeApp(
-        options: firebaseOptions,
-      );
-      analytics = FirebaseAnalytics.instance;
-    }
-  }
-
-  static FirebaseAnalytics getAnalytics() {
-    return _instance.analytics;
+  Future<void> load() async {
+    debugMessage("[Firebase] Initializing app...");
+    await Firebase.initializeApp(
+      options: firebaseOptions,
+    );
+    debugMessage("[Firebase] Firebase app loaded");
   }
 }

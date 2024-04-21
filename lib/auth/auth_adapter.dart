@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/app/debug_page.dart';
@@ -59,6 +60,10 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     var data = processHTTPResponse(response);
     var user = User.fromJson(data);
 
+    FirebaseAnalytics.instance.setUserId(id: user.id.toString());
+    FirebaseAnalytics.instance
+        .setUserProperty(name: "email", value: user.email);
+
     _user = user;
     _token = token;
     notifyListenersAsync();
@@ -78,6 +83,11 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
     var data = processHTTPResponse(response);
     var (token, user) = _parseAuthJson(data);
+
+    FirebaseAnalytics.instance.setUserId(id: user.id.toString());
+    FirebaseAnalytics.instance
+        .setUserProperty(name: "email", value: user.email);
+    FirebaseAnalytics.instance.logSignUp(signUpMethod: "normal");
 
     _user = user;
     _token = token;
@@ -99,6 +109,11 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     var data = processHTTPResponse(response);
     var (token, user) = _parseAuthJson(data);
 
+    FirebaseAnalytics.instance.setUserId(id: user.id.toString());
+    FirebaseAnalytics.instance
+        .setUserProperty(name: "email", value: user.email);
+    FirebaseAnalytics.instance.logLogin(loginMethod: "normal");
+
     _user = user;
     _token = token;
     await Settings.instance.authToken.setValue(token);
@@ -108,6 +123,8 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   }
 
   Future<void> logOut() async {
+    FirebaseAnalytics.instance.setUserId(id: null);
+
     _user = null;
     _token = null;
     await Settings.instance.authToken.setValue(null);

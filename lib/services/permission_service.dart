@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -7,11 +7,16 @@ class PermissionHandle {
 
   final String name;
   final Permission permission;
-  late PermissionStatus status;
+  late PermissionStatus? status;
 
-  bool get isGranted => status.isGranted;
+  bool get isGranted => status?.isGranted ?? false;
 
   Future<void> load() async {
+    if (kIsWeb) {
+      status = null;
+      return;
+    }
+
     status = await permission.status;
   }
 
@@ -39,6 +44,6 @@ class PermissionService with ChangeNotifier, ChangeNotifierAsync {
   }
 
   String getStateString() {
-    return permissions.map((v) => "${v.name}: ${v.status.name}").join((", "));
+    return permissions.map((v) => "${v.name}: ${v.isGranted}").join((", "));
   }
 }

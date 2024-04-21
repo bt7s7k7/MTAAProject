@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
@@ -51,6 +52,13 @@ class DebugPage extends StatefulWidget {
 }
 
 class _DebugPageState extends State<DebugPage> {
+  void _dummyAnalyticsLog() {
+    FirebaseAnalytics.instance.logEvent(
+      name: "debug_event",
+      parameters: {"user_id": AuthAdapter.instance.user!.id},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -77,6 +85,14 @@ class _DebugPageState extends State<DebugPage> {
             listenable: PedometerService.instance,
             builder: (_, __) => Text(
                 "Steps: ${PedometerService.instance.steps} (${PedometerService.instance.status})"),
+          ),
+          Wrap(
+            children: [
+              FilledButton(
+                onPressed: _dummyAnalyticsLog,
+                child: const Text("Analytics Log"),
+              ),
+            ],
           ),
           const Divider(height: 1, thickness: 1),
           ListenableBuilder(

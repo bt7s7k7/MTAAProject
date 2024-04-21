@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:pedometer/pedometer.dart';
@@ -17,6 +17,7 @@ class PedometerService with ChangeNotifier, ChangeNotifierAsync {
   late Stream<StepCount> _stepCountStream;
 
   Future<void> load() async {
+    if (kIsWeb) return;
     _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
     _pedestrianStatusStream.listen((event) {
       _status = event.status;

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
@@ -5,8 +8,6 @@ import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
-import 'package:mtaa_project/services/firebase_service.dart';
-import 'dart:convert';
 
 enum SendInviteResult { accepted, sent }
 
@@ -86,7 +87,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     };
 
     // Log the 'send_invite' event to Firebase Analytics
-    FirebaseService.getAnalytics().logEvent(
+    FirebaseAnalytics.instance.logEvent(
       name: 'send_invite',
       parameters: {
         'receiver_id': receiver
@@ -109,7 +110,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     processHTTPResponse(response);
 
     // Log the 'respond_invite' event to Firebase Analytics
-    FirebaseService.getAnalytics().logEvent(
+    FirebaseAnalytics.instance.logEvent(
       name: 'respond_invite',
       parameters: {
         'sender_id': sender

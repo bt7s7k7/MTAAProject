@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Present in all applications -->
+    <string name="google_app_id" translatable="false">$appId</string>
+
+    <!-- Present in applications with the appropriate services configured -->
+    <string name="gcm_defaultSenderId" translatable="false">$messagingSenderId</string>
+    <string name="google_api_key" translatable="false">$apiKey</string>
+    <string name="project_id" translatable="false">$projectId</string>
+
+</resources>
