@@ -91,6 +91,9 @@ class _LanguageSK extends LanguageProfile {
   String ofSteps() => "krokov";
 
   @override
+  String maxLevel() => "Dosiahli ste maximálneho levelu";
+
+  @override
   String darkTheme() => "Tmavá téma";
 
   @override
@@ -115,4 +118,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String grantPermission() => "Udeliť";
+
+  @override
+  String beginRecording() => "Začať";
 }
