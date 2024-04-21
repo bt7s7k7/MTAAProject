@@ -5,6 +5,10 @@ import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:mtaa_project/services/firebase_service.dart';
+import 'dart:convert';
+
 
 enum SendInviteResult { accepted, sent }
 
@@ -69,16 +73,30 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     var auth = AuthAdapter.instance;
     var response = await post(
       backendURL.resolve("/friend/invite"),
-      body: <String, dynamic>{"id": receiver.id.toString()},
-      headers: auth.getAuthorizationHeaders(),
+      body: jsonEncode(<String, dynamic>{"id": receiver.id.toString()}),
+      headers: {
+        ...auth.getAuthorizationHeaders(),
+        "content-type": "application/json",
+      },
     );
 
     var data = processHTTPResponse(response);
-    return switch (data) {
+    var result = switch (data) {
       {"result": "accepted"} => SendInviteResult.accepted,
       {"result": "sent"} => SendInviteResult.sent,
       _ => throw const APIError("Invalid response for send invite")
     };
+
+    // Log the 'send_invite' event to Firebase Analytics
+    FirebaseService.getAnalytics().logEvent(
+      name: 'send_invite',
+      parameters: {
+        'receiver_id': receiver.id, // Consider anonymizing this if it's personally identifiable information.
+        'result': result.toString(), // Log the result of the invite.
+      },
+    );
+
+    return result;
   }
 
   Future<void> respondInvite(User sender, InviteResponse inviteResponse) async {
@@ -90,6 +108,15 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     processHTTPResponse(response);
+
+    // Log the 'respond_invite' event to Firebase Analytics
+    FirebaseService.getAnalytics().logEvent(
+      name: 'respond_invite',
+      parameters: {
+        'sender_id': sender.id, // Consider anonymizing this if it's personally identifiable information.
+        'response': inviteResponse.name, // Log the response to the invite.
+      },
+    );
   }
 
   Future<void> removeFriend(User friend) async {

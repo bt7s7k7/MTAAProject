@@ -7,6 +7,9 @@ import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:mtaa_project/services/firebase_service.dart'; 
+
 
 class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
   ActivityAdapter._();
@@ -63,19 +66,36 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activity;
   }
 
-  Future<void> uploadActivity(Activity activity) async {
-    var auth = AuthAdapter.instance;
-    var response = await post(
-      backendURL.resolve("/activity"),
-      headers: {
-        ...auth.getAuthorizationHeaders(),
-        "content-type": "application/json",
-      },
-      body: jsonEncode(activity.toJson()),
-    );
+  
+Future<void> uploadActivity(Activity activity) async {
+  var auth = AuthAdapter.instance;
+  var response = await post(
+    backendURL.resolve("/activity"),
+    headers: {
+      ...auth.getAuthorizationHeaders(),
+      "content-type": "application/json",
+    },
+    body: jsonEncode(activity.toJson()),
+  );
 
-    processHTTPResponse(response);
-  }
+  processHTTPResponse(response);
+
+  // Log the 'create_activity' event to Firebase Analytics
+  FirebaseService.getAnalytics().logEvent(
+    name: 'create_activity',
+    parameters: {
+      'activity_id': activity.id,
+      'activity_name': activity.activityName,
+      'user_id': activity.user.id, 
+      'points': activity.points,
+      'steps': activity.steps,
+      'distance': activity.distance,
+      'duration': activity.duration,
+      'created_at': activity.createdAt.millisecondsSinceEpoch, 
+      'likes_count': activity.likesCount,
+    },
+  );
+}
 
   Future<void> deleteActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
@@ -87,6 +107,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     processHTTPResponse(response);
   }
 
+
   Future<void> likeActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
     var response = await post(
@@ -95,6 +116,14 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     processHTTPResponse(response);
+
+    FirebaseService.getAnalytics().logEvent(
+      name: 'like_activity',
+      parameters: {
+        'activity_id': activity.id,
+        'user_id': auth.user?.id, 
+      },
+    );
   }
 
   Future<void> unlikeActivity(Activity activity) async {
@@ -105,5 +134,16 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
 
     processHTTPResponse(response);
+
+    FirebaseService.getAnalytics().logEvent(
+      name: 'unlike_activity',
+      parameters: {
+        'activity_id': activity.id,
+        'user_id': auth.user?.id, 
+      },
+    );
   }
+
+
+    
 }
