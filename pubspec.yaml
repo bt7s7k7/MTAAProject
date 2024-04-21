@@ -42,13 +42,10 @@ dependencies:
   firebase_messaging: ^14.8.2
   firebase_core: ^2.30.0
   flutter_osm_plugin: 0.70.4
-<<<<<<< HEAD
   firebase_analytics: ^10.10.2
-=======
   pedometer: ^4.0.1
   permission_handler: ^11.3.1
->>>>>>> ee4fc5e6c50ea2e12665959c5a769f10211c2eb7
-
+  geolocator: ^11.0.0
 
 dev_dependencies:
   flutter_test:

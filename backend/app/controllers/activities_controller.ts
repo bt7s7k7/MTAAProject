@@ -7,9 +7,6 @@ import { ActivityRepository } from '../repositories/activity_repository.js'
 import { LikesRepository } from '../repositories/like_repository.js'
 import { UserRepository } from '../repositories/user_repository.js'
 
-
-
-
 @inject()
 export default class ActivityController {
   constructor(
@@ -85,25 +82,7 @@ export default class ActivityController {
     const activityData = await activityValidator.validate(request.all())
     const activity = await this.activityRepository.storeActivity(user, activityData)
 
-<<<<<<< HEAD
-    // Example: Award 10 points for every new activity
-    await this.userRepository.addPoints(user, 10)
-
-    // Check for level up
-    const leveledUp = await this.userRepository.checkAndUpdateLevel(user)
-
-    
-
-
-    // Include level up information in the response
-    return {
-      ...activity.serialize(),
-      points: user.points,
-      leveledUp,
-    }
-=======
     return activity.serialize()
->>>>>>> ee4fc5e6c50ea2e12665959c5a769f10211c2eb7
   }
 
   async like({ auth, params }: HttpContext) {

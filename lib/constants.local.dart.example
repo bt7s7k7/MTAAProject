@@ -7,4 +7,7 @@ const _firebaseOptions = FirebaseOptions(
   appId: "$appId",
   messagingSenderId: "$messagingSenderId",
   projectId: "$projectId",
+  storageBucket: "$storageBucket",
+  measurementId: "$measurementId",
+  authDomain: "$authDomain",
 );

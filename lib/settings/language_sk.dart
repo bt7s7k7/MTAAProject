@@ -117,6 +117,19 @@ class _LanguageSK extends LanguageProfile {
       "Prosím udeľte povolenie na počítanie krokov";
 
   @override
+  String locationPermission() => "Poloha";
+
+  @override
+  String locationPermissionRequired() =>
+      "Prosím udeľte povolenie na stanovenie polohy";
+
+  @override
+  String currentLocation() => "Poloha";
+
+  @override
+  String locationSearching() => "Hľadám...";
+
+  @override
   String grantPermission() => "Udeliť";
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
@@ -10,14 +11,16 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class RecordingPage extends StatefulWidget {
-  const RecordingPage({super.key});
+class RecordingSetupPage extends StatefulWidget {
+  const RecordingSetupPage({super.key});
 
   @override
-  State<RecordingPage> createState() => _RecordingPageState();
+  State<RecordingSetupPage> createState() => _RecordingSetupPageState();
 }
 
-class _RecordingPageState extends State<RecordingPage> {
+class _RecordingSetupPageState extends State<RecordingSetupPage> {
+  GeoPoint? location;
+
   void _createActivity() async {
     var random = Random();
     await ActivityAdapter.instance.uploadActivity(
@@ -35,17 +38,24 @@ class _RecordingPageState extends State<RecordingPage> {
     popupResult(context, "Activity created");
   }
 
+  void _updateLocation(GeoPoint newLocation) async {
+    setState(() {
+      location = newLocation;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget permissionRequest(
         {required PermissionHandle handle,
         required String Function() name,
         required String Function() subtitle,
-        required IconData icon}) {
+        required IconData icon,
+        Widget success = const SizedBox(height: 0)}) {
       return ListenableBuilder(
         listenable: PermissionService.instance,
         builder: (_, __) => switch (handle.status.isGranted) {
-          true => const SizedBox(height: 0),
+          true => success,
           false => Card(
               child: ListenableBuilder(
                 listenable: LanguageManager.instance,
@@ -75,7 +85,11 @@ class _RecordingPageState extends State<RecordingPage> {
             focusedButton: 1,
           ),
         ),
-        const Expanded(child: MapView()),
+        Expanded(
+          child: MapView(
+            onLocationUpdate: _updateLocation,
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -89,6 +103,15 @@ class _RecordingPageState extends State<RecordingPage> {
                     .stepCountingPermissionRequired(),
                 icon: Icons.directions_walk,
               ),
+              permissionRequest(
+                  handle: PermissionService.instance.location,
+                  name: () =>
+                      LanguageManager.instance.language.locationPermission(),
+                  subtitle: () => LanguageManager.instance.language
+                      .locationPermissionRequired(),
+                  icon: Icons.location_on,
+                  success: Text(
+                      "${LanguageManager.instance.language.currentLocation()}: ${location == null ? LanguageManager.instance.language.locationSearching() : "(${location!.latitude.toStringAsFixed(4)}, ${location!.longitude.toStringAsFixed(4)})"}")),
               ListenableBuilder(
                 listenable: LanguageManager.instance,
                 builder: (_, __) => FilledButton(

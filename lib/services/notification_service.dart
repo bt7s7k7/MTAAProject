@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/app/debug_page.dart';
@@ -51,8 +50,6 @@ class NotificationService {
   }
 
   Future<String?> load() async {
-    await Firebase.initializeApp(options: firebaseOptions);
-
     FirebaseMessaging.onMessage.listen((event) {
       debugMessage(
           "[Push] Foreground notification, {title: ${event.notification?.title}, body: ${event.notification?.body}}");

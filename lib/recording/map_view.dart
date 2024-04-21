@@ -1,9 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mtaa_project/app/debug_page.dart';
+import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+final _defaultLocation = GeoPoint(latitude: 0, longitude: 0);
+
 class MapView extends StatefulWidget {
-  const MapView({super.key});
+  const MapView({super.key, this.onLocationUpdate});
+
+  final void Function(GeoPoint location)? onLocationUpdate;
 
   @override
   State<MapView> createState() => _MapViewState();
@@ -12,19 +21,81 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   bool _ready = false;
 
+  late bool _locationEnabled;
   late MapController _mapController;
+
+  StreamSubscription<Position>? _positionSubscription;
+
+  void _handleLocationChange(GeoPoint position) {
+    _mapController.changeLocation(position);
+    if (widget.onLocationUpdate != null) widget.onLocationUpdate!(position);
+  }
+
+  Future<void> _handleLocationPermissionChanged() async {
+    if (!_locationEnabled) {
+      debugMessage("[Map] Disabled tracking");
+      return;
+    }
+
+    debugMessage("[Map] Enabled tracking");
+
+    var serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      debugMessage("[Map] Location service not enabled");
+      return;
+    }
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      debugMessage("[Map] Location permission reports denied");
+      return;
+    }
+
+    if (_positionSubscription != null) {
+      _positionSubscription!.cancel();
+      _positionSubscription = null;
+    }
+
+    _positionSubscription =
+        Geolocator.getPositionStream().listen((currentLocation) {
+      _handleLocationChange(GeoPoint(
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+      ));
+    });
+
+    var currentLocation = await Geolocator.getCurrentPosition();
+    _handleLocationChange(GeoPoint(
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+    ));
+    _mapController.setZoom(zoomLevel: 19);
+  }
+
+  void _onPermissionChanged() {
+    var newLocationEnabled = PermissionService.instance.location.isGranted;
+    if (newLocationEnabled == _locationEnabled) return;
+    _handleLocationPermissionChanged();
+  }
 
   @override
   void initState() {
     super.initState();
+
+    _locationEnabled = PermissionService.instance.location.isGranted;
+    PermissionService.instance.addListener(_onPermissionChanged);
+
     _mapController = MapController(
-      initPosition:
-          GeoPoint(latitude: 48.11977120843681, longitude: 17.118147610953137),
+      initPosition: _defaultLocation,
     );
+    _handleLocationPermissionChanged();
   }
 
   @override
   void dispose() {
+    PermissionService.instance.removeListener(_onPermissionChanged);
+    _positionSubscription?.cancel();
     _mapController.dispose();
     super.dispose();
   }
