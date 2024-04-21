@@ -11,14 +11,14 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class RecordingPage extends StatefulWidget {
-  const RecordingPage({super.key});
+class RecordingSetupPage extends StatefulWidget {
+  const RecordingSetupPage({super.key});
 
   @override
-  State<RecordingPage> createState() => _RecordingPageState();
+  State<RecordingSetupPage> createState() => _RecordingSetupPageState();
 }
 
-class _RecordingPageState extends State<RecordingPage> {
+class _RecordingSetupPageState extends State<RecordingSetupPage> {
   GeoPoint? location;
 
   void _createActivity() async {

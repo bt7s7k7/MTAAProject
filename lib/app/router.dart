@@ -7,7 +7,7 @@ import 'package:mtaa_project/friends/friend_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/home/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
-import 'package:mtaa_project/recording/recording_page.dart';
+import 'package:mtaa_project/recording/recording_setup_page.dart';
 import 'package:mtaa_project/user/profile_page.dart';
 import 'package:mtaa_project/user/user.dart';
 
@@ -50,7 +50,7 @@ final router = GoRouter(
         GoRoute(
           path: "/recording",
           name: "Recording",
-          builder: (context, state) => const RecordingPage(),
+          builder: (context, state) => const RecordingSetupPage(),
         ),
         GoRoute(
           path: "/friends",
