@@ -44,5 +44,9 @@ abstract class LanguageProfile {
   String beginRecording();
   String stepCountingPermission();
   String stepCountingPermissionRequired();
+  String locationPermission();
+  String locationPermissionRequired();
+  String currentLocation();
+  String locationSearching();
   String grantPermission();
 }

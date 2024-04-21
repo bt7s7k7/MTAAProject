@@ -118,8 +118,21 @@ class _LanguageEN extends LanguageProfile {
       "Please grant step counting permission to continue";
 
   @override
+  String locationPermission() => "Location";
+
+  @override
+  String locationPermissionRequired() =>
+      "Please grant location permission to continue";
+
+  @override
   String grantPermission() => "Grant";
 
   @override
   String beginRecording() => "Begin";
+
+  @override
+  String currentLocation() => "Location";
+
+  @override
+  String locationSearching() => "Searching...";
 }

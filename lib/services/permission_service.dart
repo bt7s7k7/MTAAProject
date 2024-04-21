@@ -9,6 +9,8 @@ class PermissionHandle {
   final Permission permission;
   late PermissionStatus status;
 
+  bool get isGranted => status.isGranted;
+
   Future<void> load() async {
     status = await permission.status;
   }
@@ -25,10 +27,11 @@ class PermissionService with ChangeNotifier, ChangeNotifierAsync {
 
   final activityRecognition =
       PermissionHandle._("activityRecognition", Permission.activityRecognition);
+  final location = PermissionHandle._("location", Permission.locationWhenInUse);
   late final List<PermissionHandle> permissions;
 
   Future<void> load() async {
-    permissions = [activityRecognition];
+    permissions = [activityRecognition, location];
 
     for (final handle in permissions) {
       await handle.load();
