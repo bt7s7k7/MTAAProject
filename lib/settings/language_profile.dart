@@ -5,6 +5,8 @@ abstract class LanguageProfile {
   abstract final String label;
   abstract final String locale;
   late final DateFormat dateFormat = DateFormat.yMd(locale);
+  late final DateFormat timeFormat =
+      DateFormat(DateFormat.HOUR24_MINUTE_SECOND, locale);
 
   String home();
   String recording();
@@ -48,5 +50,11 @@ abstract class LanguageProfile {
   String locationPermissionRequired();
   String currentLocation();
   String locationSearching();
+  String recordingInfo(
+      {required String steps,
+      required String meters,
+      required String duration});
+  String endRecording();
+  String pauseRecording();
   String grantPermission();
 }

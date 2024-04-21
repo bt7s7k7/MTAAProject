@@ -1,14 +1,18 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:mtaa_project/activity/activity.dart';
+import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/services/pedometer_service.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/support/support.dart';
 
-class _MessageList with ChangeNotifier {
+class _MessageList with ChangeNotifier, ChangeNotifierAsync {
   final value = <String>[];
 
   void addMessage(String message) {
@@ -18,7 +22,7 @@ class _MessageList with ChangeNotifier {
           lastMessage.length >= message.length) {
         if (lastMessage == message) {
           value.last = "$message (2)";
-          notifyListeners();
+          notifyListenersAsync();
           return;
         }
 
@@ -27,13 +31,13 @@ class _MessageList with ChangeNotifier {
         if (match != null) {
           var number = int.parse(match.group(1)!);
           value.last = "$message (${number + 1})";
-          notifyListeners();
+          notifyListenersAsync();
           return;
         }
       }
     }
     value.add(message);
-    notifyListeners();
+    notifyListenersAsync();
   }
 }
 
@@ -57,6 +61,23 @@ class _DebugPageState extends State<DebugPage> {
       name: "debug_event",
       parameters: {"user_id": AuthAdapter.instance.user!.id},
     );
+  }
+
+  void _dummyActivity() async {
+    var random = Random();
+    await ActivityAdapter.instance.uploadActivity(
+      Activity.fromRecording(
+        name: "New Activity",
+        steps: random.nextInt(1000) + 1000,
+        distance: random.nextInt(1000) + 10,
+        duration: random.nextInt(5000),
+        path: "",
+      ),
+    );
+
+    if (!mounted) return;
+
+    popupResult(context, "Activity created");
   }
 
   @override
@@ -91,6 +112,10 @@ class _DebugPageState extends State<DebugPage> {
               FilledButton(
                 onPressed: _dummyAnalyticsLog,
                 child: const Text("Analytics Log"),
+              ),
+              FilledButton(
+                onPressed: _dummyActivity,
+                child: const Text("Create Activity"),
               ),
             ],
           ),

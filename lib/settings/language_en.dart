@@ -135,4 +135,18 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String locationSearching() => "Searching...";
+
+  @override
+  String recordingInfo({
+    required String steps,
+    required String meters,
+    required String duration,
+  }) =>
+      "$steps steps • $meters meters • $duration";
+
+  @override
+  String endRecording() => "Finish";
+
+  @override
+  String pauseRecording() => "Pause";
 }

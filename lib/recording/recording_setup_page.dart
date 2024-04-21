@@ -1,14 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
-import 'package:mtaa_project/activity/activity.dart';
-import 'package:mtaa_project/activity/activity_adapter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/recording/map_view.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
-import 'package:mtaa_project/support/support.dart';
 
 class RecordingSetupPage extends StatefulWidget {
   const RecordingSetupPage({super.key});
@@ -20,21 +16,8 @@ class RecordingSetupPage extends StatefulWidget {
 class _RecordingSetupPageState extends State<RecordingSetupPage> {
   GeoPoint? location;
 
-  void _createActivity() async {
-    var random = Random();
-    await ActivityAdapter.instance.uploadActivity(
-      Activity.fromRecording(
-        name: "New Activity",
-        steps: random.nextInt(1000) + 1000,
-        distance: random.nextInt(1000) + 10,
-        duration: random.nextInt(5000),
-        path: "",
-      ),
-    );
-
-    if (!mounted) return;
-
-    popupResult(context, "Activity created");
+  void _beginActivity() {
+    GoRouter.of(context).goNamed("RecordingActive");
   }
 
   void _updateLocation(GeoPoint newLocation) async {
@@ -75,7 +58,6 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
     }
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ListenableBuilder(
           listenable: LanguageManager.instance,
@@ -86,6 +68,7 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
         ),
         Expanded(
           child: MapView(
+            key: mapGlobalKey,
             onLocationUpdate: _updateLocation,
           ),
         ),
@@ -113,10 +96,18 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
                       "${LanguageManager.instance.language.currentLocation()}: ${location == null ? LanguageManager.instance.language.locationSearching() : "(${location!.latitude.toStringAsFixed(4)}, ${location!.longitude.toStringAsFixed(4)})"}")),
               ListenableBuilder(
                 listenable: LanguageManager.instance,
-                builder: (_, __) => FilledButton(
-                  onPressed: _createActivity,
-                  child:
-                      Text(LanguageManager.instance.language.beginRecording()),
+                builder: (_, __) => ListenableBuilder(
+                  listenable: PermissionService.instance,
+                  builder: (_, __) => FilledButton(
+                    onPressed: switch (PermissionService
+                            .instance.activityRecognition.isGranted &&
+                        PermissionService.instance.location.isGranted) {
+                      true => _beginActivity,
+                      false => null
+                    },
+                    child: Text(
+                        LanguageManager.instance.language.beginRecording()),
+                  ),
                 ),
               )
             ],

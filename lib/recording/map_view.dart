@@ -4,15 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mtaa_project/app/debug_page.dart';
+import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
 final _defaultLocation = GeoPoint(latitude: 0, longitude: 0);
+final mapGlobalKey = GlobalKey(debugLabel: "map-view");
 
 class MapView extends StatefulWidget {
-  const MapView({super.key, this.onLocationUpdate});
+  const MapView({super.key, this.onLocationUpdate, this.tracker});
 
   final void Function(GeoPoint location)? onLocationUpdate;
+  final ActivityTracker? tracker;
 
   @override
   State<MapView> createState() => _MapViewState();
@@ -25,6 +28,7 @@ class _MapViewState extends State<MapView> {
   late MapController _mapController;
 
   StreamSubscription<Position>? _positionSubscription;
+  ActivityTracker? _tracker;
 
   void _handleLocationChange(GeoPoint position) {
     _mapController.changeLocation(position);
@@ -33,11 +37,11 @@ class _MapViewState extends State<MapView> {
 
   Future<void> _handleLocationPermissionChanged() async {
     if (!_locationEnabled) {
-      debugMessage("[Map] Disabled tracking");
+      debugMessage("[Map] Disabled location");
       return;
     }
 
-    debugMessage("[Map] Enabled tracking");
+    debugMessage("[Map] Enabled location");
 
     var serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -79,6 +83,12 @@ class _MapViewState extends State<MapView> {
     _handleLocationPermissionChanged();
   }
 
+  Future<void> _handleTrackerUpdate() async {
+    await _mapController.clearAllRoads();
+    if (_tracker!.path.length < 2) return;
+    _mapController.drawRoadManually(_tracker!.path, const RoadOption.empty());
+  }
+
   @override
   void initState() {
     super.initState();
@@ -90,6 +100,26 @@ class _MapViewState extends State<MapView> {
       initPosition: _defaultLocation,
     );
     _handleLocationPermissionChanged();
+
+    if (widget.tracker != null) {
+      widget.tracker!.addListener(_handleTrackerUpdate);
+      _tracker = widget.tracker;
+    }
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_tracker != null) {
+      _tracker!.removeListener(_handleTrackerUpdate);
+      _tracker = null;
+    }
+
+    if (widget.tracker != null) {
+      debugMessage("[Map] Tracker bound in map");
+      widget.tracker!.addListener(_handleTrackerUpdate);
+      _tracker = widget.tracker;
+    }
   }
 
   @override
@@ -97,6 +127,8 @@ class _MapViewState extends State<MapView> {
     PermissionService.instance.removeListener(_onPermissionChanged);
     _positionSubscription?.cancel();
     _mapController.dispose();
+    _tracker?.removeListener(_handleTrackerUpdate);
+
     super.dispose();
   }
 

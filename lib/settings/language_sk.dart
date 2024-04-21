@@ -130,7 +130,21 @@ class _LanguageSK extends LanguageProfile {
   String locationSearching() => "Hľadám...";
 
   @override
+  String recordingInfo({
+    required String steps,
+    required String meters,
+    required String duration,
+  }) =>
+      "$steps krokov • $meters metrov • $duration";
+
+  @override
   String grantPermission() => "Udeliť";
+
+  @override
+  String endRecording() => "Ukončiť";
+
+  @override
+  String pauseRecording() => "Pauza";
 
   @override
   String beginRecording() => "Začať";
