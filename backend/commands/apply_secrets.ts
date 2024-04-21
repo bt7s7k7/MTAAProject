@@ -1,6 +1,6 @@
 import { BaseCommand } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile, rename, writeFile } from 'node:fs/promises'
 
 export default class MakeSecrets extends BaseCommand {
   static commandName = 'apply:secrets'
@@ -9,7 +9,7 @@ export default class MakeSecrets extends BaseCommand {
   static options: CommandOptions = {}
 
   async run() {
-    const files = ['.env', '../lib/constants.local.dart', '../web/config.js']
+    const files = ['.env', '../lib/constants.local.dart', '../web/config.js', '../strings.xml']
     let secrets: Record<string, string>
     try {
       const secretsData = await readFile('./secrets.json').then((v) => v.toString())
@@ -60,5 +60,7 @@ export default class MakeSecrets extends BaseCommand {
         await writeFile(name, output)
       })
     )
+
+    await rename('../strings.xml', '../android/app/src/main/res/values/strings.xml')
   }
 }

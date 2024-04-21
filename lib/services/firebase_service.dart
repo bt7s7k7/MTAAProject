@@ -16,14 +16,17 @@ class FirebaseService {
     );
     debugMessage("[Firebase] Firebase app loaded");
 
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
     if (kReleaseMode) {
-      Function originalOnError = FlutterError.onError ?? (FlutterErrorDetails details) {};
+      Function originalOnError =
+          FlutterError.onError ?? (FlutterErrorDetails details) {};
       FlutterError.onError = (FlutterErrorDetails details) async {
         originalOnError(details);
         await FirebaseCrashlytics.instance.recordFlutterError(details);
       };
     }
-    
+
     debugMessage("[Firebase] Crashlytics initialized");
   }
 }

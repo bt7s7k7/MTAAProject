@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
@@ -10,6 +11,7 @@ import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/services/pedometer_service.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
 class _MessageList with ChangeNotifier, ChangeNotifierAsync {
@@ -80,6 +82,16 @@ class _DebugPageState extends State<DebugPage> {
     popupResult(context, "Activity created");
   }
 
+  void _dummyCrashReport() async {
+    FirebaseCrashlytics.instance.recordFlutterError(
+      FlutterErrorDetails(
+        exception: const APIError(
+            "There are things that happened (debug screen error)"),
+        stack: StackTrace.current,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -116,6 +128,10 @@ class _DebugPageState extends State<DebugPage> {
               FilledButton(
                 onPressed: _dummyActivity,
                 child: const Text("Create Activity"),
+              ),
+              FilledButton(
+                onPressed: _dummyCrashReport,
+                child: const Text("Crash Report"),
               ),
             ],
           ),
