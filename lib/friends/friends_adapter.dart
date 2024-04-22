@@ -9,22 +9,18 @@ import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Result of sending an invite returned by the backend
 enum SendInviteResult { accepted, sent }
 
+/// Response to an invite to send to the backend
 enum InviteResponse { accept, deny }
 
-@immutable
-class FriendState {
-  const FriendState({required this.friends, required this.invites});
-
-  final List<User> friends;
-  final List<User> invites;
-}
-
+///Allows for communicating with the friends controller on the backend
 class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
   FriendsAdapter._();
   static final instance = FriendsAdapter._();
 
+  /// Searches for users based on query string
   Future<List<User>> searchUsers(String query) async {
     var auth = AuthAdapter.instance;
     var url = backendURL.resolveUri(Uri(
@@ -45,6 +41,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     return users;
   }
 
+  /// Gets friends and invites
   Future<(List<User>, List<User>)> getFriendState() async {
     var auth = AuthAdapter.instance;
     var response = await get(
@@ -68,6 +65,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     return (users, invites);
   }
 
+  /// Sends an invite to a user
   Future<SendInviteResult> sendInvite(User receiver) async {
     var auth = AuthAdapter.instance;
     var response = await post(
@@ -99,6 +97,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     return result;
   }
 
+  /// Responds to an invite
   Future<void> respondInvite(User sender, InviteResponse inviteResponse) async {
     var auth = AuthAdapter.instance;
     var id = sender.id;
@@ -120,6 +119,7 @@ class FriendsAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
   }
 
+  /// Removes a friendship with the specified user
   Future<void> removeFriend(User friend) async {
     var auth = AuthAdapter.instance;
     var id = friend.id;

@@ -3,9 +3,11 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/recording/map_view.dart';
+import 'package:mtaa_project/recording/recording_page.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// Sets up permissions and allows the user to start recording an activity
 class RecordingSetupPage extends StatefulWidget {
   const RecordingSetupPage({super.key});
 
@@ -14,12 +16,15 @@ class RecordingSetupPage extends StatefulWidget {
 }
 
 class _RecordingSetupPageState extends State<RecordingSetupPage> {
+  /// Current location found by the map
   GeoPoint? location;
 
+  /// Start activity recording by redirecting to the [RecordingPage]
   void _beginActivity() {
     GoRouter.of(context).goNamed("RecordingActive");
   }
 
+  /// Handles a new location found by the map
   void _updateLocation(GeoPoint newLocation) async {
     setState(() {
       location = newLocation;

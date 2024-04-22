@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart'; // Required for kReleaseMode
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/constants.dart';
 
+/// Initializes firebase services
 class FirebaseService {
   FirebaseService._();
   static final instance = FirebaseService._();
@@ -15,21 +16,21 @@ class FirebaseService {
       options: firebaseOptions,
     );
     debugMessage("[Firebase] Firebase app loaded");
-    if(!kIsWeb) {
+    if (!kIsWeb) {
       await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-    if (kIsWeb) return;
+      if (kIsWeb) return;
 
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-    if (kReleaseMode) {
-      Function originalOnError =
-          FlutterError.onError ?? (FlutterErrorDetails details) {};
-      FlutterError.onError = (FlutterErrorDetails details) async {
-        originalOnError(details);
-        await FirebaseCrashlytics.instance.recordFlutterError(details);
-      };
-    }
+      if (kReleaseMode) {
+        Function originalOnError =
+            FlutterError.onError ?? (FlutterErrorDetails details) {};
+        FlutterError.onError = (FlutterErrorDetails details) async {
+          originalOnError(details);
+          await FirebaseCrashlytics.instance.recordFlutterError(details);
+        };
+      }
     }
   }
 }

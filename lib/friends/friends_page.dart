@@ -12,6 +12,7 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Displays a list of friends and friendship invitations
 class FriendsPage extends StatefulWidget {
   const FriendsPage({super.key});
 
@@ -20,11 +21,16 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+  /// All friends of the current user
   List<User> users = [];
+
+  /// All invites sent to the current user
   List<User> invites = [];
 
+  /// Subscription to [UpdateService] to get updates on users, disposed on dispose
   StreamSubscription<UpdateEvent>? _subscription;
 
+  /// Requests the current state from the backend
   void _refreshState() async {
     if (OfflineService.instance.isOffline) {
       setState(() {
@@ -41,6 +47,7 @@ class _FriendsPageState extends State<FriendsPage> {
     });
   }
 
+  /// Sends a response to an invite
   void _respondInvite(User sender, InviteResponse response) async {
     await FriendsAdapter.instance.respondInvite(sender, response);
     _refreshState();
@@ -112,7 +119,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
     var invitesList = UserList(
       users: invites,
-      actionBuilder: (user) => Wrap(
+      action: (user) => Wrap(
         spacing: 10.0,
         children: [
           IconButton.filled(

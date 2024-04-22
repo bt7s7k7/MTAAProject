@@ -1,5 +1,6 @@
 part of "locale_manager.dart";
 
+/// Slovak language data for localization
 class _LanguageSK extends LanguageProfile {
   @override
   String get code => "sk";
@@ -15,7 +16,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String changeProfilePicture() => "Zmeniť profilovú fotku";
-  
+
   @override
   String changePassword() => "Zmena hesla";
 

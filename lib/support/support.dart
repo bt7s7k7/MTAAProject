@@ -7,6 +7,7 @@ import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 
+/// Processes a HTTP response, throws errors or returns the response data as JSON
 Map<String, dynamic> processHTTPResponse(Response response) {
   var error = response.statusCode != 200;
 
@@ -38,6 +39,7 @@ Map<String, dynamic> processHTTPResponse(Response response) {
   }
 }
 
+/// Shows an alert based on an [UserException]
 void alertError(BuildContext context, String title, UserException exception) {
   showDialog<void>(
     context: context,
@@ -59,6 +61,7 @@ void alertError(BuildContext context, String title, UserException exception) {
   );
 }
 
+/// Shows a toast
 void popupResult(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(message),
@@ -66,6 +69,7 @@ void popupResult(BuildContext context, String message) {
   ));
 }
 
+/// Allows to deffer and merge listener notifications
 mixin ChangeNotifierAsync on ChangeNotifier {
   var _dirty = false;
 
@@ -84,6 +88,7 @@ mixin ChangeNotifierAsync on ChangeNotifier {
   }
 }
 
+/// Updates a list of entities based on a [UpdateEvent]
 void updateList<T>(
     {required UpdateEvent event,
     required List<T> list,

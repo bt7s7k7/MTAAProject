@@ -6,15 +6,22 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Field definition for [_AuthForm]
 class _AuthFormField {
   _AuthFormField(
       {required this.label, required this.onChanged, this.obscureText = false});
 
+  /// Title to display above this field
   final String label;
+
+  /// Callback after user has edited this value
   final void Function(String) onChanged;
+
+  /// Should the value of this field be unreadable like a password field
   final bool obscureText;
 }
 
+/// Template for building login and register pages
 class _AuthForm extends StatelessWidget {
   const _AuthForm({
     required this.title,
@@ -26,9 +33,16 @@ class _AuthForm extends StatelessWidget {
     required this.onAlternate,
   });
 
+  /// Title to display in app bar
   final String title;
+
+  /// List of fields to display
   final List<_AuthFormField> fields;
+
+  /// What label should the submit button have
   final String submitLabel;
+
+  /// Callback after submit button clicked
   final void Function() onSubmit;
   final String alternateText;
   final String alternateLabel;
@@ -84,6 +98,7 @@ class _AuthForm extends StatelessWidget {
   }
 }
 
+/// Page for the user to log in
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -148,6 +163,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
+/// Page for the user to register
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 

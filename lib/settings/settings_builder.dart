@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/settings/settings.dart';
 
+/// Rebuilds the callback after the specified [SettingProperty] changes
 class SettingsBuilder<T> extends StatefulWidget {
   const SettingsBuilder({
     super.key,
@@ -8,7 +9,10 @@ class SettingsBuilder<T> extends StatefulWidget {
     required this.property,
   });
 
+  /// Builder for content
   final Widget Function(T value) builder;
+
+  /// Property to be listened to
   final SettingProperty<T> property;
 
   @override
@@ -16,6 +20,7 @@ class SettingsBuilder<T> extends StatefulWidget {
 }
 
 class _SettingsBuilderState<T> extends State<SettingsBuilder<T>> {
+  /// Current value of the specified property
   late T value = widget.property.getValue();
 
   @override

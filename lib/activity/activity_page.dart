@@ -13,9 +13,11 @@ import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Displays an activity
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key, required this.activityId});
 
+  /// ID for the displayed activity
   final int activityId;
 
   @override
@@ -23,11 +25,16 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
+  /// Loaded activity data
   late Activity activity;
+
+  /// Has the activity data been loaded
   var ready = false;
 
+  /// Subscription to [UpdateService] to get updates on activity, disposed on dispose
   late StreamSubscription<UpdateEvent> updateSubscription;
 
+  /// Loads the activity using [ActivityAdapter] based on the specified ID
   void _loadActivity() async {
     var loadedActivity = await ActivityAdapter.instance
         .getActivity(widget.activityId.toString());
@@ -37,6 +44,7 @@ class _ActivityPageState extends State<ActivityPage> {
     });
   }
 
+  /// Deletes the activity after a confirmation dialog and redirects to home screen
   void _deleteActivity() async {
     if (OfflineService.instance.isOffline) {
       popupResult(

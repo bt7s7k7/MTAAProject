@@ -3,10 +3,12 @@ import 'dart:typed_data';
 
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Represents an activity
 class Activity with UpdateAware {
   Activity({
     required this.id,
@@ -34,6 +36,7 @@ class Activity with UpdateAware {
   final int likesCount;
   bool hasLiked;
 
+  /// Serializes the activity, only returns fields required by the backend
   Map<String, dynamic> toJsonForUpload() => {
         "userId": user.id,
         "activityName": activityName,
@@ -44,6 +47,7 @@ class Activity with UpdateAware {
         "path": path == null ? "" : encodePath(path!),
       };
 
+  /// Serializes the activity
   Map<String, dynamic> toJson() => {
         "id": id,
         "activityName": activityName,
@@ -58,6 +62,7 @@ class Activity with UpdateAware {
         "hasLiked": hasLiked,
       };
 
+  /// Deserializes the activity
   factory Activity.fromJson(Map<String, dynamic> json) {
     if (!json.containsKey("path")) json["path"] = null;
     return switch (json) {
@@ -91,6 +96,7 @@ class Activity with UpdateAware {
     };
   }
 
+  /// Creates a new activity using data from an [ActivityTracker]
   factory Activity.fromRecording({
     required String name,
     required int steps,
@@ -119,6 +125,7 @@ class Activity with UpdateAware {
     if (path != null) json["path"] = encodePath(path!);
   }
 
+  /// Encodes a list of [GeoPoint] to a base64 encoded string to be sent over the network
   static String encodePath(List<GeoPoint> path) {
     var pathNumbers = Float64List(path.length * 2);
     for (var i = 0; i < path.length; i++) {
@@ -130,6 +137,7 @@ class Activity with UpdateAware {
     return base64.encode(data);
   }
 
+  /// Decodes a list of [GeoPoint] from a base64 encoded string
   static List<GeoPoint> decodePath(String rawData) {
     try {
       var data = base64.decode(rawData);

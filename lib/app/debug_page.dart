@@ -14,6 +14,7 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// List of debug messages created created by [debugMessage]
 class _MessageList with ChangeNotifier, ChangeNotifierAsync {
   final value = <String>[];
 
@@ -45,11 +46,13 @@ class _MessageList with ChangeNotifier, ChangeNotifierAsync {
 
 final _messages = _MessageList();
 
+/// Creates a debug message and also prints it using [debugPrint]
 void debugMessage(String message) {
   debugPrint(message);
   _messages.addMessage(message);
 }
 
+/// Shows debug information and messages and contains development utility actions
 class DebugPage extends StatefulWidget {
   const DebugPage({super.key});
 
@@ -58,6 +61,7 @@ class DebugPage extends StatefulWidget {
 }
 
 class _DebugPageState extends State<DebugPage> {
+  /// Sends a fake firebase analytics event
   void _dummyAnalyticsLog() {
     FirebaseAnalytics.instance.logEvent(
       name: "debug_event",
@@ -65,6 +69,7 @@ class _DebugPageState extends State<DebugPage> {
     );
   }
 
+  /// Creates a randomly generated activity
   void _dummyActivity() async {
     var random = Random();
     await ActivityAdapter.instance.uploadActivity(
@@ -82,6 +87,7 @@ class _DebugPageState extends State<DebugPage> {
     popupResult(context, "Activity created");
   }
 
+  /// Sends a fake crash report
   void _dummyCrashReport() async {
     FirebaseCrashlytics.instance.recordFlutterError(
       FlutterErrorDetails(

@@ -4,6 +4,7 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/level_adapter.dart';
 import 'package:mtaa_project/user/level_image.dart';
 
+/// Shows the current level and points, with a circular progress indicator to reach the next level
 class HomeLevelDisplay extends StatelessWidget {
   const HomeLevelDisplay({super.key});
 

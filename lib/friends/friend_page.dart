@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
+import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/user.dart';
 import 'package:mtaa_project/user/user_header.dart';
 
+/// Page displaying the profile of a friended user
 class FriendPage extends StatelessWidget {
   const FriendPage({super.key, required this.user});
 
+  /// Removes the user from current user friends and redirects back to [FriendsPage]
   void _removeFriend() async {
     await FriendsAdapter.instance.removeFriend(user);
     router.goNamed("Friends");
   }
 
+  /// The user being displayed
   final User user;
 
   @override

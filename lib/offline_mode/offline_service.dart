@@ -5,6 +5,7 @@ import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Detects and notifies clients when the network state changes
 class OfflineService with ChangeNotifier, ChangeNotifierAsync {
   OfflineService._();
   static final instance = OfflineService._();
@@ -15,6 +16,7 @@ class OfflineService with ChangeNotifier, ChangeNotifierAsync {
 
   final List<void Function()> _onlineActions = [];
 
+  /// Sets the current online state
   void setOnlineState(bool online) {
     if (online == _isOnline) return;
     _isOnline = online;
@@ -30,13 +32,15 @@ class OfflineService with ChangeNotifier, ChangeNotifierAsync {
     notifyListenersAsync();
   }
 
+  /// Adds an action to be called when connectivity is established
   void addOnlineAction(void Function() callback) {
     _onlineActions.add(callback);
     if (_isOnline) {
       callback();
     }
-  }
+  } 
 
+  /// Performs a network request if online or calls the fallback callback if offline
   Future<Map<String, dynamic>> networkRequestWithFallback(
       {required Future<Response> Function() request,
       required Map<String, dynamic> Function() fallback,
@@ -55,6 +59,7 @@ class OfflineService with ChangeNotifier, ChangeNotifierAsync {
     }
   }
 
+  /// Determines if we are online or not
   Future<void> load() async {
     try {
       var response = await get(backendURL.resolve("/ping"));

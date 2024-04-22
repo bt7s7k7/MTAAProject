@@ -1,5 +1,6 @@
 part of "locale_manager.dart";
 
+/// English language data for localization
 class _LanguageEN extends LanguageProfile {
   @override
   String get code => "en";
@@ -81,7 +82,7 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String changeProfilePicture() => "Change Profile Picture";
-  
+
   @override
   String saveChanges() => "Save Changes";
 

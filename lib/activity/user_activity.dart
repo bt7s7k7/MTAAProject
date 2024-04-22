@@ -3,6 +3,7 @@ import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/activity/activity_list.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Displays all activities created by a user
 class UserActivity extends StatelessWidget {
   const UserActivity({super.key, required this.user});
 

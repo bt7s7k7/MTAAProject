@@ -12,6 +12,7 @@ import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Allows for communicating with the auth and user controller on the backend
 class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   AuthAdapter._();
   static final instance = AuthAdapter._();
@@ -21,6 +22,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
   String? get token => _token;
   String? _token;
 
+  /// Parses data returned by authentication endpoints
   (String, User) _parseAuthJson(Map<String, dynamic> json) {
     return switch (json) {
       {
@@ -32,11 +34,13 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     };
   }
 
+  /// Creates headers for authorizing requests
   Map<String, String> getAuthorizationHeaders() {
     if (_token == null) throw NotAuthenticatedException();
     return {"Authorization": "Bearer $_token"};
   }
 
+  /// Loads user information
   Future<User> load() async {
     UpdateService.instance.addListener((event) {
       if (_user == null) return;
@@ -87,6 +91,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     return user;
   }
 
+  /// Register a new user
   Future<User> register(String fullName, String email, String password) async {
     var response = await post(
       backendURL.resolve("/auth/register"),
@@ -114,6 +119,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     return user;
   }
 
+  /// Logins into an existing account
   Future<User> login(String email, String password) async {
     var response = await post(
       backendURL.resolve("/auth/login"),
@@ -140,6 +146,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     return user;
   }
 
+  /// Deletes all login information
   Future<void> logOut() async {
     FirebaseAnalytics.instance.setUserId(id: null);
 

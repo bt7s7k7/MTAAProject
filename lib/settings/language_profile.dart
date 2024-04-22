@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+/// Base for languages for localization
 abstract class LanguageProfile {
   abstract final String code;
   abstract final String label;
@@ -76,6 +77,4 @@ abstract class LanguageProfile {
   String changeProfilePicture();
   String changePassword();
   String saveChanges();
-  
-
 }

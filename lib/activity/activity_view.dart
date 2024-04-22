@@ -8,9 +8,11 @@ import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_icon.dart';
 
+/// Displays an activity in a list
 class ActivityView extends StatelessWidget {
   const ActivityView({super.key, required this.activity});
 
+  /// Adds or removes a like from the activity based on current [Activity.hasLiked]
   void _toggleLike(context) {
     var user = AuthAdapter.instance.user;
     var language = LanguageManager.instance.language;
@@ -33,6 +35,7 @@ class ActivityView extends StatelessWidget {
     }
   }
 
+  /// The activity to show
   final Activity activity;
 
   @override

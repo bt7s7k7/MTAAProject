@@ -12,6 +12,7 @@ import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user.dart';
 
+/// Page for the user to find friends based on their name
 class AddFriendsPage extends StatefulWidget {
   const AddFriendsPage({super.key});
 
@@ -20,11 +21,19 @@ class AddFriendsPage extends StatefulWidget {
 }
 
 class _AddFriendsPageState extends State<AddFriendsPage> {
+  /// Current search query
   String query = "";
+
+  /// Users found using the [query]
   List<User> users = [];
+
+  /// List of users that an invitation has been sent to hide the add button
   Set<User> interactedUsers = {};
+
+  /// Timer for debouncing the search
   Timer? _debounce;
 
+  /// Loads a list of users based on the [query]
   Future<void> _searchUsers() async {
     if (OfflineService.instance.isOffline) return;
 
@@ -41,6 +50,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     _searchUsers();
   }
 
+  /// Event handler for search field changed, performs debouncing before calling [_searchUsers]
   void _onSearchChanged(String value) {
     if (value == "×××dddd") {
       GoRouter.of(context).goNamed("Debug");
@@ -54,6 +64,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
     _searchUsers();
   }
 
+  /// Sends an invite to the specified user
   void _sendInvite(User user) async {
     if (OfflineService.instance.isOffline) return;
 
@@ -110,7 +121,7 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
           Expanded(
             child: UserList(
               users: users,
-              actionBuilder: (user) => switch (interactedUsers.contains(user)) {
+              action: (user) => switch (interactedUsers.contains(user)) {
                 true => const SizedBox.shrink(),
                 false => ListenableBuilder(
                     listenable: LanguageManager.instance,

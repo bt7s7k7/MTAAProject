@@ -5,12 +5,11 @@ import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/services/notification_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
-import 'package:mtaa_project/settings/theme_switcher.dart';
+import 'package:mtaa_project/settings/settings_builder.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_header.dart';
 import 'package:mtaa_project/user/user_settings.dart';
-
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -29,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
       MaterialPageRoute(builder: (context) => UserSettings()),
     );
   }
-
 
   Future<void> _setNotificationEnabled(bool enabled) async {
     if (Settings.instance.notificationsEnabled.getValue()) {
@@ -127,4 +125,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-

@@ -3,12 +3,14 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
+import 'package:mtaa_project/activity/activity_page.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/recording/map_view.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// Record an activity using a [ActivityTracker]
 class RecordingPage extends StatefulWidget {
   const RecordingPage({super.key});
 
@@ -25,10 +27,12 @@ class _RecordingPageState extends State<RecordingPage> {
     super.dispose();
   }
 
+  /// Handles a new location being found by the map
   void _updateLocation(GeoPoint location) {
     tracker.appendLocation(location);
   }
 
+  /// Pauses the [tracker] and displays an alert, that allows to unpause
   Future<void> _pause() async {
     tracker.paused = true;
     await showDialog<void>(
@@ -53,6 +57,7 @@ class _RecordingPageState extends State<RecordingPage> {
     tracker.paused = false;
   }
 
+  /// Finishes the current activity and redirects to its [ActivityPage]
   void _finish() async {
     List<GeoPoint>? path = tracker.path;
     if (path.isEmpty) {
