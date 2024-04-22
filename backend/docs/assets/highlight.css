@@ -9,7 +9,7 @@
     --dark-code-background: #1E1E1E;
 }
 
-@media (prefers-color-scheme: light) { :root {
+@media (prefers-color-scheme: light) { :root {  
     --hl-0: var(--light-hl-0);
     --hl-1: var(--light-hl-1);
     --hl-2: var(--light-hl-2);
