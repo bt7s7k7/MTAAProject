@@ -77,4 +77,5 @@ abstract class LanguageProfile {
   String changeProfilePicture();
   String changePassword();
   String saveChanges();
+  String changesSaved();
 }

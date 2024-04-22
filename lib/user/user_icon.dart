@@ -12,7 +12,10 @@ class UserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      child: Image.network(icon ?? defaultUserIcon, fit: BoxFit.cover),
+      child: Image.network(
+        icon == null ? defaultUserIcon : backendURL.resolve(icon!).toString(),
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

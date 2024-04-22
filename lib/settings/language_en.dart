@@ -210,4 +210,7 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String cancel() => "Cancel";
+
+  @override
+  String changesSaved() => "Changes saved";
 }

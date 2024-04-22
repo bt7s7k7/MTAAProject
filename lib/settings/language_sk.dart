@@ -208,4 +208,7 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String cancel() => "Späť";
+
+  @override
+  String changesSaved() => "Zmeny uložené";
 }

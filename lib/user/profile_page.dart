@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/services/notification_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/settings/settings.dart';
@@ -57,14 +58,24 @@ class _ProfilePageState extends State<ProfilePage> {
               title: LanguageManager.instance.language.profile(),
             ),
           ),
-          UserHeader(user: auth.user!),
+          ListenableBuilder(
+            listenable: auth,
+            builder: (_, __) => UserHeader(user: auth.user!),
+          ),
           const SizedBox(height: 10),
           ListenableBuilder(
-            listenable: LanguageManager.instance,
-            builder: (_, __) => ListTile(
-              title: Text(LanguageManager.instance.language.accountSettings()),
-              onTap: _accountSettings,
-            ),
+            listenable: OfflineService.instance,
+            builder: (_, __) => switch (OfflineService.instance.isOnline) {
+              true => ListenableBuilder(
+                  listenable: LanguageManager.instance,
+                  builder: (_, __) => ListTile(
+                    title: Text(
+                        LanguageManager.instance.language.accountSettings()),
+                    onTap: _accountSettings,
+                  ),
+                ),
+              false => const SizedBox()
+            },
           ),
           ListenableBuilder(
             listenable: LanguageManager.instance,

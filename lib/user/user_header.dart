@@ -20,7 +20,12 @@ class UserHeader extends StatelessWidget {
         SizedBox(
           width: 100,
           height: 100,
-          child: Image.network(user.icon ?? defaultUserIcon, fit: BoxFit.cover),
+          child: Image.network(
+            user.icon == null
+                ? defaultUserIcon
+                : backendURL.resolve(user.icon!).toString(),
+            fit: BoxFit.cover,
+          ),
         ),
         Expanded(
           child: Column(

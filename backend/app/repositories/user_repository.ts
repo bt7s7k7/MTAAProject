@@ -182,7 +182,7 @@ export class UserRepository {
       name: `profile.${photo.extname}`, // Save with a custom name
     })
 
-    user.icon = `uploads/users/${user.id}/profile.${photo.extname}`
+    user.icon = `uploads/users/${user.id}/profile.${photo.extname}?t=${Math.random()}`
     await user.save()
 
     this.eventRouter.notifyUserAndFriends(user.id, {
@@ -198,8 +198,8 @@ export class UserRepository {
       if (value === '' || value === null) {
         continue
       }
-
       const original = user[key as keyof typeof user]
+      console.log({ original, value, key })
       if (original !== value) {
         void ((user as any)[key] = value)
       }

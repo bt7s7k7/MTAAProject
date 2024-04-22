@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
@@ -12,11 +13,7 @@ import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 
-<<<<<<< HEAD
-
-=======
 /// Displays an activity
->>>>>>> 8572a09487111cc6108ae6f038f4af6ca405b068
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key, required this.activityId});
 

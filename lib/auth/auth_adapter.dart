@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/app/debug_page.dart';
@@ -89,6 +91,30 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     notifyListenersAsync();
 
     return user;
+  }
+
+  /// Allow for changing user name or password
+  Future<void> updateUser(Map<String, dynamic> values) async {
+    var response = await put(
+      backendURL.resolve("/user"),
+      headers: getAuthorizationHeaders(),
+      body: values,
+    );
+
+    processHTTPResponse(response);
+  }
+
+  Future<void> updateIcon(PlatformFile icon) async {
+    var request = MultipartRequest("PUT", backendURL.resolve("/user/photo"));
+    request.files.add(MultipartFile.fromBytes(
+      "photo",
+      icon.bytes!,
+      filename: icon.name,
+    ));
+    request.headers.addAll(getAuthorizationHeaders());
+
+    var response = await Response.fromStream(await request.send());
+    processHTTPResponse(response);
   }
 
   /// Register a new user
