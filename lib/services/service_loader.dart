@@ -78,7 +78,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
 
       debugMessage("[Loader] Done.");
     } on OnlineInitRequired {
-      router.goNamed("Online Init");
+      router.goNamed("OnlineInit");
     }
 
     setState(() {

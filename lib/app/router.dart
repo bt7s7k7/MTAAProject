@@ -8,6 +8,7 @@ import 'package:mtaa_project/friends/friend_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/home/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
+import 'package:mtaa_project/offline_mode/online_init_page.dart';
 import 'package:mtaa_project/recording/recording_page.dart';
 import 'package:mtaa_project/recording/recording_setup_page.dart';
 import 'package:mtaa_project/user/profile_page.dart';
@@ -29,6 +30,11 @@ final router = GoRouter(
       path: "/register",
       name: "Register",
       builder: (context, state) => const RegisterPage(),
+    ),
+    GoRoute(
+      path: "/online-init",
+      name: "OnlineInit",
+      builder: (context, state) => const OnlineInitPage(),
     ),
     GoRoute(
       path: "/recording/active",
