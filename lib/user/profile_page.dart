@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Column(
+      child: ListView(
         children: [
           ListenableBuilder(
             listenable: LanguageManager.instance,
