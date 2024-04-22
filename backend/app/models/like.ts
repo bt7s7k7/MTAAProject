@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 import Activity from './activity.js'
 import User from './user.js'
 
+/** Model for `likes` table */
 export default class Like extends BaseModel {
   @column({ isPrimary: true })
   declare id: number

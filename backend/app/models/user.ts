@@ -6,7 +6,6 @@ import { BaseModel, column, hasMany, hasOne, manyToMany } from '@adonisjs/lucid/
 import type { HasMany, HasOne, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import Activity from './activity.js'
-
 import Level from './level.js'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
@@ -14,6 +13,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   passwordColumnName: 'password',
 })
 
+/** Model for `users` table */
 export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
   declare id: number
@@ -55,7 +55,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare friends: ManyToMany<typeof User>
 
   @hasMany(() => Activity, {
-    foreignKey: 'userId', // The name of the foreign key column on the 'activities' table
+    foreignKey: 'userId',
   })
   declare activities: HasMany<typeof Activity>
 

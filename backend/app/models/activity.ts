@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 import Like from './like.js'
 import User from './user.js'
 
+/** Model for `activities` table */
 export default class Activity extends BaseModel {
   @hasMany(() => Like, { serializeAs: null })
   declare likes: HasMany<typeof Like>
@@ -17,7 +18,6 @@ export default class Activity extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  // Pridané stĺpce podľa špecifikácie
   @column()
   declare userId: number
 
@@ -39,7 +39,6 @@ export default class Activity extends BaseModel {
   @column()
   declare path: string | null
 
-  // Definícia vzťahu s modelom User
   @belongsTo(() => User, {
     foreignKey: 'userId',
   })

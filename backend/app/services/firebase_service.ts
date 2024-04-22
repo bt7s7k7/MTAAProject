@@ -2,8 +2,10 @@ import logger from '@adonisjs/core/services/logger'
 import { App, applicationDefault, getApps, initializeApp } from 'firebase-admin/app'
 import { Messaging, getMessaging } from 'firebase-admin/messaging'
 
+/** Class for initializing firebase services */
 export class FirebaseService {
   protected _app: App | null = null
+  /** Returns the current firebase application */
   async getApp() {
     if (this._app !== null) {
       return this._app
@@ -24,6 +26,7 @@ export class FirebaseService {
   }
 
   protected _messaging: Messaging | null = null
+  /** Returns the firebase cloud messaging module */
   async getMessaging() {
     if (this._messaging !== null) return this._messaging
     return (this._messaging = getMessaging(await this.getApp()))

@@ -4,10 +4,12 @@ import { UserEventRouter } from '#services/user_event_router'
 import { inject } from '@adonisjs/core'
 import { Exception } from '@adonisjs/core/exceptions'
 
+/** Class for liking and unliking activities */
 @inject()
 export class LikesRepository {
   constructor(protected eventRouter: UserEventRouter) {}
 
+  /** Adds a like to an activity */
   async createLike(userId: number, activityId: number) {
     const prevActivity = await Activity.query().where('id', activityId).firstOrFail()
     if (prevActivity.userId === userId) {
@@ -47,6 +49,7 @@ export class LikesRepository {
     })
   }
 
+  /** Returns if the user has already liked an activity */
   async userHasLikedActivity(userId: number, activityId: number) {
     const like = await Like.query()
       .where('userId', userId)
@@ -55,6 +58,7 @@ export class LikesRepository {
     return !!like
   }
 
+  /** Removes a like from an activity */
   async deleteLike(userId: number, activityId: number) {
     const like = await Like.query()
       .where('user_id', userId)

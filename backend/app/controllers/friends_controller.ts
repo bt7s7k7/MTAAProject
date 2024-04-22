@@ -5,12 +5,13 @@ import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import { UserRepository } from '../repositories/user_repository.js'
 
+/** Controller for managing user's friends */
 @inject()
 export default class FriendsController {
   constructor(protected userRepository: UserRepository) {}
 
   /**
-   * GET /friends
+   * GET `/friend`
    *
    * This method returns a list of friends for the authenticated user
    */
@@ -27,7 +28,7 @@ export default class FriendsController {
   }
 
   /**
-   * GET /friends/search?query=someone
+   * GET `/friend/search?query=someone`
    *
    * This method searches for users based on a query string
    */
@@ -40,7 +41,7 @@ export default class FriendsController {
   }
 
   /**
-   * POST /friends/invite
+   * POST `/friend/invite`
    *
    * This method sends a friend invite from the authenticated user to another user
    */
@@ -53,7 +54,7 @@ export default class FriendsController {
   }
 
   /**
-   * POST /friends/invite/:id/accept
+   * PUT `/friend/invite/:id/accept`
    *
    * This method allows a user to accept a friend invite
    */
@@ -70,7 +71,7 @@ export default class FriendsController {
   }
 
   /**
-   * POST /friends/invite/:id/accept
+   * PUT `/friend/invite/:id/accept`
    *
    * This method allows a user to deny a friend invite
    */
@@ -87,9 +88,9 @@ export default class FriendsController {
   }
 
   /**
-   * POST /friends/remove/:id
+   * POST `/friend/remove/:id`
    *
-   * This method allows a user to deny a friend invite
+   * This method allows a user to remove a friendship
    */
   async remove({ request, auth }: HttpContext) {
     const user = auth.user!

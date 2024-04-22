@@ -2,6 +2,7 @@ import { BaseModel, column, hasOne } from '@adonisjs/lucid/orm'
 import type { HasOne } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 
+/** Model for `levels` table */
 export default class Level extends BaseModel {
   @column({ isPrimary: true })
   declare id: number

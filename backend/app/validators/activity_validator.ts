@@ -1,5 +1,6 @@
 import vine from '@vinejs/vine'
 
+/** Validates request for activity creation */
 export const activityValidator = vine.compile(
   vine.object({
     activityName: vine.string().maxLength(255),

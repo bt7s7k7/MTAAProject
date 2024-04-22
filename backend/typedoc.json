@@ -1,8 +1,14 @@
   {
-    "entryPoints": ["./bin/server.ts"],
+    "entryPoints": [
+      "./app"
+    ],
+    "entryPointStrategy": "expand",
     "out": "./docs",
-    "exclude": ["**/*+(index|.spec|.test).ts"],
-    "excludePrivate": true,
-    "excludeProtected": true
+    "excludePrivate": false,
+    "excludeProtected": false,
+    "name": "DigiSenior backend",
+    "plugin": [
+      "typedoc-plugin-rename-defaults",
+      "typedoc-plugin-merge-modules"
+    ]
   }
-  

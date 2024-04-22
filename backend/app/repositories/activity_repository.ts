@@ -8,14 +8,16 @@ import { Infer } from '@vinejs/vine/types'
 import { NotificationRepository } from './notification_repository.js'
 import { UserRepository } from './user_repository.js'
 
+/** Class for getting and creating activities */
 @inject()
 export class ActivityRepository {
   constructor(
     protected eventRouter: UserEventRouter,
     protected notificationRepository: NotificationRepository,
-    protected userRepository: UserRepository // Inject the UserRepository here
+    protected userRepository: UserRepository
   ) {}
 
+  /** Finds all activities for a user and their friends */
   async findAllUserAndFriendsActivities(userId: number) {
     const activities = await Activity.query()
       .leftJoin('users_friends', 'activities.user_id', 'users_friends.user_id')
@@ -29,6 +31,7 @@ export class ActivityRepository {
     return activities
   }
 
+  /** Finds all activities for a user */
   async findUserActivitiesById(userId: number) {
     return Activity.query()
       .where('userId', userId)
@@ -37,6 +40,7 @@ export class ActivityRepository {
       .orderBy('activities.created_at', 'desc')
   }
 
+  /** Returns details about a specific activity */
   async findActivityDetails(userId: number, activityId: number) {
     const activity = await Activity.query()
       .where('id', activityId)
@@ -54,6 +58,7 @@ export class ActivityRepository {
     }
   }
 
+  /** Creates a new activity */
   async storeActivity(user: User, data: Infer<typeof activityValidator>) {
     const activity = await user.related('activities').create(data)
     const pointsForActivity = this.calculatePointsForActivity(data.steps) // Assume `data` has `steps`
@@ -81,6 +86,7 @@ export class ActivityRepository {
     return activity
   }
 
+  /** Destroys an activity */
   async destroyActivity(activityId: number, userId: number) {
     const activity = await Activity.query()
       .where('id', activityId)
@@ -97,18 +103,7 @@ export class ActivityRepository {
     })
   }
 
-  async updateActivity(activityId: number, userId: number, data: any) {
-    const activity = await Activity.query()
-      .where('id', activityId)
-      .where('userId', userId)
-      .firstOrFail()
-
-    activity.merge(data)
-    await activity.save()
-    return activity
-  }
-
-  calculatePointsForActivity(steps: number): number {
+  protected calculatePointsForActivity(steps: number): number {
     return steps
   }
 }

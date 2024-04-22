@@ -1,5 +1,4 @@
 import Invite from '#models/invite'
-import Level from '#models/level'
 import User from '#models/user'
 import { UserEventRouter } from '#services/user_event_router'
 import { userUpdateValidator } from '#validators/user_validator'
@@ -12,6 +11,7 @@ import { mkdir } from 'node:fs/promises'
 import { LevelRepository } from './level_repository.js'
 import { NotificationRepository } from './notification_repository.js'
 
+/** Class for managing users and their friendships */
 @inject()
 export class UserRepository {
   constructor(
@@ -20,17 +20,20 @@ export class UserRepository {
     protected levelRepository: LevelRepository
   ) {}
 
+  /** Returns if a user is friends with an another user */
   async isFriendsWith(user: User, friend: User) {
     const result = await user.related('friends').pivotQuery().where('friend_id', friend.id).first()
     return !!result
   }
 
+  /** Searches users by a query, limiting result size */
   async searchUsers(query: string) {
     const limit = 10
     return await User.query().whereILike('fullName', `%${query}%`).limit(limit)
   }
 
   protected _iconsPath: string | null = null
+  /** Gets path to icon upload folder */
   async getIconsPath() {
     if (this._iconsPath === null) {
       this._iconsPath = app.makePath('uploads', 'icons')
@@ -43,6 +46,7 @@ export class UserRepository {
     return this._iconsPath
   }
 
+  /** Sends an invite from one user to another */
   async sendInvite(from: User, to: User) {
     const existing = await Invite.query()
       .where('receiverId', to.id)
@@ -84,6 +88,7 @@ export class UserRepository {
     return 'sent'
   }
 
+  /** Accepts an invite */
   async acceptInvite(invite: Invite) {
     await Promise.all([invite.load('receiver'), invite.load('sender')])
 
@@ -105,6 +110,7 @@ export class UserRepository {
     })
   }
 
+  /** Denies an invite */
   async denyInvite(invite: Invite) {
     await Promise.all([invite.load('receiver'), invite.load('sender')])
 
@@ -125,6 +131,7 @@ export class UserRepository {
     })
   }
 
+  /** Adds a friendship between users */
   async addFriendship(from: User, to: User) {
     await Promise.all([
       from.related('friends').attach([to.id]),
@@ -145,6 +152,7 @@ export class UserRepository {
     })
   }
 
+  /** Removes a friendship between users */
   async removeFriendship(from: User, to: User) {
     if (!this.isFriendsWith(from, to)) throw new Exception('Not friends', { status: 400 })
 
@@ -168,6 +176,7 @@ export class UserRepository {
     })
   }
 
+  /** Handles a user uploading an icon */
   async uploadIcon(user: User, photo: MultipartFile) {
     await photo.move(`./uploads/users/${user.id}`, {
       name: `profile.${photo.extname}`, // Save with a custom name
@@ -183,6 +192,7 @@ export class UserRepository {
     })
   }
 
+  /** Updates user profile */
   async updateUser(user: User, data: Infer<typeof userUpdateValidator>) {
     for (const [key, value] of Object.entries(data)) {
       if (value === '' || value === null) {
@@ -204,6 +214,7 @@ export class UserRepository {
     })
   }
 
+  /** Adds a points to a user, automatically levelling up  */
   async addPoints(user: User, points: number): Promise<void> {
     user.points += points // Pridaj body k existujúcemu počtu
 
