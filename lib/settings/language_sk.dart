@@ -8,7 +8,19 @@ class _LanguageSK extends LanguageProfile {
   String get label => "Slovenský";
 
   @override
+  String accountSettings() => "Nastavenia účtu";
+
+  @override
   String get locale => "sk_SK";
+
+  @override
+  String changeProfilePicture() => "Zmeniť profilovú fotku";
+  
+  @override
+  String changePassword() => "Zmena hesla";
+
+  @override
+  String saveChanges() => "Uložiť zmeny";
 
   @override
   String activitySubtitle({

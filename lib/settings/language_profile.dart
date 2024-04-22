@@ -50,6 +50,7 @@ abstract class LanguageProfile {
   String locationPermission();
   String locationPermissionRequired();
   String currentLocation();
+  String accountSettings();
   String locationSearching();
   String recordingInfo(
       {required String steps,
@@ -72,4 +73,9 @@ abstract class LanguageProfile {
   String confirmActivityDeletionDesc();
   String delete();
   String cancel();
+  String changeProfilePicture();
+  String changePassword();
+  String saveChanges();
+  
+
 }

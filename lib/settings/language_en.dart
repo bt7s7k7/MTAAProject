@@ -77,6 +77,18 @@ class _LanguageEN extends LanguageProfile {
   String search() => "Search";
 
   @override
+  String changePassword() => "Change Password";
+
+  @override
+  String changeProfilePicture() => "Change Profile Picture";
+  
+  @override
+  String saveChanges() => "Save Changes";
+
+  @override
+  String accountSettings() => "Account settings";
+
+  @override
   String userPoints({required int points}) => "$points points";
 
   @override

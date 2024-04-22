@@ -9,6 +9,8 @@ import 'package:mtaa_project/settings/theme_switcher.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_header.dart';
+import 'package:mtaa_project/user/user_settings.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -21,6 +23,13 @@ class _ProfilePageState extends State<ProfilePage> {
   void _logOut() {
     AuthAdapter.instance.logOut();
   }
+
+  void _accountSettings() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => UserSettings()),
+    );
+  }
+
 
   Future<void> _setNotificationEnabled(bool enabled) async {
     if (Settings.instance.notificationsEnabled.getValue()) {
@@ -52,6 +61,13 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           UserHeader(user: auth.user!),
           const SizedBox(height: 10),
+          ListenableBuilder(
+            listenable: LanguageManager.instance,
+            builder: (_, __) => ListTile(
+              title: Text(LanguageManager.instance.language.accountSettings()),
+              onTap: _accountSettings,
+            ),
+          ),
           ListenableBuilder(
             listenable: LanguageManager.instance,
             builder: (_, __) => ListTile(
@@ -111,3 +127,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
