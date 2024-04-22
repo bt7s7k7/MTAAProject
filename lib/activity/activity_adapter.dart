@@ -6,6 +6,9 @@ import 'package:http/http.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
+import 'package:mtaa_project/services/update_service.dart';
+import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -13,14 +16,74 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
   ActivityAdapter._();
   static final instance = ActivityAdapter._();
 
+  List<dynamic> _getCachedActivities() {
+    var source = Settings.instance.cachedActivities.getValue();
+    if (source == null) return [];
+    var data = jsonDecode(source) as List<dynamic>;
+    return data;
+  }
+
+  void _saveCachedActivities(List<dynamic> activities) {
+    Settings.instance.cachedActivities.setValue(jsonEncode(activities));
+  }
+
+  List<dynamic>? _getUploadQueue() {
+    var queueSource = Settings.instance.cachedUploadQueue.getValue();
+    if (queueSource == null) return null;
+    var queueData = jsonDecode(queueSource) as List<dynamic>;
+    return queueData;
+  }
+
+  void _saveUploadQueue(List<dynamic>? queue) {
+    if (queue == null) {
+      Settings.instance.cachedUploadQueue.setValue(null);
+    } else {
+      Settings.instance.cachedUploadQueue.setValue(jsonEncode(queue));
+    }
+  }
+
+  void _appendUploadQueue(dynamic activity) {
+    var queue = _getUploadQueue() ?? [];
+    queue.add(activity);
+    _saveUploadQueue(queue);
+  }
+
+  Future<void> load() async {
+    OfflineService.instance.addOnlineAction(() async {
+      var auth = AuthAdapter.instance;
+      var queue = _getUploadQueue();
+      if (queue == null) return;
+
+      for (var activityData in List<dynamic>.from(queue)) {
+        var activity = Activity.fromJson(activityData);
+        var response = await post(
+          backendURL.resolve("/activity"),
+          headers: {
+            ...auth.getAuthorizationHeaders(),
+            "content-type": "application/json",
+          },
+          body: jsonEncode(activity.toJsonForUpload()),
+        );
+        processHTTPResponse(response);
+        queue.remove(activityData);
+        _saveUploadQueue(queue);
+      }
+
+      assert(queue.isEmpty);
+      _saveUploadQueue(null);
+    });
+  }
+
   Future<List<Activity>> getHomeActivities() async {
     var auth = AuthAdapter.instance;
-    var response = await get(
-      backendURL.resolve("/activity"),
-      headers: auth.getAuthorizationHeaders(),
+    var data = await OfflineService.instance.networkRequestWithFallback(
+      request: () => get(
+        backendURL.resolve("/activity"),
+        headers: auth.getAuthorizationHeaders(),
+      ),
+      fallback: () => {"items": _getCachedActivities()},
     );
 
-    var data = processHTTPResponse(response);
     var activities = switch (data) {
       {
         "items": List<dynamic> activityData,
@@ -29,17 +92,28 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
       _ => throw APIError("Invalid response for home activities: $data")
     };
 
+    if (OfflineService.instance.isOnline) {
+      _saveCachedActivities(activities
+          .where((element) => element.user.id == auth.user!.id)
+          .toList());
+    }
+
     return activities;
   }
 
   Future<List<Activity>> getUserActivities(int id) async {
     var auth = AuthAdapter.instance;
-    var response = await get(
-      backendURL.resolve("/activity/user/$id"),
-      headers: auth.getAuthorizationHeaders(),
+
+    var data = await OfflineService.instance.networkRequestWithFallback(
+      request: () => get(
+        backendURL.resolve("/activity/user/$id"),
+        headers: auth.getAuthorizationHeaders(),
+      ),
+      fallback: () => id == auth.user!.id
+          ? {"items": _getCachedActivities()}
+          : {"items": []},
     );
 
-    var data = processHTTPResponse(response);
     var activities = switch (data) {
       {
         "items": List<dynamic> activityData,
@@ -48,17 +122,35 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
       _ => throw APIError("Invalid response for user activities: $data")
     };
 
+    if (OfflineService.instance.isOnline && id == auth.user!.id) {
+      _saveCachedActivities(activities);
+    }
+
     return activities;
   }
 
   Future<Activity> getActivity(String id) async {
     var auth = AuthAdapter.instance;
-    var response = await get(
-      backendURL.resolve("/activity/$id"),
-      headers: auth.getAuthorizationHeaders(),
-    );
 
-    var data = processHTTPResponse(response);
+    var data = await OfflineService.instance.networkRequestWithFallback(
+      request: () => get(
+        backendURL.resolve("/activity/$id"),
+        headers: auth.getAuthorizationHeaders(),
+      ),
+      fallback: () {
+        var cached = _getCachedActivities();
+        var activityData = cached.firstWhere(
+          (element) => element["id"].toString() == id,
+          orElse: () => null,
+        );
+
+        if (activityData == null) {
+          throw const APIError("Offline activity not found");
+        }
+
+        return activityData;
+      },
+    );
     var activity = Activity.fromJson(data);
 
     return activity;
@@ -66,16 +158,31 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
 
   Future<Activity> uploadActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
-    var response = await post(
-      backendURL.resolve("/activity"),
-      headers: {
-        ...auth.getAuthorizationHeaders(),
-        "content-type": "application/json",
+
+    var data = await OfflineService.instance.networkRequestWithFallback(
+      request: () => post(
+        backendURL.resolve("/activity"),
+        headers: {
+          ...auth.getAuthorizationHeaders(),
+          "content-type": "application/json",
+        },
+        body: jsonEncode(activity.toJsonForUpload()),
+      ),
+      fallback: () {
+        var cachedActivities = _getCachedActivities();
+        var serializedActivity = activity.toJson();
+        cachedActivities.insert(0, serializedActivity);
+        _saveCachedActivities(cachedActivities);
+        _appendUploadQueue(serializedActivity);
+        UpdateService.instance.submitUpdate(UpdateEvent(
+          type: "activity",
+          id: activity.id,
+          value: serializedActivity,
+        ));
+        return serializedActivity;
       },
-      body: jsonEncode(activity.toJson()),
     );
 
-    var data = processHTTPResponse(response);
     var savedActivity = Activity.fromJson(data);
 
     // Log the 'create_activity' event to Firebase Analytics

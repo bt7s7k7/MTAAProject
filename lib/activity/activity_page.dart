@@ -7,9 +7,11 @@ import 'package:mtaa_project/app/router.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/friends/user_view.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/recording/map_view.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
+import 'package:mtaa_project/support/support.dart';
 
 class ActivityPage extends StatefulWidget {
   const ActivityPage({super.key, required this.activityId});
@@ -36,6 +38,14 @@ class _ActivityPageState extends State<ActivityPage> {
   }
 
   void _deleteActivity() async {
+    if (OfflineService.instance.isOffline) {
+      popupResult(
+        context,
+        LanguageManager.instance.language.actionRequiredOnline(),
+      );
+      return;
+    }
+
     var delete = false;
 
     await showDialog<void>(

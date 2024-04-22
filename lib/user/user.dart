@@ -24,7 +24,8 @@ class User {
         "email": email,
         "fullName": fullName,
         "icon": icon,
-        "points": points
+        "points": points,
+        "levelId": levelId
       };
 
   factory User.fromJson(Map<String, dynamic> json) {

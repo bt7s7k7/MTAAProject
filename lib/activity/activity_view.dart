@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_icon.dart';
@@ -15,6 +16,11 @@ class ActivityView extends StatelessWidget {
     var language = LanguageManager.instance.language;
     if (user?.id == activity.user.id) {
       popupResult(context, language.cannotLikeOwnActivity());
+      return;
+    }
+
+    if (OfflineService.instance.isOffline) {
+      popupResult(context, language.actionRequiredOnline());
       return;
     }
 

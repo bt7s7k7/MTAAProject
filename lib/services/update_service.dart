@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -41,6 +42,10 @@ class UpdateService {
     return _streamController.stream.listen(listener);
   }
 
+  void submitUpdate(UpdateEvent event) {
+    _streamController.add(event);
+  }
+
   Future<void> updateConnection() {
     var token = AuthAdapter.instance.token;
 
@@ -69,16 +74,19 @@ class UpdateService {
     _socket!.onConnect((_) {
       if (completer == null) {
         debugMessage("[WS] Reconnected to server");
+        OfflineService.instance.setOnlineState(true);
         return;
       }
 
       debugMessage("[WS] Connected to server");
+      OfflineService.instance.setOnlineState(true);
       completer?.complete();
       completer = null;
     });
 
     _socket!.onDisconnect((_) {
       debugMessage("[WS] Disconnected from the server");
+      OfflineService.instance.setOnlineState(false);
     });
 
     _socket!.onError((data) {

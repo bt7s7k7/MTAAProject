@@ -165,7 +165,23 @@ class _LanguageSK extends LanguageProfile {
   String mapOffline() => "Mapa nie je dispozícií offline";
 
   @override
+  String homeActivityOffline() =>
+      "Aktivity svojích priateľov môžte vidieť len online";
+
+  @override
+  String actionRequiredOnline() => "Túto akciu je možné vykonať len online";
+
+  @override
+  String friendsOffline() => "Vašich priateľov môžte vidieť len online";
+
+  @override
   String offlineDesc() => "Ak chcete zobraziť, pripojte sa k internetu";
+
+  @override
+  String offlineInit() => "Ste offline";
+
+  @override
+  String offlineInitDesc() => "Na inicializáciu aplikácie je potrebný internet";
 
   @override
   String confirmActivityDeletion() => "Vymazať aktivitu";

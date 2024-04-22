@@ -62,7 +62,12 @@ abstract class LanguageProfile {
   String unpauseRecording();
   String grantPermission();
   String mapOffline();
+  String homeActivityOffline();
+  String friendsOffline();
+  String actionRequiredOnline();
   String offlineDesc();
+  String offlineInit();
+  String offlineInitDesc();
   String confirmActivityDeletion();
   String confirmActivityDeletionDesc();
   String delete();

@@ -16,6 +16,8 @@ LocalStorage get _localStorage {
   return _localStorageInstance!;
 }
 
+Future<void>? _storageLock;
+
 class SettingsError implements Exception {
   const SettingsError(this.msg);
 
@@ -57,24 +59,37 @@ class SettingProperty<T> {
   }
 
   Future<void> setValue(T value) async {
+    if (_storageLock != null) {
+      _storageLock!.then((_) => setValue(value));
+      return;
+    }
+
+    var locker = Completer<void>();
+    _storageLock = locker.future;
+
     _controller.add(value);
 
-    if (value == null) {
-      await _localStorage.deleteItem(_key);
-      return;
-    }
+    try {
+      if (value == null) {
+        await _localStorage.deleteItem(_key);
+        return;
+      }
 
-    if (value is String) {
-      await _localStorage.setItem(_key, value);
-      return;
-    }
+      if (value is String) {
+        await _localStorage.setItem(_key, value);
+        return;
+      }
 
-    if (value is int || value is bool) {
-      await _localStorage.setItem(_key, jsonEncode(value));
-      return;
-    }
+      if (value is int || value is bool) {
+        await _localStorage.setItem(_key, jsonEncode(value));
+        return;
+      }
 
-    throw SettingsError("Invalid type $T for settings property");
+      throw SettingsError("Invalid type $T for settings property");
+    } finally {
+      _storageLock = null;
+      locker.complete();
+    }
   }
 }
 
@@ -89,6 +104,11 @@ class Settings {
     "notifications-enabled",
     defaultValue: false,
   );
+
+  final cachedUser = SettingProperty<String?>._("cached-user");
+  final cachedLevels = SettingProperty<String?>._("cached-levels");
+  final cachedActivities = SettingProperty<String?>._("cached-activities");
+  final cachedUploadQueue = SettingProperty<String?>._("cached-upload-queue");
 
   Future<void> ready() {
     return _localStorage.ready;

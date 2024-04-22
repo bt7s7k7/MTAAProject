@@ -166,7 +166,24 @@ class _LanguageEN extends LanguageProfile {
   String mapOffline() => "Map is not available offline";
 
   @override
+  String homeActivityOffline() =>
+      "You can only see activities of your friends online";
+
+  @override
+  String friendsOffline() => "You can only see your friends online";
+
+  @override
+  String actionRequiredOnline() => "This action can only be performed online";
+
+  @override
   String offlineDesc() => "Connect to the internet to enable";
+
+  @override
+  String offlineInit() => "You are offline";
+
+  @override
+  String offlineInitDesc() =>
+      "Internet required for application initialization";
 
   @override
   String confirmActivityDeletion() => "Delete activity";

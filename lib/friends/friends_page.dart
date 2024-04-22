@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
+import 'package:mtaa_project/offline_mode/offline_warning.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/support.dart';
@@ -24,6 +26,14 @@ class _FriendsPageState extends State<FriendsPage> {
   StreamSubscription<UpdateEvent>? _subscription;
 
   void _refreshState() async {
+    if (OfflineService.instance.isOffline) {
+      setState(() {
+        this.users = [];
+        this.invites = [];
+      });
+
+      return;
+    }
     var (users, invites) = await FriendsAdapter.instance.getFriendState();
     setState(() {
       this.users = users;
@@ -39,6 +49,8 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   void initState() {
     super.initState();
+
+    OfflineService.instance.addListener(_refreshState);
 
     _subscription = UpdateService.instance.addListener((event) {
       if (event.type == "friend") {
@@ -90,6 +102,7 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   void dispose() {
     _subscription!.cancel();
+    OfflineService.instance.removeListener(_refreshState);
     super.dispose();
   }
 
@@ -149,6 +162,9 @@ class _FriendsPageState extends State<FriendsPage> {
                 ],
               false => [],
             }),
+            OfflineWarning(
+              label: () => LanguageManager.instance.language.friendsOffline(),
+            ),
             Expanded(
               child: UserList(
                 users: users,

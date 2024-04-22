@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/constants.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
@@ -43,6 +46,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
       debugMessage("[Auth] User update ${event.value}");
 
       _user = User.fromJson(event.value!);
+      Settings.instance.cachedUser.setValue(jsonEncode(_user!.toJson()));
       notifyListenersAsync();
     });
 
@@ -52,17 +56,29 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
       throw NotAuthenticatedException();
     }
 
-    var response = await get(
-      backendURL.resolve("/user"),
-      headers: {"Authorization": "Bearer $token"},
+    var data = await OfflineService.instance.networkRequestWithFallback(
+      request: () => get(
+        backendURL.resolve("/user"),
+        headers: {"Authorization": "Bearer $token"},
+      ),
+      fallback: () {
+        var cachedUser = Settings.instance.cachedUser.getValue();
+        if (cachedUser == null) throw OnlineInitRequired();
+        return jsonDecode(cachedUser);
+      },
     );
 
-    var data = processHTTPResponse(response);
     var user = User.fromJson(data);
 
     FirebaseAnalytics.instance.setUserId(id: user.id.toString());
-    FirebaseAnalytics.instance
-        .setUserProperty(name: "email", value: user.email);
+    FirebaseAnalytics.instance.setUserProperty(
+      name: "email",
+      value: user.email,
+    );
+
+    if (OfflineService.instance.isOnline) {
+      await Settings.instance.cachedUser.setValue(jsonEncode(data));
+    }
 
     _user = user;
     _token = token;
@@ -92,6 +108,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     _user = user;
     _token = token;
     await Settings.instance.authToken.setValue(token);
+    await Settings.instance.cachedUser.setValue(jsonEncode(_user!.toJson()));
     notifyListenersAsync();
 
     return user;
@@ -117,6 +134,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     _user = user;
     _token = token;
     await Settings.instance.authToken.setValue(token);
+    await Settings.instance.cachedUser.setValue(jsonEncode(_user!.toJson()));
     notifyListenersAsync();
 
     return user;
@@ -128,6 +146,7 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
     _user = null;
     _token = null;
     await Settings.instance.authToken.setValue(null);
+    await Settings.instance.cachedUser.setValue(null);
     notifyListenersAsync();
   }
 }

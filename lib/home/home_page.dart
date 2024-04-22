@@ -3,6 +3,7 @@ import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/activity/activity_list.dart';
 import 'package:mtaa_project/home/home_level_display.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/offline_mode/offline_warning.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
 class HomePage extends StatelessWidget {
@@ -22,6 +23,10 @@ class HomePage extends StatelessWidget {
             ),
           ),
           const HomeLevelDisplay(),
+          OfflineWarning(
+            label: () =>
+                LanguageManager.instance.language.homeActivityOffline(),
+          ),
           ActivityList(
             getter: ActivityAdapter.instance.getHomeActivities,
             useListView: false,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_view.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -32,6 +33,8 @@ class _ActivityListState extends State<ActivityList> {
   void initState() {
     super.initState();
 
+    OfflineService.instance.addListener(_loadActivities);
+
     _subscription = UpdateService.instance.addListener((event) {
       if (event.type != "activity") return;
       updateList(
@@ -48,6 +51,8 @@ class _ActivityListState extends State<ActivityList> {
 
   @override
   void dispose() {
+    OfflineService.instance.removeListener(_loadActivities);
+
     _subscription!.cancel();
     super.dispose();
   }

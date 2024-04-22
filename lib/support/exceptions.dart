@@ -12,6 +12,11 @@ class NotAuthenticatedException implements Exception {
   String toString() => "Not Authenticated";
 }
 
+class OnlineInitRequired implements Exception {
+  @override
+  String toString() => "Online initialization required";
+}
+
 class APIError implements Exception {
   const APIError(this.msg);
 

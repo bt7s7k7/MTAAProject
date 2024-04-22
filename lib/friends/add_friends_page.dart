@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/friends/friends_adapter.dart';
 import 'package:mtaa_project/friends/user_list.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
+import 'package:mtaa_project/offline_mode/offline_service.dart';
+import 'package:mtaa_project/offline_mode/offline_warning.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
@@ -24,6 +26,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   Timer? _debounce;
 
   Future<void> _searchUsers() async {
+    if (OfflineService.instance.isOffline) return;
+
     var usersResult = await FriendsAdapter.instance.searchUsers(query);
     setState(() {
       users = usersResult;
@@ -51,6 +55,8 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
   }
 
   void _sendInvite(User user) async {
+    if (OfflineService.instance.isOffline) return;
+
     try {
       var result = await FriendsAdapter.instance.sendInvite(user);
       setState(() {
@@ -97,6 +103,9 @@ class _AddFriendsPageState extends State<AddFriendsPage> {
                 icon: const Icon(Icons.search),
               ),
             ),
+          ),
+          OfflineWarning(
+            label: () => LanguageManager.instance.language.offlineDesc(),
           ),
           Expanded(
             child: UserList(

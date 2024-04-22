@@ -34,7 +34,7 @@ class Activity with UpdateAware {
   final int likesCount;
   bool hasLiked;
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJsonForUpload() => {
         "userId": user.id,
         "activityName": activityName,
         "points": points,
@@ -42,6 +42,20 @@ class Activity with UpdateAware {
         "distance": distance,
         "duration": duration,
         "path": path == null ? "" : encodePath(path!),
+      };
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "activityName": activityName,
+        "points": points,
+        "steps": steps,
+        "distance": distance,
+        "duration": duration,
+        "path": path == null ? "" : encodePath(path!),
+        "user": user.toJson(),
+        "createdAt": createdAt.toIso8601String(),
+        "likesCount": likesCount,
+        "hasLiked": hasLiked,
       };
 
   factory Activity.fromJson(Map<String, dynamic> json) {
@@ -85,7 +99,7 @@ class Activity with UpdateAware {
     required List<GeoPoint> path,
   }) {
     return Activity(
-      id: 0,
+      id: DateTime.now().millisecondsSinceEpoch,
       user: AuthAdapter.instance.user!,
       activityName: name,
       points: steps,
