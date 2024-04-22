@@ -15,18 +15,18 @@ class FirebaseService {
       options: firebaseOptions,
     );
     debugMessage("[Firebase] Firebase app loaded");
+    if(!kIsWeb) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-
-    if (kReleaseMode) {
-      Function originalOnError =
-          FlutterError.onError ?? (FlutterErrorDetails details) {};
-      FlutterError.onError = (FlutterErrorDetails details) async {
-        originalOnError(details);
-        await FirebaseCrashlytics.instance.recordFlutterError(details);
-      };
+      if (kReleaseMode) {
+        Function originalOnError =
+            FlutterError.onError ?? (FlutterErrorDetails details) {};
+        FlutterError.onError = (FlutterErrorDetails details) async {
+          originalOnError(details);
+          await FirebaseCrashlytics.instance.recordFlutterError(details);
+        };
+      }    
+      debugMessage("[Firebase] Crashlytics initialized");
     }
-
-    debugMessage("[Firebase] Crashlytics initialized");
   }
 }
