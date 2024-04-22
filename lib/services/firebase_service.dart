@@ -30,5 +30,6 @@ class FirebaseService {
         await FirebaseCrashlytics.instance.recordFlutterError(details);
       };
     }
+    }
   }
 }
