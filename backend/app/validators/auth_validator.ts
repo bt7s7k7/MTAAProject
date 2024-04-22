@@ -1,5 +1,6 @@
 import vine from '@vinejs/vine'
 
+/** Validates a login request */
 export const loginValidator = vine.compile(
   vine.object({
     email: vine.string(),
@@ -7,6 +8,7 @@ export const loginValidator = vine.compile(
   })
 )
 
+/** Validates a register request */
 export const registerValidator = vine.compile(
   vine.object({
     email: vine.string(),

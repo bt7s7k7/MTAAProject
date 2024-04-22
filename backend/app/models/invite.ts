@@ -3,6 +3,7 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
 import User from './user.js'
 
+/** Model for `invites` table */
 export default class Invite extends BaseModel {
   @column({ isPrimary: true })
   declare id: number

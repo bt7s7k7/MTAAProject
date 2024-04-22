@@ -3,7 +3,11 @@ import { loginValidator, registerValidator } from '#validators/auth_validator'
 import { Exception } from '@adonisjs/core/exceptions'
 import { HttpContext } from '@adonisjs/core/http'
 
+/** Controller for authentication of users */
 export default class AuthController {
+  /** POST `/auth/login`
+   * Logs the user in
+   */
   async login({ request }: HttpContext) {
     const { email, password } = await loginValidator.validate(request.all())
 
@@ -16,6 +20,9 @@ export default class AuthController {
     }
   }
 
+  /** POST `/auth/register`
+   * Registers new user
+   */
   async register({ request }: HttpContext) {
     const data = await registerValidator.validate(request.all())
 
@@ -44,6 +51,9 @@ export default class AuthController {
     }
   }
 
+  /** GET `/auth/me`
+   * Returns current user information
+   */
   async me({ auth }: HttpContext) {
     const user = auth.user!
 

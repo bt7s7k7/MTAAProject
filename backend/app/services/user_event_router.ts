@@ -2,6 +2,7 @@ import User from '#models/user'
 import logger from '@adonisjs/core/services/logger'
 import { Server } from 'socket.io'
 
+/** Options for websocket update */
 export interface NotifyOptions {
   /** Type of the entity that is changed */
   type: string
@@ -11,6 +12,7 @@ export interface NotifyOptions {
   value: object | null
 }
 
+/** Class for sending update messages over websocket */
 export class UserEventRouter {
   constructor(public io: Server) {
     io.on('connect', (socket) => {
@@ -33,6 +35,7 @@ export class UserEventRouter {
     })
   }
 
+  /** Updates user client subscriptions after a friendship change. Only one directional, use {@link updateFriendshipState} for updating both users. */
   protected async _updateFriendFor(user: number, friend: number, change: 'added' | 'removed') {
     const sockets = await this.io.in('user:' + user).fetchSockets()
     for (const socket of sockets) {
@@ -44,6 +47,7 @@ export class UserEventRouter {
     }
   }
 
+  /** Updates client event subscriptions after a friendship change.  */
   async updateFriendshipState(user1: number, user2: number, change: 'added' | 'removed') {
     await Promise.all([
       this._updateFriendFor(user1, user2, change),
@@ -51,14 +55,17 @@ export class UserEventRouter {
     ])
   }
 
+  /** Sends an update event to client */
   notifyUser(userId: number, options: NotifyOptions) {
     this.notify('user:' + userId, options)
   }
 
+  /** Sends an update event to client and their friends */
   notifyUserAndFriends(userId: number, options: NotifyOptions) {
     this.notify('friends:' + userId, options)
   }
 
+  /** Sends an update event to clients subscribed to the specified room */
   notify(room: string, options: NotifyOptions) {
     this.io.in(room).emit('update', options)
   }

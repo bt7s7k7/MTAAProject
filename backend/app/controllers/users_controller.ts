@@ -5,19 +5,22 @@ import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import { UserRepository } from '../repositories/user_repository.js'
 
+/** Controller for getting information about other users */
 @inject()
 export default class UserController {
   constructor(protected userRepository: UserRepository) {}
 
-  // GET /user
-  // Returns details of the logged-in user
+  /* GET `/user`
+   * Returns details of the logged-in user
+   */
   async index({ auth }: HttpContext) {
     const user = auth.user!
     return user.serialize()
   }
 
-  // POST /user
-  // Updates user data
+  /* POST `/user`
+   * Updates user data
+   */
   async update({ auth, request }: HttpContext) {
     const user = auth.user!
     const data = await userUpdateValidator.validate(request.all())
@@ -27,8 +30,9 @@ export default class UserController {
     return user.serialize()
   }
 
-  // POST /user/photo
-  // Handles profile picture upload
+  /* POST `/user/photo`
+   * Handles profile picture upload
+   */
   async uploadPhoto({ auth, request }: HttpContext) {
     const user = auth.user!
     const photo = request.file('photo', { size: '2mb' }) // Validate file size
@@ -39,8 +43,9 @@ export default class UserController {
     return user.serialize()
   }
 
-  // GET /user/:id
-  // Returns details of a selected user, if they are friends
+  /* GET `/user/:id`
+   * Returns details of a selected user, if they are friends
+   */
   async show({ auth, params }: HttpContext) {
     const user = auth.user!
     const targetUserId = params['id']

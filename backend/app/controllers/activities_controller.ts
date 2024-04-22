@@ -7,8 +7,9 @@ import { ActivityRepository } from '../repositories/activity_repository.js'
 import { LikesRepository } from '../repositories/like_repository.js'
 import { UserRepository } from '../repositories/user_repository.js'
 
-export const test = 5
-
+/**
+ * Controller for manipulating activities
+ */
 @inject()
 export default class ActivityController {
   constructor(
@@ -17,6 +18,11 @@ export default class ActivityController {
     protected likesRepository: LikesRepository
   ) {}
 
+  /**
+   * GET `/activity/`
+   *
+   * Returns all activities by the current user and their friends to be displayed in the home page.
+   */
   async index({ auth }: HttpContext) {
     const user = auth.user!
     const activities = await this.activityRepository.findAllUserAndFriendsActivities(user.id)
@@ -35,6 +41,11 @@ export default class ActivityController {
     return activitiesWithLikeStatus
   }
 
+  /**
+   * GET `/activity/user/:id`
+   *
+   * Return activities belonging to a specific user for the profile page.
+   */
   async userActivities({ auth, params }: HttpContext) {
     const currentUser = auth.user!
     const targetUserId = Number.parseInt(params.id)
@@ -61,6 +72,11 @@ export default class ActivityController {
     )
   }
 
+  /**
+   * GET `/activity/:id`
+   *
+   * Returns an activity including the path.
+   */
   async activityDetails({ auth, params }: HttpContext) {
     const user = auth.user!
     const activityId = Number.parseInt(params.id)
@@ -73,12 +89,22 @@ export default class ActivityController {
     }
   }
 
+  /**
+   * DELETE `/activity/:id`
+   *
+   * Deletes an activity, belonging to the current user
+   */
   async deleteActivity({ auth, params }: HttpContext) {
     const user = auth.user!
     const id = Number(params.id)
     await this.activityRepository.destroyActivity(id, user.id)
   }
 
+  /**
+   * POST `/activity`
+   *
+   * Creates an activity
+   */
   async store({ auth, request }: HttpContext) {
     const user = auth.user!
     const activityData = await activityValidator.validate(request.all())
@@ -91,6 +117,11 @@ export default class ActivityController {
     }
   }
 
+  /**
+   * POST `/activity/like/:id`
+   *
+   * Adds a like to an activity
+   */
   async like({ auth, params }: HttpContext) {
     const userId = auth.user!.id
     const id = Number(params.id)
@@ -98,6 +129,11 @@ export default class ActivityController {
     await this.likesRepository.createLike(userId, id)
   }
 
+  /**
+   * DELETE `/activity/like/:id`
+   *
+   * Removes a like from an activity
+   */
   async unlike({ auth, params }: HttpContext) {
     const userId = auth.user!.id
     const id = Number(params.id)
