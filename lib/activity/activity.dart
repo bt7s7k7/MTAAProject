@@ -29,7 +29,7 @@ class Activity with UpdateAware {
   final int steps;
   final int distance;
   final int duration;
-  final List<GeoPoint> path;
+  final List<GeoPoint>? path;
   final DateTime createdAt;
   final int likesCount;
   bool hasLiked;
@@ -41,7 +41,7 @@ class Activity with UpdateAware {
         "steps": steps,
         "distance": distance,
         "duration": duration,
-        "path": encodePath(path),
+        "path": path == null ? "" : encodePath(path!),
       };
 
   factory Activity.fromJson(Map<String, dynamic> json) {
@@ -68,7 +68,7 @@ class Activity with UpdateAware {
           steps: steps,
           distance: distance,
           duration: duration,
-          path: decodePath(path ?? ""),
+          path: path == null || path.isEmpty ? null : decodePath(path),
           createdAt: DateTime.parse(createdAt),
           likesCount: likesCount,
           hasLiked: hasLiked,
@@ -102,6 +102,7 @@ class Activity with UpdateAware {
   @override
   void patchUpdate(Map<String, dynamic> json) {
     json["hasLiked"] = hasLiked;
+    if (path != null) json["path"] = encodePath(path!);
   }
 
   static String encodePath(List<GeoPoint> path) {

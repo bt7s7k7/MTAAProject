@@ -3,6 +3,7 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
+import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/recording/map_view.dart';
@@ -52,8 +53,18 @@ class _RecordingPageState extends State<RecordingPage> {
     tracker.paused = false;
   }
 
-  void _finish() {
-    ActivityAdapter.instance.uploadActivity(
+  void _finish() async {
+    List<GeoPoint>? path = tracker.path;
+    if (path.isEmpty) {
+      debugMessage("[Map] After finishing activity path is empty");
+      path = null;
+    }
+
+    if (path != null && path.length == 1) {
+      path.add(path.first);
+    }
+
+    var result = await ActivityAdapter.instance.uploadActivity(
       Activity.fromRecording(
         name: LanguageManager.instance.language.recording(),
         steps: tracker.steps,
@@ -63,7 +74,8 @@ class _RecordingPageState extends State<RecordingPage> {
       ),
     );
 
-    GoRouter.of(context).goNamed("RecordingResult", extra: tracker);
+    if (!mounted) return;
+    GoRouter.of(context).goNamed("Activity", extra: result.id);
   }
 
   @override

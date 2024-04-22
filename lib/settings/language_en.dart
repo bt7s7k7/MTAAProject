@@ -62,6 +62,9 @@ class _LanguageEN extends LanguageProfile {
   String recording() => "Recording";
 
   @override
+  String activity() => "Activity";
+
+  @override
   String register() => "Register";
 
   @override
@@ -158,4 +161,23 @@ class _LanguageEN extends LanguageProfile {
 
   @override
   String unpauseRecording() => "Resume";
+
+  @override
+  String mapOffline() => "Map is not available offline";
+
+  @override
+  String offlineDesc() => "Connect to the internet to enable";
+
+  @override
+  String confirmActivityDeletion() => "Delete activity";
+
+  @override
+  String confirmActivityDeletionDesc() =>
+      "Are you sure you want to delete this activity?";
+
+  @override
+  String delete() => "Delete";
+
+  @override
+  String cancel() => "Cancel";
 }

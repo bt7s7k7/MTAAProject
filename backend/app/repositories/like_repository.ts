@@ -42,6 +42,7 @@ export class LikesRepository {
         ...activity.serialize(),
         likesCount: activity.likes.length,
         hasLiked: false,
+        path: null,
       },
     })
   }
@@ -79,6 +80,7 @@ export class LikesRepository {
         ...activity.serialize(),
         likesCount: activity.likes.length,
         hasLiked: false,
+        path: null,
       },
     })
   }

@@ -61,6 +61,9 @@ class _LanguageSK extends LanguageProfile {
   String recording() => "Nahrávanie";
 
   @override
+  String activity() => "Aktivita";
+
+  @override
   String register() => "Registrácia";
 
   @override
@@ -157,4 +160,23 @@ class _LanguageSK extends LanguageProfile {
 
   @override
   String unpauseRecording() => "Pokračovať";
+
+  @override
+  String mapOffline() => "Mapa nie je dispozícií offline";
+
+  @override
+  String offlineDesc() => "Ak chcete zobraziť, pripojte sa k internetu";
+
+  @override
+  String confirmActivityDeletion() => "Vymazať aktivitu";
+
+  @override
+  String confirmActivityDeletionDesc() =>
+      "Ste si istý že checete vymazať túto aktivitu?";
+
+  @override
+  String delete() => "Vymazať";
+
+  @override
+  String cancel() => "Späť";
 }

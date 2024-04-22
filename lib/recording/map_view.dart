@@ -31,9 +31,11 @@ class _MapViewState extends State<MapView> {
 
   StreamSubscription<Position>? _positionSubscription;
   ActivityTracker? _tracker;
+  GeoPoint? _lastPosition;
 
   void _handleLocationChange(GeoPoint position) {
     _mapController.changeLocation(position);
+    _lastPosition = position;
     if (widget.onLocationUpdate != null) widget.onLocationUpdate!(position);
   }
 
@@ -94,9 +96,10 @@ class _MapViewState extends State<MapView> {
   }
 
   void _drawPath() async {
-    await _mapController.clearAllRoads();
-    if (widget.path!.length < 2) return;
     var path = widget.path!;
+    debugMessage("[Map] Drawing path $path");
+    await _mapController.clearAllRoads();
+    if (path.length < 2) return;
     var lat1 = path[0].latitude;
     var lat2 = path[0].latitude;
     var lng1 = path[0].longitude;
@@ -117,12 +120,15 @@ class _MapViewState extends State<MapView> {
     lng1 -= lngBuffer;
     lng2 += lngBuffer;
 
-    _mapController.limitAreaMap(BoundingBox(
+    var bounds = BoundingBox(
       north: lat2,
       south: lat1,
       west: lng1,
       east: lng2,
-    ));
+    );
+    _mapController.limitAreaMap(bounds).then((_) {
+      _mapController.zoomToBoundingBox(bounds);
+    });
 
     _mapController.drawRoadManually(widget.path!, const RoadOption.empty());
   }
@@ -161,6 +167,9 @@ class _MapViewState extends State<MapView> {
       debugMessage("[Map] Tracker bound in map");
       widget.tracker!.addListener(_handleTrackerUpdate);
       _tracker = widget.tracker;
+      if (_lastPosition != null) {
+        _tracker!.appendLocation(_lastPosition!);
+      }
     }
 
     if (widget.path != null) {
@@ -179,6 +188,15 @@ class _MapViewState extends State<MapView> {
   }
 
   void _setReady() {
+    if (widget.path != null) {
+      _drawPath();
+    }
+
+    if (_lastPosition != null) {
+      _mapController.setZoom(zoomLevel: 19);
+      _handleLocationChange(_lastPosition!);
+    }
+
     setState(() {
       _ready = true;
     });

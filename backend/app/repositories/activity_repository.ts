@@ -3,6 +3,7 @@ import User from '#models/user'
 import { UserEventRouter } from '#services/user_event_router'
 import { activityValidator } from '#validators/activity_validator'
 import { inject } from '@adonisjs/core'
+import { Exception } from '@adonisjs/core/exceptions'
 import { Infer } from '@vinejs/vine/types'
 import { NotificationRepository } from './notification_repository.js'
 import { UserRepository } from './user_repository.js'
@@ -34,11 +35,14 @@ export class ActivityRepository {
       .preload('user')
       .preload('likes')
       .orderBy('activities.created_at', 'desc')
-      .select('activities.*')
   }
 
   async findActivityDetails(userId: number, activityId: number) {
-    const activity = await Activity.query().where('id', activityId).preload('user').firstOrFail()
+    const activity = await Activity.query()
+      .where('id', activityId)
+      .preload('user', (v) => v.preload('friends'))
+      .preload('likes')
+      .firstOrFail()
 
     if (
       activity.userId === userId ||
@@ -46,7 +50,7 @@ export class ActivityRepository {
     ) {
       return activity
     } else {
-      throw new Error('Not authorized to view this activity')
+      throw new Exception('Not authorized to view this activity', { status: 403 })
     }
   }
 
@@ -64,6 +68,7 @@ export class ActivityRepository {
         ...activity.serialize(),
         hasLiked: false,
         likesCount: 0,
+        path: null,
       },
     })
 

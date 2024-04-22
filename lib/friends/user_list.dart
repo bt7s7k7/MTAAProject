@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/user/user_icon.dart';
+import 'package:mtaa_project/friends/user_view.dart';
 import 'package:mtaa_project/user/user.dart';
 
 class UserList extends StatelessWidget {
@@ -21,7 +21,7 @@ class UserList extends StatelessWidget {
       shrinkWrap: true,
       children: users
           .map(
-            (user) => _UserElement(
+            (user) => UserView(
               title: user.fullName,
               icon: user.icon,
               subtitle: "${user.points} points",
@@ -30,32 +30,6 @@ class UserList extends StatelessWidget {
             ),
           )
           .toList(),
-    );
-  }
-}
-
-class _UserElement extends StatelessWidget {
-  const _UserElement(
-      {required this.title,
-      required this.icon,
-      required this.subtitle,
-      this.action,
-      this.onClick});
-
-  final String title;
-  final String? icon;
-  final String subtitle;
-  final Widget? action;
-  final void Function()? onClick;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onClick,
-      title: Text(title),
-      subtitle: Text(subtitle),
-      leading: UserIcon(icon: icon),
-      trailing: action,
     );
   }
 }

@@ -101,7 +101,8 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
                   builder: (_, __) => FilledButton(
                     onPressed: switch (PermissionService
                             .instance.activityRecognition.isGranted &&
-                        PermissionService.instance.location.isGranted) {
+                        PermissionService.instance.location.isGranted &&
+                        location != null) {
                       true => _beginActivity,
                       false => null
                     },

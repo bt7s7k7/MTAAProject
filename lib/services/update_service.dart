@@ -35,8 +35,9 @@ class UpdateService {
 
   final _streamController = StreamController<UpdateEvent>.broadcast();
 
-  StreamSubscription<UpdateEvent>? addListener(
-      void Function(UpdateEvent) listener) {
+  StreamSubscription<UpdateEvent> addListener(
+    void Function(UpdateEvent) listener,
+  ) {
     return _streamController.stream.listen(listener);
   }
 

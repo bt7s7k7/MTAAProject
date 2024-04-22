@@ -6,7 +6,6 @@ import 'package:http/http.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/constants.dart';
-import 'package:mtaa_project/services/firebase_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
@@ -65,7 +64,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activity;
   }
 
-  Future<void> uploadActivity(Activity activity) async {
+  Future<Activity> uploadActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
     var response = await post(
       backendURL.resolve("/activity"),
@@ -76,7 +75,8 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
       body: jsonEncode(activity.toJson()),
     );
 
-    processHTTPResponse(response);
+    var data = processHTTPResponse(response);
+    var savedActivity = Activity.fromJson(data);
 
     // Log the 'create_activity' event to Firebase Analytics
     FirebaseAnalytics.instance.logEvent(
@@ -93,6 +93,8 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
         'likes_count': activity.likesCount,
       },
     );
+
+    return savedActivity;
   }
 
   Future<void> deleteActivity(Activity activity) async {

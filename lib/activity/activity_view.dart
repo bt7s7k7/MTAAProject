@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/activity.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
@@ -36,10 +37,12 @@ class ActivityView extends StatelessWidget {
             ? "${(activity.distance / 1000).toStringAsFixed(2)} km"
             : "${activity.distance} km";
 
+    var router = GoRouter.of(context);
+
     return Card(
       child: InkWell(
         onTap: () {
-          ActivityAdapter.instance.deleteActivity(activity);
+          router.pushNamed("Activity", extra: activity.id);
         },
         child: ListTile(
           leading: UserIcon(icon: activity.user.icon),

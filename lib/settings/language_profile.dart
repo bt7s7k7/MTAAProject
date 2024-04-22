@@ -10,6 +10,7 @@ abstract class LanguageProfile {
 
   String home();
   String recording();
+  String activity();
   String friends();
   String addFriends();
   String search();
@@ -60,4 +61,10 @@ abstract class LanguageProfile {
   String recordingPausedDesc();
   String unpauseRecording();
   String grantPermission();
+  String mapOffline();
+  String offlineDesc();
+  String confirmActivityDeletion();
+  String confirmActivityDeletionDesc();
+  String delete();
+  String cancel();
 }

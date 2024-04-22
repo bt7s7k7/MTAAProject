@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mtaa_project/activity/activity_page.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/auth/login_register_page.dart';
 import 'package:mtaa_project/friends/add_friends_page.dart';
@@ -7,9 +8,7 @@ import 'package:mtaa_project/friends/friend_page.dart';
 import 'package:mtaa_project/friends/friends_page.dart';
 import 'package:mtaa_project/home/home_page.dart';
 import 'package:mtaa_project/layout/main_layout.dart';
-import 'package:mtaa_project/recording/activity_tracker.dart';
 import 'package:mtaa_project/recording/recording_page.dart';
-import 'package:mtaa_project/recording/recording_result_page.dart';
 import 'package:mtaa_project/recording/recording_setup_page.dart';
 import 'package:mtaa_project/user/profile_page.dart';
 import 'package:mtaa_project/user/user.dart';
@@ -46,6 +45,12 @@ final router = GoRouter(
           builder: (context, state) => const HomePage(),
         ),
         GoRoute(
+          path: "/activity",
+          name: "Activity",
+          builder: (context, state) =>
+              ActivityPage(activityId: state.extra as int),
+        ),
+        GoRoute(
           path: "/profile",
           name: "Profile",
           builder: (context, state) => const ProfilePage(),
@@ -59,12 +64,6 @@ final router = GoRouter(
           path: "/recording",
           name: "Recording",
           builder: (context, state) => const RecordingSetupPage(),
-        ),
-        GoRoute(
-          path: "/recording/result",
-          name: "RecordingResult",
-          builder: (context, state) =>
-              RecordingResultPage(tracker: state.extra as ActivityTracker),
         ),
         GoRoute(
           path: "/friends",

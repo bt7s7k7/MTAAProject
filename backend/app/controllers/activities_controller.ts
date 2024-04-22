@@ -21,13 +21,12 @@ export default class ActivityController {
 
     const activitiesWithLikeStatus = await Promise.all(
       activities.map(async (activity) => {
-        const serializedActivity = activity.serialize()
-        serializedActivity.likesCount = activity.likes.length
-        serializedActivity.hasLiked = await this.likesRepository.userHasLikedActivity(
-          user.id,
-          activity.id
-        )
-        return serializedActivity
+        return {
+          ...activity.serialize(),
+          likesCount: activity.likes.length,
+          hasLiked: await this.likesRepository.userHasLikedActivity(user.id, activity.id),
+          path: null,
+        }
       })
     )
 
@@ -50,13 +49,12 @@ export default class ActivityController {
     const activities = await this.activityRepository.findUserActivitiesById(targetUserId)
     return Promise.all(
       activities.map(async (activity) => {
-        const serializedActivity = activity.serialize()
-        serializedActivity.likesCount = activity.likes.length
-        serializedActivity.hasLiked = await this.likesRepository.userHasLikedActivity(
-          currentUser.id,
-          activity.id
-        )
-        return serializedActivity
+        return {
+          ...activity.serialize(),
+          likesCount: activity.likes.length,
+          hasLiked: await this.likesRepository.userHasLikedActivity(currentUser.id, activity.id),
+          path: null,
+        }
       })
     )
   }
@@ -66,9 +64,11 @@ export default class ActivityController {
     const activityId = Number.parseInt(params.id)
     const activity = await this.activityRepository.findActivityDetails(user.id, activityId)
 
-    const serializedActivity = activity.serialize()
-    serializedActivity.likesCount = activity.likes.length // Append likes count
-    return serializedActivity
+    return {
+      ...activity.serialize(),
+      likesCount: activity.likes.length,
+      hasLiked: await this.likesRepository.userHasLikedActivity(user.id, activity.id),
+    }
   }
 
   async deleteActivity({ auth, params }: HttpContext) {
@@ -82,7 +82,11 @@ export default class ActivityController {
     const activityData = await activityValidator.validate(request.all())
     const activity = await this.activityRepository.storeActivity(user, activityData)
 
-    return activity.serialize()
+    return {
+      ...activity.serialize(),
+      likesCount: 0,
+      hasLiked: false,
+    }
   }
 
   async like({ auth, params }: HttpContext) {
