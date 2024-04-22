@@ -4,11 +4,14 @@ import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:pedometer/pedometer.dart';
 
+/// Gets step count from the device's pedometer
 class PedometerService with ChangeNotifier, ChangeNotifierAsync {
   PedometerService._();
   static final instance = PedometerService._();
 
   var _steps = 0;
+
+  /// Amount of steps counted
   int get steps => _steps;
 
   String _status = "loading";
@@ -17,6 +20,7 @@ class PedometerService with ChangeNotifier, ChangeNotifierAsync {
   late Stream<PedestrianStatus> _pedestrianStatusStream;
   late Stream<StepCount> _stepCountStream;
 
+  /// Gets the current steps from the devices's pedometer and listens for updates
   void _init() {
     _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
     _pedestrianStatusStream.listen((event) {
@@ -44,6 +48,7 @@ class PedometerService with ChangeNotifier, ChangeNotifierAsync {
     _init();
   }
 
+  /// Calls [_init] if activity recognition permission were granted, otherwise waits until they are
   Future<void> load() async {
     if (kIsWeb) return;
 

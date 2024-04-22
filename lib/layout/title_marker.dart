@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mtaa_project/layout/application_app_bar.dart';
 import 'package:mtaa_project/layout/layout_config.dart';
 
+/// Registers the current screen with the [LayoutConfig] so the correct title is shown in the [ApplicationAppBar] and/or button is focused in the bottom navigation bar
 class TitleMarker extends StatefulWidget {
   const TitleMarker({super.key, required this.title, this.focusedButton});
 

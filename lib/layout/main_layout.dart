@@ -5,6 +5,7 @@ import 'package:mtaa_project/layout/layout_config.dart';
 import 'package:mtaa_project/layout/screen_format_builder.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// All routes to show in the bottom navigation bar
 final _routes = <({IconData icon, String Function() title, String route})>[
   (
     icon: Icons.home,
@@ -23,6 +24,7 @@ final _routes = <({IconData icon, String Function() title, String route})>[
   ),
 ];
 
+/// Main layout for the application, showing an app bar and bottom navigation bar
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key, required this.child});
 

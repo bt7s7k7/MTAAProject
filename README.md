@@ -1,16 +1,18 @@
-# mtaa_project
+# DigiSenior
 
-A new Flutter project.
+## Setup
 
-## Getting Started
+Na spustenie aplikácie je potrebný Dart verzie aspoň 3.3.1 a Flutter verzie aspoň 3.19.3. Pred spustením aplikácie je potrebné aplikovať necommitované informácie podľa README na backende.
 
-This project is a starting point for a Flutter application.
+  1. Nainštalovať packackage
+  ```bash
+  flutter pub get
+  ```
 
-A few resources to get you started if this is your first Flutter project:
+  2. Stiahnuť google services configuračný súbor do `android/app/google-services.json`
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Spustenie 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter run
+```

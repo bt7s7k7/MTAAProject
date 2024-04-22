@@ -8,10 +8,12 @@ import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Allows for communicating with the notification controller on the backend and gets the initial notification that started the application
 class NotificationService {
   NotificationService._();
   static final instance = NotificationService._();
 
+  /// Generates a FCM token and sends it to the backend
   Future<void> enableNotifications() async {
     var permissions = await FirebaseMessaging.instance.requestPermission();
     if (permissions.authorizationStatus != AuthorizationStatus.authorized) {
@@ -37,6 +39,7 @@ class NotificationService {
     Settings.instance.notificationsEnabled.setValue(true);
   }
 
+  /// Disables notifications
   Future<void> disableNotifications() async {
     var auth = AuthAdapter.instance;
     var response = await delete(
@@ -49,6 +52,7 @@ class NotificationService {
     await Settings.instance.notificationsEnabled.setValue(false);
   }
 
+  /// Gets the initial notification that started the application
   Future<String?> load() async {
     FirebaseMessaging.onMessage.listen((event) {
       debugMessage(

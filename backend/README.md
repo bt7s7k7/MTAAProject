@@ -8,9 +8,11 @@ Na spustenie tohto programu je potrebné NodeJS verzie aspoň 20.11.1 a yarn pac
   ```bash
   yarn
   ```
-  2. Vložiť prístupové údaje k databáze
-     1. Skopírovať `.env.example` do  `.env`
-     2. V `.env` nastaviť hodnoty: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_DATABASE`
+  2. Pripraviť údaje, ktoré sa necommitujú do repository
+     1. Spustiť `node ace apply:secrets`
+     2. Vo vygenerovanom súbore `secrets.json` doplniť informácie
+     3. Stiahnuť `firebase-key.json` z firebase console
+     4. Spustiť `node ace apply:secrets`
   
   3. Spustiť databázovú migráciu a seedovanie databázy
   ```bash

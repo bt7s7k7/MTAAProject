@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// Shows an offline warning if we are offline
 class OfflineWarning extends StatelessWidget {
   const OfflineWarning({super.key, required this.label});
 
+  /// What message to show in the title
   final String Function() label;
 
   @override

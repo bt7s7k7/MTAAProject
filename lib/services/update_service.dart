@@ -7,11 +7,17 @@ import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
+/// Event sent from the backend when a relevant entity has changed
 class UpdateEvent {
   UpdateEvent({required this.type, required this.id, required this.value});
 
+  /// The type of the modified entity
   final String type;
+
+  /// The ID of the modified entity
   final int id;
+
+  /// The new value the entity has, or `null` if it was deleted
   final Map<String, dynamic>? value;
 
   factory UpdateEvent.fromJson(Map<String, dynamic> json) {
@@ -27,25 +33,32 @@ class UpdateEvent {
   }
 }
 
+/// Opens a websocket connection to the backend to get entity update events
 class UpdateService {
   UpdateService._();
   static final instance = UpdateService._();
 
+  /// Websocket being used to connect to the backend
   io.Socket? _socket;
+
+  /// Last auth token from [AuthAdapter] to detect when it changed
   String? _lastToken;
 
   final _streamController = StreamController<UpdateEvent>.broadcast();
 
+  /// Calls the callback on any [UpdateEvent] received from the backend, it is up to the client to filter out the relevant ones
   StreamSubscription<UpdateEvent> addListener(
     void Function(UpdateEvent) listener,
   ) {
     return _streamController.stream.listen(listener);
   }
 
+  /// Mocks an update received from the backend for offline mode
   void submitUpdate(UpdateEvent event) {
     _streamController.add(event);
   }
 
+  /// (Re)creates the connection if the auth token changes
   Future<void> updateConnection() {
     var token = AuthAdapter.instance.token;
 

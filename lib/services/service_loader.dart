@@ -14,6 +14,7 @@ import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/user/level_adapter.dart';
 
+/// Loads all services and redirects into the correct starting page
 class ServiceLoader extends StatefulWidget {
   const ServiceLoader({super.key, required this.child});
 
@@ -32,6 +33,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     loadServices();
   }
 
+  /// Loads all services
   Future<void> loadServices() async {
     // Then load other services
     AuthAdapter.instance.addListener(_onAuthChanged);
@@ -86,6 +88,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
     });
   }
 
+  /// Handler for logging out, redirects to login page
   void _onAuthChanged() {
     UpdateService.instance.updateConnection();
 

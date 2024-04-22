@@ -7,11 +7,15 @@ import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Displays a list of activities based on a getter
 class ActivityList extends StatefulWidget {
   const ActivityList(
       {super.key, required this.getter, this.useListView = true});
 
+  /// Getter for activities
   final Future<List<Activity>> Function() getter;
+
+  /// Should the displayed activities be wrapped in a list view (`true` by default)
   final bool useListView;
 
   @override
@@ -19,9 +23,13 @@ class ActivityList extends StatefulWidget {
 }
 
 class _ActivityListState extends State<ActivityList> {
+  /// Loaded activities
   List<Activity> _activities = [];
+
+  /// Subscription to [UpdateService] to get updates on activities, disposed on dispose
   StreamSubscription<UpdateEvent>? _subscription;
 
+  /// Loads the activities using the getter
   Future<void> _loadActivities() async {
     var activitiesResult = await widget.getter();
     setState(() {

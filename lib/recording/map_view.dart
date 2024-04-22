@@ -6,17 +6,28 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/recording/activity_tracker.dart';
+import 'package:mtaa_project/recording/recording_page.dart';
+import 'package:mtaa_project/recording/recording_setup_page.dart';
 import 'package:mtaa_project/services/permission_service.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// Location to show on the map before the real user location can be determined
 final _defaultLocation = GeoPoint(latitude: 0, longitude: 0);
+
+/// Key to preserve map state when going from [RecordingSetupPage] to [RecordingPage]
 final mapGlobalKey = GlobalKey(debugLabel: "map-view");
 
+/// Shows a map
 class MapView extends StatefulWidget {
   const MapView({super.key, this.onLocationUpdate, this.tracker, this.path});
 
+  /// Callback when a user location changes
   final void Function(GeoPoint location)? onLocationUpdate;
+
+  /// The activity tracker to show a path for
   final ActivityTracker? tracker;
+
+  /// Static path to display
   final List<GeoPoint>? path;
 
   @override
@@ -26,19 +37,29 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   bool _ready = false;
 
+  /// Is location tracking enabled
   late bool _locationEnabled;
+
+  /// Map controller used by the [OSMFlutter] widget
   late MapController _mapController;
 
+  /// Subscription to the location tracker
   StreamSubscription<Position>? _positionSubscription;
+
+  /// Reference to the current [ActivityTracker]
   ActivityTracker? _tracker;
+
+  /// Last position found by the location tracker
   GeoPoint? _lastPosition;
 
+  /// Handler for a new location found by the location tracker
   void _handleLocationChange(GeoPoint position) {
     _mapController.changeLocation(position);
     _lastPosition = position;
     if (widget.onLocationUpdate != null) widget.onLocationUpdate!(position);
   }
 
+  /// Handler when the location permission is changed
   Future<void> _handleLocationPermissionChanged() async {
     if (widget.path != null) return;
 
@@ -83,18 +104,21 @@ class _MapViewState extends State<MapView> {
     _mapController.setZoom(zoomLevel: 19);
   }
 
+  /// Callback after [PermissionService] update, calls [_handleLocationPermissionChanged] if the location permission changes
   void _onPermissionChanged() {
     var newLocationEnabled = PermissionService.instance.location.isGranted;
     if (newLocationEnabled == _locationEnabled) return;
     _handleLocationPermissionChanged();
   }
 
+  /// Handler for when the current [_tracker] updates its path
   Future<void> _handleTrackerUpdate() async {
     await _mapController.clearAllRoads();
     if (_tracker!.path.length < 2) return;
     _mapController.drawRoadManually(_tracker!.path, const RoadOption.empty());
   }
 
+  /// Draws a static path based, zooms into it and locks the camera into the path bounding box
   void _drawPath() async {
     var path = widget.path!;
     debugMessage("[Map] Drawing path $path");
@@ -187,6 +211,7 @@ class _MapViewState extends State<MapView> {
     super.dispose();
   }
 
+  /// Handles when the [OSMFlutter] is initialized
   void _setReady() {
     if (widget.path != null) {
       _drawPath();

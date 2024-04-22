@@ -12,10 +12,12 @@ import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 
+/// Allows for communicating with the activity controller on the backend
 class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
   ActivityAdapter._();
   static final instance = ActivityAdapter._();
 
+  /// Gets cached activities for offline mode
   List<dynamic> _getCachedActivities() {
     var source = Settings.instance.cachedActivities.getValue();
     if (source == null) return [];
@@ -23,10 +25,12 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return data;
   }
 
+  /// Sets cached activities for offline mode
   void _saveCachedActivities(List<dynamic> activities) {
     Settings.instance.cachedActivities.setValue(jsonEncode(activities));
   }
 
+  /// Gets activity upload queue for offline mode
   List<dynamic>? _getUploadQueue() {
     var queueSource = Settings.instance.cachedUploadQueue.getValue();
     if (queueSource == null) return null;
@@ -34,6 +38,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return queueData;
   }
 
+  /// Sets activity upload queue for offline mode
   void _saveUploadQueue(List<dynamic>? queue) {
     if (queue == null) {
       Settings.instance.cachedUploadQueue.setValue(null);
@@ -42,12 +47,14 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     }
   }
 
+  /// Adds an activity to the upload queue for offline mode
   void _appendUploadQueue(dynamic activity) {
     var queue = _getUploadQueue() ?? [];
     queue.add(activity);
     _saveUploadQueue(queue);
   }
 
+  /// Adds a hook to the [OfflineService] for uploading activities created during offline mode
   Future<void> load() async {
     OfflineService.instance.addOnlineAction(() async {
       var auth = AuthAdapter.instance;
@@ -74,6 +81,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     });
   }
 
+  /// Gets activities to be displayed on the home page
   Future<List<Activity>> getHomeActivities() async {
     var auth = AuthAdapter.instance;
     var data = await OfflineService.instance.networkRequestWithFallback(
@@ -101,6 +109,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activities;
   }
 
+  /// Gets the activities that should be displayed in a user profile page
   Future<List<Activity>> getUserActivities(int id) async {
     var auth = AuthAdapter.instance;
 
@@ -129,6 +138,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activities;
   }
 
+  /// Gets activity details
   Future<Activity> getActivity(String id) async {
     var auth = AuthAdapter.instance;
 
@@ -156,6 +166,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return activity;
   }
 
+  /// Uploads a new activity to the server
   Future<Activity> uploadActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
 
@@ -204,6 +215,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     return savedActivity;
   }
 
+  /// Requests activity deletion from the server
   Future<void> deleteActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
     var response = await delete(
@@ -214,6 +226,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     processHTTPResponse(response);
   }
 
+  /// Adds a like on the specified activity
   Future<void> likeActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
     var response = await post(
@@ -232,6 +245,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
     );
   }
 
+  /// Removes a like on the specified activity
   Future<void> unlikeActivity(Activity activity) async {
     var auth = AuthAdapter.instance;
     var response = await delete(

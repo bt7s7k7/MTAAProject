@@ -6,6 +6,7 @@ import 'package:mtaa_project/layout/title_marker.dart';
 import 'package:mtaa_project/offline_mode/offline_warning.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 
+/// Page containing the current level and all relevant activities
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
