@@ -16,24 +16,25 @@ export class ActivityRepository {
   ) {}
 
   async findAllUserAndFriendsActivities(userId: number) {
-    const user = await User.query()
-      .where('id', userId)
-      .preload('activities', (query) => {
-        query.preload('user').preload('likes') // Preload likes here
-      })
-      .preload('friends', (friendsQuery) => {
-        friendsQuery.preload('activities', (query) => {
-          query.preload('user').preload('likes') // Preload likes here
-        })
-      })
-      .firstOrFail()
+    const activities = await Activity.query()
+      .leftJoin('users_friends', 'activities.user_id', 'users_friends.user_id')
+      .where('activities.user_id', userId)
+      .orWhere('users_friends.friend_id', userId)
+      .preload('likes')
+      .preload('user')
+      .orderBy('activities.created_at', 'desc')
+      .select('activities.*')
 
-    const activities = user.activities.concat(user.friends.flatMap((friend) => friend.activities))
     return activities
   }
 
   async findUserActivitiesById(userId: number) {
-    return Activity.query().where('userId', userId).preload('user').preload('likes')
+    return Activity.query()
+      .where('userId', userId)
+      .preload('user')
+      .preload('likes')
+      .orderBy('activities.created_at', 'desc')
+      .select('activities.*')
   }
 
   async findActivityDetails(userId: number, activityId: number) {
