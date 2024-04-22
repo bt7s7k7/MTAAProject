@@ -1,5 +1,4 @@
 import Invite from '#models/invite'
-import Level from '#models/level'
 import User from '#models/user'
 import { UserEventRouter } from '#services/user_event_router'
 import { userUpdateValidator } from '#validators/user_validator'

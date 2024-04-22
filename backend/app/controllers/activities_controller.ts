@@ -7,6 +7,8 @@ import { ActivityRepository } from '../repositories/activity_repository.js'
 import { LikesRepository } from '../repositories/like_repository.js'
 import { UserRepository } from '../repositories/user_repository.js'
 
+export const test = 5
+
 @inject()
 export default class ActivityController {
   constructor(
