@@ -16,6 +16,8 @@ class FirebaseService {
     );
     debugMessage("[Firebase] Firebase app loaded");
 
+    if (kIsWeb) return;
+
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
     if (kReleaseMode) {
