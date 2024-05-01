@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mtaa_project/constants.dart';
 import 'package:mtaa_project/settings/locale_manager.dart';
 import 'package:mtaa_project/user/level_adapter.dart';
 import 'package:mtaa_project/user/level_image.dart';
 import 'package:mtaa_project/user/user.dart';
+import 'package:mtaa_project/user/user_icon.dart';
 
 class UserHeader extends StatelessWidget {
   const UserHeader({super.key, required this.user});
@@ -20,12 +20,7 @@ class UserHeader extends StatelessWidget {
         SizedBox(
           width: 100,
           height: 100,
-          child: Image.network(
-            user.icon == null
-                ? defaultUserIcon
-                : backendURL.resolve(user.icon!).toString(),
-            fit: BoxFit.cover,
-          ),
+          child: UserImage(icon: user.icon),
         ),
         Expanded(
           child: Column(

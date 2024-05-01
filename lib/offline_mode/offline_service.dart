@@ -38,7 +38,7 @@ class OfflineService with ChangeNotifier, ChangeNotifierAsync {
     if (_isOnline) {
       callback();
     }
-  } 
+  }
 
   /// Performs a network request if online or calls the fallback callback if offline
   Future<Map<String, dynamic>> networkRequestWithFallback(
