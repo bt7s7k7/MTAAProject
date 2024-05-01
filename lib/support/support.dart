@@ -6,6 +6,7 @@ import 'package:mtaa_project/app/debug_page.dart';
 import 'package:mtaa_project/services/update_aware.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/exceptions.dart';
+import 'package:mtaa_project/user/user.dart';
 
 /// Processes a HTTP response, throws errors or returns the response data as JSON
 Map<String, dynamic> processHTTPResponse(Response response) {
@@ -126,4 +127,25 @@ void updateList<T>(
       list[index] = newValue;
     });
   }
+}
+
+/// Updates entity user if relevant, used with [UpdateEvent]
+void updateUserInList<T>({
+  required User user,
+  required List<T> list,
+  required int Function(T element) userGetter,
+  required T Function(T element, User user) userSetter,
+  required void Function() callback,
+}) {
+  var affected = false;
+
+  for (final (index, element) in list.indexed) {
+    var userId = userGetter(element);
+    if (userId == user.id) {
+      list[index] = userSetter(element, user);
+      affected = true;
+    }
+  }
+
+  if (affected) callback();
 }

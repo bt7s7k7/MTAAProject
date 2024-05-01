@@ -36,6 +36,22 @@ class Activity with UpdateAware {
   final int likesCount;
   bool hasLiked;
 
+  Activity withUser(User user) {
+    return Activity(
+      id: id,
+      user: user,
+      activityName: activityName,
+      points: points,
+      steps: steps,
+      distance: distance,
+      duration: duration,
+      path: path,
+      createdAt: createdAt,
+      likesCount: likesCount,
+      hasLiked: hasLiked,
+    );
+  }
+
   /// Serializes the activity, only returns fields required by the backend
   Map<String, dynamic> toJsonForUpload() => {
         "userId": user.id,

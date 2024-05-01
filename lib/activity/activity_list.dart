@@ -6,6 +6,7 @@ import 'package:mtaa_project/activity/activity_view.dart';
 import 'package:mtaa_project/offline_mode/offline_service.dart';
 import 'package:mtaa_project/services/update_service.dart';
 import 'package:mtaa_project/support/support.dart';
+import 'package:mtaa_project/user/user.dart';
 
 /// Displays a list of activities based on a getter
 class ActivityList extends StatefulWidget {
@@ -44,6 +45,17 @@ class _ActivityListState extends State<ActivityList> {
     OfflineService.instance.addListener(_loadActivities);
 
     _subscription = UpdateService.instance.addListener((event) {
+      if (event.type == "user" && event.value != null) {
+        var user = User.fromJson(event.value!);
+        updateUserInList(
+          user: user,
+          list: _activities,
+          userGetter: (v) => v.user.id,
+          userSetter: (v, user) => v.withUser(user),
+          callback: () => setState(() {}),
+        );
+      }
+
       if (event.type != "activity") return;
       updateList(
         event: event,
