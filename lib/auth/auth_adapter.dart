@@ -106,9 +106,12 @@ class AuthAdapter with ChangeNotifier, ChangeNotifierAsync {
 
   Future<void> updateIcon(PlatformFile icon) async {
     var request = MultipartRequest("PUT", backendURL.resolve("/user/photo"));
+
+    var iconContent = await icon.xFile.readAsBytes();
+
     request.files.add(MultipartFile.fromBytes(
       "photo",
-      icon.bytes!,
+      iconContent,
       filename: icon.name,
     ));
     request.headers.addAll(getAuthorizationHeaders());
