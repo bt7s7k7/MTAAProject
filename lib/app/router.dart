@@ -13,6 +13,7 @@ import 'package:mtaa_project/recording/recording_page.dart';
 import 'package:mtaa_project/recording/recording_setup_page.dart';
 import 'package:mtaa_project/user/profile_page.dart';
 import 'package:mtaa_project/user/user.dart';
+import 'package:mtaa_project/user/user_settings.dart';
 
 final _rootNavigationKey = GlobalKey<NavigatorState>();
 final _homeNavigationKey = GlobalKey<NavigatorState>();
@@ -60,6 +61,11 @@ final router = GoRouter(
           path: "/profile",
           name: "Profile",
           builder: (context, state) => const ProfilePage(),
+        ),
+        GoRoute(
+          path: "/user-settings",
+          name: "UserSettings",
+          builder: (context, state) => const UserSettings(),
         ),
         GoRoute(
           path: "/friend",

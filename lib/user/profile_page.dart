@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mtaa_project/activity/user_activity.dart';
 import 'package:mtaa_project/auth/auth_adapter.dart';
 import 'package:mtaa_project/layout/title_marker.dart';
@@ -10,7 +11,6 @@ import 'package:mtaa_project/settings/settings_builder.dart';
 import 'package:mtaa_project/support/exceptions.dart';
 import 'package:mtaa_project/support/support.dart';
 import 'package:mtaa_project/user/user_header.dart';
-import 'package:mtaa_project/user/user_settings.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -25,9 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _accountSettings() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => UserSettings()),
-    );
+    GoRouter.of(context).pushNamed("UserSettings");
   }
 
   Future<void> _setNotificationEnabled(bool enabled) async {
