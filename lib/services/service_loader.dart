@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/activity/activity_adapter.dart';
 import 'package:mtaa_project/app/debug_page.dart';
@@ -22,21 +24,10 @@ class ServiceLoader extends StatefulWidget {
 
   @override
   State<ServiceLoader> createState() => _ServiceLoaderState();
-}
-
-class _ServiceLoaderState extends State<ServiceLoader> {
-  var loaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadServices();
-  }
 
   /// Loads all services
-  Future<void> loadServices() async {
-    // Then load other services
-    AuthAdapter.instance.addListener(_onAuthChanged);
+  static Future<String?> loadServices() async {
+    String? resultPage;
 
     try {
       debugMessage("[Loader] FirebaseService");
@@ -55,7 +46,7 @@ class _ServiceLoaderState extends State<ServiceLoader> {
         debugMessage(
             "[Auth] Authenticated: ${AuthAdapter.instance.user?.toJson()}");
       } on NotAuthenticatedException {
-        router.goNamed("Login");
+        resultPage = "Login";
         debugMessage("[Auth] Login required");
       }
 
@@ -75,12 +66,34 @@ class _ServiceLoaderState extends State<ServiceLoader> {
 
       if (initRoute != null) {
         debugMessage("[Loader] Has init route: $initRoute");
-        router.goNamed(initRoute);
+        resultPage = initRoute;
       }
 
       debugMessage("[Loader] Done.");
     } on OnlineInitRequired {
-      router.goNamed("OnlineInit");
+      resultPage = "OnlineInit";
+    }
+
+    return resultPage;
+  }
+}
+
+class _ServiceLoaderState extends State<ServiceLoader> {
+  var loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadServices();
+  }
+
+  /// Calls [ServiceLoader.loadServices] and sets [loaded] when finished
+  Future<void> _loadServices() async {
+    AuthAdapter.instance.addListener(_onAuthChanged);
+
+    var initRoute = await ServiceLoader.loadServices();
+    if (initRoute != null) {
+      router.goNamed(initRoute);
     }
 
     setState(() {

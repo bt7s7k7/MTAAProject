@@ -5,25 +5,29 @@ import 'package:mtaa_project/settings/settings.dart';
 import 'package:mtaa_project/settings/settings_builder.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, this.skipInitialization = false});
+
+  final bool skipInitialization;
 
   @override
   Widget build(BuildContext context) {
-    return ServiceLoader(
-      child: SettingsBuilder(
-        property: Settings.instance.darkTheme,
-        builder: (darkTheme) => MaterialApp.router(
-          title: "DigiSenior",
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.deepPurple,
-              brightness: darkTheme ? Brightness.dark : Brightness.light,
-            ),
-            useMaterial3: true,
+    var content = SettingsBuilder(
+      property: Settings.instance.darkTheme,
+      builder: (darkTheme) => MaterialApp.router(
+        title: "DigiSenior",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+            brightness: darkTheme ? Brightness.dark : Brightness.light,
           ),
-          routerConfig: router,
+          useMaterial3: true,
         ),
+        routerConfig: router,
       ),
     );
+
+    if (skipInitialization) return content;
+
+    return ServiceLoader(child: content);
   }
 }

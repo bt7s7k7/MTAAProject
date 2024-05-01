@@ -33,6 +33,7 @@ class _ActivityListState extends State<ActivityList> {
   /// Loads the activities using the getter
   Future<void> _loadActivities() async {
     var activitiesResult = await widget.getter();
+    if (!mounted) return;
     setState(() {
       _activities = activitiesResult;
     });
