@@ -22,6 +22,12 @@ class PedometerService with ChangeNotifier, ChangeNotifierAsync {
 
   /// Gets the current steps from the devices's pedometer and listens for updates
   void _init() {
+    if (const bool.fromEnvironment("isEmulator")) {
+      _pedestrianStatusStream = const Stream.empty(broadcast: true);
+      _stepCountStream = const Stream.empty(broadcast: true);
+      return;
+    }
+
     _pedestrianStatusStream = Pedometer.pedestrianStatusStream;
     _pedestrianStatusStream.listen((event) {
       _status = event.status;

@@ -15,6 +15,12 @@ void main() {
     await ServiceLoader.loadServices();
   });
 
+  tearDown(() async {
+    if (AuthAdapter.instance.token != null) {
+      await AuthAdapter.instance.logOut();
+    }
+  });
+
   group("Authentication", () {
     testWidgets("login", (tester) async {
       router.goNamed("Login");
@@ -33,31 +39,16 @@ void main() {
           find.widgetWithText(FilledButton, "Login").expectFoundOne();
       await tester.tap(loginButton);
 
-      await tester.pumpAndSettle();
+      var profileButton =
+          find.widgetWithIcon(IconButton, Icons.account_circle_outlined);
+      await waitFor(tester, profileButton);
 
       expect(AuthAdapter.instance.user, isNotNull);
       expect(AuthAdapter.instance.user!.email, "joy@example.com");
 
-      var profileButton = find
-          .widgetWithIcon(IconButton, Icons.account_circle_outlined)
-          .expectFoundOne();
       await tester.tap(profileButton);
 
       await tester.pumpAndSettle();
-      find.textContaining(RegExp(r"Joy Johns"));
-
-      await AuthAdapter.instance.logOut();
-      expect(AuthAdapter.instance.token, isNull);
-    });
-
-    testWidgets("profile", (tester) async {
-      await AuthAdapter.instance.login("joy@example.com", "12345");
-
-      router.goNamed("Profile");
-
-      await tester.pumpWidget(const App(skipInitialization: true));
-      await tester.pumpAndSettle();
-
       find.textContaining(RegExp(r"Joy Johns"));
 
       await AuthAdapter.instance.logOut();
