@@ -11,6 +11,7 @@ Future<void> waitFor(
   WidgetTester tester,
   Finder finder, {
   Duration timeout = const Duration(seconds: 20),
+  bool invert = false,
 }) async {
   final end = tester.binding.clock.now().add(timeout);
 
@@ -21,5 +22,5 @@ Future<void> waitFor(
 
     await tester.pumpAndSettle();
     await Future.delayed(const Duration(milliseconds: 100));
-  } while (finder.evaluate().isEmpty);
+  } while (finder.evaluate().isEmpty == !invert);
 }

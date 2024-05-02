@@ -7,6 +7,7 @@ import 'package:mtaa_project/settings/settings_builder.dart';
 class App extends StatelessWidget {
   const App({super.key, this.skipInitialization = false});
 
+  /// Do not run [ServiceLoader], used during testing
   final bool skipInitialization;
 
   @override
