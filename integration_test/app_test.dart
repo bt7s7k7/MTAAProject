@@ -5,6 +5,7 @@ import "package:mtaa_project/app/app.dart";
 import "package:mtaa_project/app/router.dart";
 import "package:mtaa_project/auth/auth_adapter.dart";
 import "package:mtaa_project/services/service_loader.dart";
+import "package:mtaa_project/services/update_service.dart";
 
 import "test_support.dart";
 
@@ -192,6 +193,41 @@ void main() {
       // Verify the activity was saved
       var activityView = find.widgetWithText(ListTile, "Recording");
       await waitFor(tester, activityView);
+    });
+
+    testWidgets("like friend activity", (tester) async {
+      // Login as user B
+      await AuthAdapter.instance.login("kale@example.com", "12345");
+      await UpdateService.instance
+          .updateConnection(); // Ensure websocket connection is created
+      router.goNamed("Home");
+      await tester.pumpWidget(const App(skipInitialization: true));
+      await tester.pumpAndSettle();
+
+      // Verify user A activity is shown
+      var userAActivity = find.widgetWithText(ListTile, "Recording");
+      await waitFor(tester, userAActivity);
+
+      // Like activity
+      var likeButton = find
+          .descendant(
+            of: userAActivity,
+            matching: find.widgetWithIcon(IconButton, Icons.thumb_up_outlined),
+          )
+          .expectFoundOne();
+      await tester.tap(likeButton);
+
+      // Verify activity liked
+      var likedButton = find.descendant(
+        of: userAActivity,
+        matching: find.widgetWithIcon(IconButton, Icons.thumb_up),
+      );
+      await waitFor(tester, likedButton);
+
+      // Verify like count is 1
+      find
+          .descendant(of: userAActivity, matching: find.textContaining("1"))
+          .expectFoundOne();
     });
   });
 }
