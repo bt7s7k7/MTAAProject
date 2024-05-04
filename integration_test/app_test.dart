@@ -131,4 +131,67 @@ void main() {
       }
     });
   });
+
+  group("Activity", () {
+    testWidgets("create activity", (tester) async {
+      // Start as user A
+      await AuthAdapter.instance.login("joy@example.com", "12345");
+      router.goNamed("Home");
+      await tester.pumpWidget(const App(skipInitialization: true));
+      await tester.pumpAndSettle();
+
+      router.goNamed("Recording");
+      await tester.pumpAndSettle();
+
+      // Open activity permission popup
+      var stepCounterPerm =
+          find.widgetWithText(Card, "Step counting").expectFoundOne();
+      var stepCounterPermGrant = find
+          .descendant(of: stepCounterPerm, matching: find.byType(FilledButton))
+          .expectFoundOne();
+      await tester.tap(stepCounterPermGrant);
+      // Wait for the card to disappear, meaning user has granted permission
+      await waitFor(tester, stepCounterPerm, invert: true);
+
+      // Open location popup
+      var locationPerm = find.widgetWithText(Card, "Location").expectFoundOne();
+      var locationPermGrant = find
+          .descendant(of: locationPerm, matching: find.byType(FilledButton))
+          .expectFoundOne();
+      await tester.tap(locationPermGrant);
+      // Wait for the card to disappear, meaning user has granted permission
+      await waitFor(tester, locationPerm, invert: true);
+
+      router.goNamed("Home");
+      await tester.pumpAndSettle();
+      router.goNamed("Recording");
+      await tester.pumpAndSettle();
+
+      // Wait until location found
+      var locationSearching = find.textContaining("Searching...");
+      await waitFor(tester, locationSearching, invert: true);
+
+      // Press begin
+      var beginButton =
+          find.widgetWithText(FilledButton, "Begin").expectFoundOne();
+      await tester.tap(beginButton);
+      await tester.pumpAndSettle();
+
+      // Wait some time
+      await tester.pump(const Duration(milliseconds: 1500));
+
+      // Press finish
+      var finishButton = find.widgetWithText(FilledButton, "Finish");
+      await tester.tap(finishButton);
+      await tester.pumpAndSettle();
+
+      // Go home
+      router.goNamed("Home");
+      await tester.pumpAndSettle();
+
+      // Verify the activity was saved
+      var activityView = find.widgetWithText(ListTile, "Recording");
+      await waitFor(tester, activityView);
+    });
+  });
 }

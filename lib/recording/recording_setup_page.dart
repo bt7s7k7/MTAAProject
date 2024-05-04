@@ -19,8 +19,14 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
   /// Current location found by the map
   GeoPoint? location;
 
+  /// Stop building map widget after router navigation to prevent it being two places at once
+  var unmountMap = false;
+
   /// Start activity recording by redirecting to the [RecordingPage]
   void _beginActivity() {
+    setState(() {
+      unmountMap = true;
+    });
     GoRouter.of(context).goNamed("RecordingActive");
   }
 
@@ -72,10 +78,12 @@ class _RecordingSetupPageState extends State<RecordingSetupPage> {
           ),
         ),
         Expanded(
-          child: MapView(
-            key: mapGlobalKey,
-            onLocationUpdate: _updateLocation,
-          ),
+          child: unmountMap
+              ? const SizedBox()
+              : MapView(
+                  key: mapGlobalKey,
+                  onLocationUpdate: _updateLocation,
+                ),
         ),
         Padding(
           padding: const EdgeInsets.all(20.0),

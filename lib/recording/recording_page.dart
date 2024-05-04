@@ -65,10 +65,6 @@ class _RecordingPageState extends State<RecordingPage> {
       path = null;
     }
 
-    if (path != null && path.length == 1) {
-      path.add(path.first);
-    }
-
     var result = await ActivityAdapter.instance.uploadActivity(
       Activity.fromRecording(
         name: LanguageManager.instance.language.recording(),

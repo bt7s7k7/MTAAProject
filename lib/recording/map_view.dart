@@ -173,10 +173,6 @@ class _MapViewState extends State<MapView> {
       widget.tracker!.addListener(_handleTrackerUpdate);
       _tracker = widget.tracker;
     }
-
-    if (widget.path != null) {
-      _drawPath();
-    }
   }
 
   @override
