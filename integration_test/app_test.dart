@@ -6,6 +6,7 @@ import "package:mtaa_project/app/router.dart";
 import "package:mtaa_project/auth/auth_adapter.dart";
 import "package:mtaa_project/services/service_loader.dart";
 import "package:mtaa_project/services/update_service.dart";
+import "package:mtaa_project/settings/settings.dart";
 
 import "test_support.dart";
 
@@ -22,6 +23,7 @@ void main() {
     // each test, for isolation
     if (AuthAdapter.instance.token != null) {
       await AuthAdapter.instance.logOut();
+      await UpdateService.instance.updateConnection();
     }
   });
 
@@ -258,6 +260,58 @@ void main() {
       // Wait for home screen and verify that the activity is not there
       await waitFor(tester, find.textContaining("steps"));
       expect(activityEntry, findsNothing);
+    });
+  });
+
+  group("Settings", () {
+    testWidgets("set theme", (tester) async {
+      // Start as user A
+      await AuthAdapter.instance.login("joy@example.com", "12345");
+      router.goNamed("Profile");
+      await tester.pumpWidget(const App(skipInitialization: true));
+      await tester.pumpAndSettle();
+
+      var darkThemeEntry =
+          find.widgetWithText(ListTile, "Dark theme").expectFoundOne();
+      var darkThemeCheckbox = find
+          .descendant(of: darkThemeEntry, matching: find.byType(Checkbox))
+          .expectFoundOne();
+      await tester.tap(darkThemeCheckbox);
+      await tester.pumpAndSettle();
+
+      expect(Settings.instance.darkTheme.getValue(), isTrue);
+      await Settings.instance.darkTheme.setValue(false);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets("set language", (tester) async {
+      // Start as user A
+      await AuthAdapter.instance.login("joy@example.com", "12345");
+      router.goNamed("Profile");
+      await tester.pumpWidget(const App(skipInitialization: true));
+      await tester.pumpAndSettle();
+
+      var languageEntry =
+          find.widgetWithText(ListTile, "Language").expectFoundOne();
+      var languageDropdown = find
+          .descendant(
+            of: languageEntry,
+            matching: find.byType(DropdownButton<String>),
+          )
+          .expectFoundOne();
+      await tester.tap(languageDropdown);
+      await tester.pumpAndSettle();
+
+      var slovakLanguage =
+          find.widgetWithText(DropdownMenuItem<String>, "Slovenský");
+      await tester.tap(slovakLanguage);
+      await tester.pumpAndSettle();
+
+      find.widgetWithText(ListTile, "Jazyk").expectFoundOne();
+
+      expect(Settings.instance.language.getValue(), "sk");
+      await Settings.instance.language.setValue("en");
+      await tester.pumpAndSettle();
     });
   });
 }
