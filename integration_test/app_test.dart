@@ -229,5 +229,35 @@ void main() {
           .descendant(of: userAActivity, matching: find.textContaining("1"))
           .expectFoundOne();
     });
+
+    testWidgets("delete activity", (tester) async {
+      // Start as user A
+      await AuthAdapter.instance.login("joy@example.com", "12345");
+      router.goNamed("Home");
+      await tester.pumpWidget(const App(skipInitialization: true));
+      await tester.pumpAndSettle();
+
+      // Verify user A activity is shown
+      var activityEntry = find.widgetWithText(ListTile, "Recording");
+      await waitFor(tester, activityEntry);
+      // Open activity page
+      await tester.tap(activityEntry);
+      await tester.pumpAndSettle();
+
+      // Delete activity
+      var deleteButton =
+          find.widgetWithIcon(IconButton, Icons.delete).expectFoundOne();
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      // Confirm deletion in pupup
+      var deleteConfirmation = find.widgetWithText(TextButton, "Delete");
+      await tester.tap(deleteConfirmation);
+      await tester.pumpAndSettle();
+
+      // Wait for home screen and verify that the activity is not there
+      await waitFor(tester, find.textContaining("steps"));
+      expect(activityEntry, findsNothing);
+    });
   });
 }

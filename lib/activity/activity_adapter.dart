@@ -131,7 +131,9 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
       _ => throw APIError("Invalid response for user activities: $data")
     };
 
-    if (OfflineService.instance.isOnline && id == auth.user!.id) {
+    if (auth.user != null &&
+        OfflineService.instance.isOnline &&
+        id == auth.user!.id) {
       _saveCachedActivities(activities);
     }
 
