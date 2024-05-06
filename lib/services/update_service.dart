@@ -78,9 +78,14 @@ class UpdateService {
 
     _socket = io.io(
       backendURL.toString(),
-      io.OptionBuilder().setAuth({
-        "token": AuthAdapter.instance.token,
-      }).setTransports(["websocket"]).build(),
+      io.OptionBuilder()
+          .setAuth({
+            "token": AuthAdapter.instance.token,
+          })
+          .setTransports(["websocket"])
+          .enableForceNew()
+          .enableForceNewConnection()
+          .build(),
     );
 
     debugMessage("[WS] Connecting to the server...");

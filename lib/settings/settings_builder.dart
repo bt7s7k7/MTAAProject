@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mtaa_project/settings/settings.dart';
 
@@ -22,16 +24,23 @@ class SettingsBuilder<T> extends StatefulWidget {
 class _SettingsBuilderState<T> extends State<SettingsBuilder<T>> {
   /// Current value of the specified property
   late T value = widget.property.getValue();
+  late StreamSubscription<T> _subscription;
 
   @override
   void initState() {
     super.initState();
 
-    widget.property.addListener((newValue) {
+    _subscription = widget.property.addListener((newValue) {
       setState(() {
         value = newValue;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription.cancel();
   }
 
   @override

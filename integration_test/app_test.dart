@@ -4,6 +4,7 @@ import "package:integration_test/integration_test.dart";
 import "package:mtaa_project/app/app.dart";
 import "package:mtaa_project/app/router.dart";
 import "package:mtaa_project/auth/auth_adapter.dart";
+import "package:mtaa_project/offline_mode/offline_service.dart";
 import "package:mtaa_project/services/service_loader.dart";
 import "package:mtaa_project/services/update_service.dart";
 import "package:mtaa_project/settings/settings.dart";
@@ -24,6 +25,7 @@ void main() {
     if (AuthAdapter.instance.token != null) {
       await AuthAdapter.instance.logOut();
       await UpdateService.instance.updateConnection();
+      OfflineService.instance.setOnlineState(true);
     }
   });
 
@@ -235,6 +237,8 @@ void main() {
     testWidgets("delete activity", (tester) async {
       // Start as user A
       await AuthAdapter.instance.login("joy@example.com", "12345");
+      await UpdateService.instance
+          .updateConnection(); // Ensure websocket connection is created
       router.goNamed("Home");
       await tester.pumpWidget(const App(skipInitialization: true));
       await tester.pumpAndSettle();
@@ -259,6 +263,7 @@ void main() {
 
       // Wait for home screen and verify that the activity is not there
       await waitFor(tester, find.textContaining("steps"));
+      activityEntry.reset();
       expect(activityEntry, findsNothing);
     });
   });

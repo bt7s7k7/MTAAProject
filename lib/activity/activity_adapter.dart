@@ -58,6 +58,7 @@ class ActivityAdapter with ChangeNotifier, ChangeNotifierAsync {
   Future<void> load() async {
     OfflineService.instance.addOnlineAction(() async {
       var auth = AuthAdapter.instance;
+      if (AuthAdapter.instance.user == null) return;
       var queue = _getUploadQueue();
       if (queue == null) return;
 
